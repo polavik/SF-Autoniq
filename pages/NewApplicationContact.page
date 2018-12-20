@@ -1,0 +1,44 @@
+<apex:page standardController="Application_Contact_Role__c" extensions="NewApplicationContactContExt" title="New {!$ObjectType.Application_Contact_Role__c.label}">
+    <apex:sectionHeader title="{!$ObjectType.Application_Contact_Role__c.label} {!$Label.Edit}" subtitle="{!$Label.New} {!$ObjectType.Application_Contact_Role__c.label}"/>
+    <apex:pageMessages id="pgMsgs"/>
+    <apex:form >
+        <apex:pageBlock title="{!$Label.Contracting_Contact_New}" mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Save}" action="{!saveContact}" rerender="pgMsgs"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageblockSection columns="1" title="{!$Label.Information}" collapsible="false">
+                <apex:inputField value="{!Application_Contact_Role__c.Application__c}"/>
+                <apex:inputField value="{!Application_Contact_Role__c.Contact__c}"/>
+                <apex:inputField value="{!Application_Contact_Role__c.Account__c}" required="true"/>
+                <apex:inputField value="{!Application_Contact_Role__c.AFC_Contracts__c}"/>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel for="ifAFCContracts" value="{!$ObjectType.Application_Contact_Role__c.fields.AFC_Contract_Shell__c.label}"/>
+                    <apex:actionRegion >
+                        <apex:inputField id="ifAFCContracts" value="{!Application_Contact_Role__c.AFC_Contract_Shell__c}">
+                            <apex:actionSupport event="onchange" rerender="opShowOnContract,pgMsgs"/>
+                        </apex:inputField>
+                    </apex:actionRegion>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel for="ifShowOnContract" value="{!$ObjectType.Application_Contact_Role__c.fields.Show_on_Contract__c.label}"/>
+                    <apex:actionregion >
+                        <apex:outputPanel id="opShowOnContract">
+                            <apex:inputField id="ifShowOnContract" value="{!Application_Contact_Role__c.Show_on_Contract__c}" required="true" rendered="{!NOT(ISBLANK(Application_Contact_Role__c.AFC_Contract_Shell__c))}">
+                                <apex:actionSupport event="onchange" rerender="opContractName,pgMsgs"/>
+                            </apex:inputField>
+                        </apex:outputPanel>
+                    </apex:actionregion>
+                </apex:pageblockSectionItem>
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel for="ifContractName" value="{!$ObjectType.Application_Contact_Role__c.fields.Contract_Name__c.label}"/>
+                    <apex:outputPanel id="opContractName">
+                        <apex:inputField id="ifContractName" value="{!Application_Contact_Role__c.Contract_Name__c}" required="true" rendered="{!Application_Contact_Role__c.Show_on_Contract__c = 'Other'}"/>
+                    </apex:outputPanel>
+                </apex:pageblockSectionItem>
+                <apex:inputField value="{!Application_Contact_Role__c.Relationship__c}" required="true"/>              
+                <apex:inputField value="{!Application_Contact_Role__c.Relationship_Subtype__c}"/>              
+            </apex:pageblockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

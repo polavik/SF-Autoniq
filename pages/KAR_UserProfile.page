@@ -1,0 +1,350 @@
+<apex:page docType="html-5.0" sidebar="false" showHeader="false" applyHtmlTag="false" 
+           standardStylesheets="true" applyBodyTag="false" 
+           controller="EdgeForceIntranetDashboardController">
+    <title>User Profile</title>
+<!--     <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/jquery.validate.min.js')}" /> -->
+    <style>
+        .messageText h4{
+            border-collapse: collapse;
+            color: rgb(204, 0, 0);
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            height: 17px;
+            line-height: 17.1428394317627px;
+            margin: 0;
+            padding: 0;
+            background: none;
+        }
+        .grp-settings input[type="radio"] {
+            margin: 10px;
+        }
+        .controls {
+            float: right;
+            padding-left: 0px !important;
+        }
+        .more-info .form-group {
+            display: block !important;
+        }
+        .more-info .form-group label {
+            width: 90%;
+            text-align: left;
+            padding-bottom: 5px;
+        }
+        @media (min-width: 768px) {
+            .profile-info .form-group > div.md {
+                width: 70%;
+            }
+        }
+    </style>
+
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <apex:outputpanel >
+                <apex:actionstatus id="status">
+                    <apex:facet name="start">
+                        <div class="loading-overlay" style="z-index:2;">
+                            <div class="loading-spinner">
+                                <div class="rect1"></div>
+                                <div class="rect2"></div>
+                                <div class="rect3"></div>
+                                <div class="rect4"></div>
+                                <div class="rect5"></div>
+                            </div>
+                        </div><!-- /.overlay -->
+                    </apex:facet>
+                </apex:actionstatus>
+            </apex:outputpanel>
+
+            <apex:form id="frm" styleClass="user-profile desktop-pad-t">
+                <div class="container-bs">
+                    <div class="r1-c2 one-third sm">
+                        <div class="widget-left photo-upload">
+                            <div class="widget-heading">
+                                <h2>{!$Label.EF_Profile_UserPhotoLabel}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <apex:image value="{!userInformation.FullPhotoUrl}" styleClass="img-user" />
+                                <a class="btn-bs btn-primary btn-block" data-toggle="modal" data-target="#photo-upload">{!$Label.EF_Profile_UpdatePhoto}</a>
+                            </div><!-- /.content -->
+                        </div>
+                        <div class="widget-right profile-info">
+                            <div class="widget-heading">
+                                <h2>{!$Label.EF_Profile_EditProfile}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <apex:outputPanel id="userProfile">
+                                    <div id="messages">
+                                        <div class="alert alert-danger" role="alert" id="updateFail" style="display:none;">{!pageMessages}</div>
+                                        <script>
+                                            function checkError(){
+                                                if('{!pageMessages}' != ''){
+                                                    $('#updateFail').show();window.scrollTo(0,0);
+                                                }
+                                            }
+                                        </script>
+                                    </div>
+                                    <div class="form-horizontal" role="form" id="userForm">
+                                        <div class="form-group">
+                                            <label class="control-label" for="username">{!$ObjectType.User.fields.UserName.Label}:</label>
+                                            <div class="md">
+                                                <apex:outputText value="{!userInformation.UserName}" id="username" styleClass="form-control" html-readonly="" />
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label" for="firstname">{!$ObjectType.User.fields.FirstName.Label}:</label>
+                                            <div class="md">
+                                                <apex:outputText value="{!userInformation.FirstName}" styleClass="form-control" id="firstname" html-readonly=""/>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="lastname">{!$ObjectType.User.fields.LastName.Label}:</label>
+                                            <div class="md">
+                                                <apex:outputText value="{!userInformation.LastName}" styleClass="form-control" id="lastname" html-readonly=""/>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="email">{!$ObjectType.User.fields.Email.Label}:</label>
+                                            <div class="md">
+                                                <apex:outputText value="{!userInformation.Email}" styleClass="form-control" id="email" html-readonly=""/>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="timezone">{!$ObjectType.User.fields.TimeZoneSidKey.Label}:</label>
+                                            <div>
+                                                <apex:inputField value="{!userInformation.TimeZoneSidKey}" styleClass="form-control" id="timezone" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="locale">{!$ObjectType.User.fields.LocaleSidKey.Label}:</label>
+                                            <div class="md">
+                                                <apex:inputField value="{!userInformation.LocaleSidKey}" styleClass="form-control language" id="locale" />
+                                                 <!-- <apex:selectList value="{!userInformation.LocaleSidKey}" styleClass="form-control" id="locale" size="1" >
+                                                    <apex:selectOption itemValue="en_US" itemLabel="English (United States)" />
+                                                    <apex:selectOption itemValue="fr_CA" itemLabel="French (Canada)" />
+                                                </apex:selectList> -->
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="language">{!$ObjectType.User.fields.LanguageLocaleKey.Label}:</label>
+                                            <div class="md">
+                                                <!-- <apex:selectList value="{!userInformation.LanguageLocaleKey}" styleClass="form-control language" id="language" size="1" >
+                                                    <apex:selectOption itemValue="en_US" itemLabel="English" />
+                                                    <apex:selectOption itemValue="fr_CA" itemLabel="French (Canadian)" />
+                                                </apex:selectList> -->
+                                                <apex:inputField value="{!userInformation.LanguageLocaleKey}" styleClass="form-control language" id="language" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="street">{!$ObjectType.User.fields.Street.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.Street}" styleClass="form-control" id="street" />-->
+                                                <apex:outputText value="{!userInformation.Street}" styleClass="form-control" id="street" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="city">{!$ObjectType.User.fields.City.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.City}" styleClass="form-control" id="city" />-->
+                                                <apex:outputText value="{!userInformation.City}" styleClass="form-control" id="city" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="state">{!$ObjectType.User.fields.State.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.State}" styleClass="form-control" id="state" />-->
+                                                <apex:outputText value="{!userInformation.State}" styleClass="form-control" id="state" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="country">{!$ObjectType.User.fields.Country.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.Country}" styleClass="form-control" id="country" />-->
+                                                <apex:outputText value="{!userInformation.Country}" styleClass="form-control" id="country" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group" error-msg="Please enter a valid phone number." >
+                                            <label class="control-label" for="phone">{!$ObjectType.User.fields.Phone.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.Phone}" styleClass="form-control" id="phone" html-name="phone" />-->
+                                                <apex:outputText value="{!userInformation.Phone}" styleClass="form-control" id="phone" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="title">{!$ObjectType.User.fields.Title.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.Title}" styleClass="form-control" id="title1" />-->
+                                                <apex:outputText value="{!userInformation.Title}" styleClass="form-control" id="title1" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="department">{!$ObjectType.User.fields.Department.Label}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.Department}" styleClass="form-control" id="department" />-->
+                                                <apex:outputText value="{!userInformation.Department}" styleClass="form-control" id="department" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="form-group">
+                                            <label class="control-label" for="businessUnit">{!$ObjectType.User.fields.EF_User_Business_Unit__c.InlineHelpText}:</label>
+                                            <div class="md">
+                                                <!--<apex:inputField value="{!userInformation.EF_User_Business_Unit__c}" styleClass="form-control" id="businessUnit" />-->
+                                                <apex:outputText value="{!userInformation.EF_User_Business_Unit__c}" styleClass="form-control" id="businessUnit" html-readonly="" />
+                                            </div>
+                                        </div><!--/.form-group -->
+                                        <div class="more-info">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userHistory">{!$ObjectType.User.fields.EF_User_History__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <apex:inputTextarea value="{!userInformation.EF_User_History__c}" id="userHistory" styleClass="form-control" rows="3" html-maxlength="1024"/>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                            <div class="form-group">
+                                                <label class="control-label" for="unserFunction">{!$ObjectType.User.fields.EF_User_Function__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <apex:inputTextarea value="{!userInformation.EF_User_Function__c}" id="userFunction" styleClass="form-control" rows="3" html-maxlength="1024"/>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFeedback">{!$ObjectType.User.fields.EF_User_Feedback__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <apex:inputTextarea value="{!userInformation.EF_User_Feedback__c}" id="userFeedback" styleClass="form-control" rows="3" html-maxlength="1024"/>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFun">{!$ObjectType.User.fields.EF_User_Fun__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <apex:inputTextarea value="{!userInformation.EF_User_Fun__c}" id="userFun" styleClass="form-control" rows="3" html-maxlength="1024"/>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                        </div>
+                                        <hr />
+                                        <apex:outputPanel rendered="{!grpSettings.size > 0}">
+                                            <div class="form-group">
+                                                <div class="col-sm-8 text-center panel-heading">
+                                                    <a role="button" data-toggle="collapse" href="#collapse0" aria-expanded="true" aria-controls="collapse0" class="collapsed">
+                                                        <h3>{!$Label.EF_Profile_ChatterNotifications}</h3>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div id="nocollapse0" class="panel-collapse" role="tabpanel" aria-labelledby="heading0">
+                                                    <div class="form-group notifications">
+                                                        <label class="control-label">Digest</label>
+                                                        <div>
+                                                            <apex:selectRadio styleClass="grp-settings" value="{!digestFreq}">
+                                                                <apex:selectOption itemLabel="Daily" itemValue="D" />
+                                                                <apex:selectOption itemLabel="Weekly" itemValue="W" />
+                                                                <apex:selectOption itemLabel="Never" itemValue="N" />
+                                                            </apex:selectRadio>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                                              
+                                            <div class="form-group">
+                                                <div class="col-sm-8 text-center panel-heading">
+                                                    <a role="button" data-toggle="collapse" href="#collapse0" aria-expanded="false" aria-controls="collapse0" class="collapsed">
+                                                        <h3>{!$Label.EF_ProfileChatterGroupNotifications}</h3><span class="icon-minus"></span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div id="collapse0" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading0">
+                                                <apex:repeat value="{!grpSettings}" var="grp">
+                                                    <div class="form-group notifications">
+                                                        <label class="control-label">{!grp.CollaborationGroup.Name}</label>
+                                                        <div>
+                                                            <apex:selectRadio styleClass="grp-settings" value="{!grp.NotificationFrequency}">
+                                                                <apex:selectOption itemLabel="Daily" itemValue="D" />
+                                                                <apex:selectOption itemLabel="Weekly" itemValue="W" />
+                                                                <apex:selectOption itemLabel="Never" itemValue="N" />
+                                                                <apex:selectOption itemLabel="On every post" itemValue="P" />
+                                                            </apex:selectRadio>
+                                                        </div>
+                                                    </div>
+                                                </apex:repeat>
+                                            </div>
+                                        </apex:outputPanel>
+                                        <div class="controls">
+                                            <input type="button" class="btn-bs btn-default" value="{!$Label.EF_CancelButton}" onClick="window.location='/apex/KAR_ViewUserProfile?Id={!$User.Id}';" />
+                                            <input type="button" class="btn-bs btn-primary" value="{!$Label.EF_UpdateProfileButton}" onClick="validateForm();return false;" />
+                                            <br />
+                                            <input type="button" class="btn-bs btn-default" value="Go to Chatter Settings" onClick="window.open('/_ui/core/feeds/notification/FeedsNotificationPrefEdit?setupid=CollaborationEmailSettings&retURL=%2Fui%2Fsetup%2FSetup%3Fsetupid%3DPersonalCollaboration', '_newWin');" />
+
+                                        </div>
+                                    </div><!--/.form-horizontal -->
+                                </apex:outputPanel>
+                            </div><!-- /.content -->
+                        </div><!-- /.widget-right -->
+                    </div>
+                </div><!-- /.container-bs -->
+                <apex:actionFunction name="updateUser" action="{!updateUserInformation}" reRender="userProfile" status="status" oncomplete="checkError();" />
+            </apex:form>
+            <script>
+                $(document).ready(function () {
+                    $("input[name*='phone']").keyup(function(){
+                        var a = $(this).val();
+                        var filter = /^[0-9-+]+$/;
+                        if (!filter.test(a)) {
+                            $(this).closest('.form-group').addClass('has-error');
+                        } else {
+                            $(this).closest('.form-group').removeClass('has-error');
+                        }
+                    });
+                    $(".language  > option").each(function() {
+                        if(this.value !== '1' && this.value !== '14'){
+                            this.remove();
+                        }
+                    });
+                });
+                function validateForm(){
+                    if($('.has-error').length>0){
+                        $('.has-error').each(function(){
+                            $('#updateFail').append('<span>'+$(this).attr('error-msg')+'</span>');
+                        });
+                        $('#updateFail').show();
+                        window.scrollTo(0,0);
+                    }else{
+                        updateUser();
+                    }
+                }
+            </script>
+
+            <script>
+                window.addEventListener('message', function(event) {
+                    if(height = event.data['height']) {
+                        console.log("Resizing iFrame to " + height + "px");
+                        $('#someId').css('height', height + 'px');
+                    }
+                });
+            </script>
+
+        </apex:define>
+    </apex:composition>
+    <apex:outputPanel id="modalPanel" layout="none">
+        <div class="modal fade" id="photo-upload" tabindex="-1" role="dialog" aria-labelledby="updatePhotoModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="updatePhotoModal">{!$Label.EF_Profile_UpdatePhoto}</h4>
+                    </div>
+                    <div class="modal-body">
+                        <apex:outputPanel >
+                            <iframe Id="someId" width="100%" height="300px" margin-width="0" scrolling="yes" style="padding:0px;margin-left: -7px" src="/apex/EF_ChatterPhoto" frameborder="0" allowfullscreen="true" ></iframe>
+                        </apex:outputPanel>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-bs btn-default" data-dismiss="modal" onClick="window.location.reload()">{!$Label.EF_CloseButton}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </apex:outputPanel>
+</apex:page>

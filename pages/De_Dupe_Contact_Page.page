@@ -1,0 +1,138 @@
+<apex:page sidebar="false"  Controller="DeDupeContactController" title="Duplicate Contact Merge">
+<style>
+.z-modal-mask {
+    width:100%;
+    height:100%;
+    background: grey;
+    opacity: 0.6;
+    position:absolute;
+    background-image: url({!$Resource.ProcessingImage2}); background-repeat: no-repeat;
+    background-size: 300px 63px;
+    background-position: center; 
+}
+
+
+#{!$Component.Section1} tr:nth-child(even) {background: #FFFAFA}
+#{!$Component.Section1} tr:nth-child(odd) {background: #FFFFFF}
+
+.detailtable tr:nth-child(even) {background: #FFFAFA}
+.detailtable tr:nth-child(odd) {background: #FFFFFF}
+
+
+
+.myTable { border:1px solid black;width: 100%; }
+.myTable th { background-color:lightgrey;color:black; }
+
+
+</style>
+
+<apex:form id="frmWaiting">
+<apex:actionStatus id="AddStatus">
+<apex:facet name="start">
+    <div class="z-modal-mask">    
+    </div>    
+</apex:facet>
+</apex:actionStatus>
+</apex:form>
+
+<apex:form id="mainform" styleClass="detailtable">
+<apex:pageMessages id="msg" escape="false"/>   
+<apex:actionFunction name="callController"    status="AddStatus"  />  
+<apex:sectionHeader title="" subtitle="DeDupe Process"/>
+<apex:pageBlock id="mainBlock" mode="detail"   >
+                
+            <apex:outputText value="Enter Master Index ID: " style="color:blue"/>       
+            <apex:inputText id="txtSearch" title="Enter Master Index to be search" value="{!MasterIndexSearch}" />
+            <apex:commandButton id="btnSearchMiFacts" action="{!getMiFact}" title="Search MiFacts" value=" Search " rerender="msg,mainBlock" status="AddStatus" />            
+  
+<br/><br/>
+        
+        <apex:repeat var="objMiFact" value="{!ListclsMiFact}">
+        <table class="myTable" >
+
+        <tr>
+
+            <th>Master Index</th>
+            <th>Fact Type</th>
+            <th>Fact Id</th>
+            <th>Domain</th>
+            <th>DomainUniqueId</th>
+            <th>Name</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Last Update Date</th>            
+            <th>Is Duplicate</th>
+                        
+        </tr>
+        
+        <tr style="border:1px solidblack;">
+
+            <td>{!objMiFact.masterIndex}</td>
+            <td><b>{!objMiFact.miFactType}</b></td>
+            <td>{!objMiFact.miFactId}</td>
+            <td><b>{!objMiFact.miDomain}</b></td>
+            <td>{!objMiFact.domainUniqueId}</td>
+            <td>{!objMiFact.name}</td>            
+            <td>{!objMiFact.city}</td>
+            <td>{!objMiFact.state}</td>
+            <td>{!objMiFact.zip}</td>            
+            <td>
+                <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                        <apex:param value="{!objMiFact.lastUpdateDate}" /> 
+                </apex:outputText>
+            </td>
+            <td><apex:inputCheckbox value="{!objMiFact.isDuplicate}" disabled="true" /></td>
+
+        </tr>
+       
+        <tr>
+         <td colspan="9">&nbsp;
+             <table>
+                <tr>
+                     <td>&nbsp;</td>
+ 
+                    <td >
+                        Enter Winner Master Index Id:
+                    </td>
+                     <td colspan="1">
+                        <apex:inputText id="txtWinnerMasterIndex" title="Enter Winner Master Index" value="{!objMiFact.WinnerContactMasterIndex}" />
+                       
+                    </td>
+                     <td>&nbsp;</td>
+                     <td >
+                         <apex:commandlink id="btnSearchWinnerContact" rerender="msg,mainBlock" status="AddStatus" styleClass="btn" style="text-decoration:none;padding:4px;"  action="{!getWinnerContact}" title="Search Winner Contact" value="Search Winner Contact">                             
+                             <apex:param name="param1" value="{!objMiFact.Index }" assignTo="{!IndexOfList}"/>
+                         </apex:commandlink>                         
+                        
+                    </td>  
+                     <td>&nbsp;</td>
+                     <td >
+                         <apex:outputLink value="/{!objMiFact.WinnerContact['Id']}" target="_blank" style="color:blue" rendered="{!IF(objMiFact.WinnerContact!=null,TRUE,FALSE)}">{!objMiFact.WinnerContact.Name}</apex:outputLink>
+                    </td> 
+                     <td>&nbsp;</td>
+                     <td >
+                         <apex:commandlink id="btnAssignToWinnerContact" rerender="msg,mainBlock" status="AddStatus" styleClass="btn" style="text-decoration:none;padding:4px;" rendered="{!IF(objMiFact.WinnerContact!=null,TRUE,FALSE)}" action="{!MigrateToWinerContact}" title="Assign/Update" value="Assign to Winner Contact"> 
+                             <apex:param name="param2" value="{!objMiFact.Index }" assignTo="{!IndexOfList}"/>
+                         </apex:commandlink>                                              
+                         
+                    </td>                   
+         
+                    <td>&nbsp;</td>
+                </tr>
+             </table>
+         </td>
+           
+        </tr>
+        <tr style="width:2px;">
+            <td  colspan="11">&nbsp;</td>
+        </tr>
+         </table>
+         <br/>
+        </apex:repeat> 
+
+   
+        
+</apex:pageBlock>
+ </apex:form>
+</apex:page>

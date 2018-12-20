@@ -1,0 +1,39 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="ATNQModifySubscriptions" >
+	<aura:registerEvent name="ATNQSubItemSelected" type="c:ATNQSubItemSelected"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="subItem" type="Subscription_Item__c" default="{ 'sobjectType': 'Subscription_Item__c' }"/>
+	<aura:attribute name="item" type="Object" access="public" />
+
+
+	
+		<td role="gridcell" tabindex="-1" class="slds-text-align_right " style="width: 3.75rem;">
+			
+			<lightning:input aura:id="inputToggle" type="checkbox-button" label="" name="addSubItem" checked="{!v.item.isChecked}" onchange="{!c.handleCheckbox}" />
+
+		</td>
+		<th scope="row">
+			<div class="slds-truncate" title="Name">
+				<div class="slds-truncate" title="Name">{!v.item.name}:</div>
+			</div>
+		</th>
+		
+		<td role="gridcell">
+			<!--<div class="slds-truncate" title="Start Date">
+				 <force:inputField value="{!v.subItem.Start_Date__c}"/>
+
+			</div>-->
+			<lightning:input aura:id="startDate" type="date" label="Start Date" name="date" onchange="{!c.handleDateChange}"/>
+		</td>
+		<td role="gridcell">
+			<div class="slds-truncate" title="Recurring">
+				<!--<force:inputField value="{!v.subItem.Recurring__c}"/>-->
+				<lightning:select aura:id="recurring"  name="selectItem" label="Recurring" >
+			        <option value="">choose one...</option>
+			        <option value="1">yes</option>
+			        <option value="2">no</option>
+			    </lightning:select>
+
+			</div>
+		</td>
+	
+</aura:component>

@@ -1,0 +1,128 @@
+<apex:page standardController="Account" >
+  <html>
+<head>
+<title></title>
+<script language="javascript" src="https://www.salesforce.com/services/lib/ajax/beta3.3/sforceclient.js?browser=true" type="text/javascript"></script>
+<script type="text/javascript" src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=salesforce.com"></script>
+<script id="clientEventHandlersJS" language="javascript">
+<!--
+function initPage() {
+sforceClient.registerInitCallback(setup);
+sforceClient.setLoginUrl("https://www.salesforce.com/services/Soap/u/7.0");
+sforceClient.init("{!API_Session_ID}", "{!API_Partner_Server_URL_70}", true);
+}
+
+//Use this function as the entry point for your DHTML and JAVASCRIPT processing
+function setup() {
+
+//Simple query call
+//sforceClient.setBatchSize(10);
+
+loadMap();
+
+}
+
+
+var reload = true;
+var map;
+var link;
+var geoPoints = [];
+var dataPointCount = 0;
+var pointCounter = 0;
+
+function geoCodeEnd(r) {
+if (r.success == 1) {
+if (r.GeoPoint.Lat != 0) {
+geoPoints[geoPoints.length] = r.GeoPoint;
+pointCounter++;
+}
+} else {
+pointCounter++;
+}
+if (pointCounter >= dataPointCount) {
+var bestZoomLevel = map.getZoomLevel(geoPoints);
+if (bestZoomLevel < 5) bestZoomLevel = 5;
+var geoCenter = map.getCenterGeoPoint(geoPoints);
+map.drawZoomAndCenter(geoCenter, bestZoomLevel);
+map.panToLatLon(geoCenter);
+}
+}
+
+function loadMap() {
+// Create a map object
+map = new YMap(document.getElementById('mapContainer'));
+// Display the map centered on given address
+YEvent.Capture(map, EventsList.onEndGeoCode, geoCodeEnd);
+map.addZoomLong();
+
+doQuery();
+}
+
+function doQuery() {
+if (reload == false) return;
+
+var positionId = "{!Account_Type}";
+var qr = sforceClient.query("Select Id, Name, Type, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry From Account where BillingCity = 'San Francisco' ");
+// Where a.Type = '" + positionId + "'");
+if (qr.size > 0) {
+var ids = [];
+for (var i=0;i<qr.records.length;i++) {
+ids[i] = qr.records[i].get("Id");
+}
+
+plotMarkers(qr);
+
+// sforceClient.retrieve("Id, Name, Type, BillingStreet, BillingCity, BillingState, BillingPostalCode, a.BillingCountry", "Account", ids, plotMarkers);
+
+}
+reload = false;
+}
+
+function doNav(arg) {
+window.parent.location = "/" + arg;
+}
+
+function plotMarkers(qr) {
+var records = qr.records;
+
+var counter = 1;
+var myImage = new YImage();
+myImage.src = 'http://us.i1.yimg.com/us.yimg.com/i/ag//flag.gif';
+myImage.size = new YSize(11,10);
+myImage.offsetSmartWindow = new YCoordPoint(0,0);
+
+if (records.length> 0) {
+
+for (var x=0;x<records.length;x++) {
+var db = records[x];
+//if (x%10==0){
+//alert('doQuer111111100044y: '+x);}
+if (db.get("BillingStreet") != null && db.get("BillingCity") != null && db.get("BillingState") != null ) {
+dataPointCount++;
+var addr = db.get("BillingStreet") + ", " + db.get("BillingCity") + ", " + db.get("BillingState");
+//var marker = new YMarker(addr,myImage);
+var marker = new YMarker(addr);
+marker.addLabel(counter);
+var name = db.get("Name") ;
+counter++;
+name = "<a href='" + sforceClient.describeSObject("Account").urlDetail.replace("{ID}", db.get("Id")) + "' target='_top'>" + name + "</a>";
+marker.personName = name;
+YEvent.Capture(marker, EventsList.MouseClick,
+function() {this.openSmartWindow("<div>This is where " + this.personName + " lives!<BR>&nbsp;</div>") });
+map.addOverlay(marker);
+}
+}
+}
+
+alert('Counter: '+counter);
+
+}
+
+//-->
+</script>
+</head>
+<body onload="initPage()">
+<div id="mapContainer" style="WIDTH: 100%; POSITION: relative; HEIGHT: 100%"></div>
+</body>
+</html>
+</apex:page>

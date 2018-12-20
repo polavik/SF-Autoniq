@@ -1,0 +1,158 @@
+<apex:page standardController="Action_Package__c" extensions="VoidFormController" renderAs="pdf" showHeader="false">
+	
+	<head>
+		<link rel='stylesheet' type='text/css' href="{!URLFOR($Resource.void_form2_css, 'void_form.css')}" />
+    </head>
+    
+
+	
+<div style="text-align:center; font-size:20px">Void Form</div>  
+	
+	
+	<c:pageBlock header="Case Information">
+		<c:singleColumnRow labelName="Type of Void" value="{!pkg.Package_Type__c}"/>
+		<c:singleColumnRow labelName="Process" value="{!pkg.Case__r.Type}"/>
+		<c:singleColumnRow labelName="Case Owner" value="{!ownerName}" />
+		<c:singleColumnRow labelName="Case No/Action Package No." value="{!CaseAuctionPackageNumber}" />
+		
+		<div id="sap_transactions">
+			<c:singleColumnRow labelName="V1/SAP Send Results" value="{!pkg.Send_Results__c}" />
+		</div>
+		<c:singleColumnRow labelName="Directions for Accounting" value="{!NULLVALUE(pkg.Directions_for_Accounting__c, 'None')}" lastRow="true"/>
+	</c:pageBlock>
+	
+	<c:pageBlock header="Vehicle & Buyer Details">
+		<c:twoColumnRow labelName1="VIN" value1="{!pkg.Case__r.VIN__r.Name}"
+						labelName2="Stock# " value2="{!stockNumber}" 
+						/>
+						
+		<c:twoColumnRow labelName1="YMMS" value1="{!pkg.Case__r.VIN__r.YMMS__c}"
+						labelName2="Account Name" value2="{!pkg.Case__r.Account.Name}" 
+						 />
+		
+		<c:twoColumnRow labelName1="Mileage" value1="{!mileage}"
+						labelName2="Contact Name" value2="{!pkg.Case__r.Contact.Name}"
+						 />
+						
+		<c:twoColumnRow labelName1="Vehicle ID " value1="{!pkg.Case__r.VIN__r.Vehicle_ID__c}"
+						labelName2="Phone" value2="{!pkg.Case__r.Contact.Phone}"
+						/>
+						 
+	</c:pageBlock>
+						
+	<c:pageBlock header="Vehicle & Transport Sale Information">
+	
+		<c:twoColumnRow labelName1="Seller" value1="{!NULLVALUE(pkg.Case__r.Seller__r.Name, 'NA')}"
+						labelName2="Transport Type" value2="{!transportType}" />
+
+		<c:twoColumnRow labelName1="Consignee Name" value1="{!consigneeName}"
+						labelName2=" " value2=" " />
+				<!-- labelName2="Stock # " value2="{!stockNumber}" -->	
+		
+		<c:twoColumnRow labelName1="Private Label" value1="{!NULLVALUE(pkg.Case__r.Private_Label__c, 'NA')}"
+						labelName2="Transport Incentive" value2="{!transportIncentive}"/>
+						
+		<c:twoColumnRow labelName1="Sale Price for Vehicle" value1="{!salePriceForVehicle}"
+						labelName2="Transport Fee" value2="{!transportFee}" />	
+						
+		<c:twoColumnRow labelName1="Vehicle Tax" value1="{!salePriceForVehicleTax}"
+						labelName2="Transport Tax" value2="{!transportFeeTax}" />
+		
+		<c:twoColumnRow labelName1="Veh. Payment Method" value1="{!pkg.Case__r.Payment_Method__c}"
+						labelName2="TP Payment Method" value2="{!NULLVALUE(pkg.Case__r.VIN__r.Transport_Payment_Method_Name__c, 'NA')}" />
+		
+		<c:twoColumnRow labelName1="Sale Date" value1="{!IF(saleDate == '', '-', saleDate)}"
+						labelName2="Actual Pickup Date" value2="{!IF(actualPickup == '', '-', actualPickup)}" />
+						
+		<c:twoColumnRow labelName1="Payment Rec'd Date" value1="{!IF(paymentReceivedDate == '', '-', paymentReceivedDate)}"
+						labelName2="Actual Dropoff Date" value2="{!IF(actualDropoff == '', '-', actualDropoff)}"/>
+						
+		<c:twoColumnRow labelName1="Payment Sent Date" value1="{!paymentSentDate}"
+						labelName2="Transporter" value2="{!NULLVALUE(pkg.Case__r.VIN__r.ATC_Transporter__r.Name, 'NA')}" lastRow="true"/>
+
+	</c:pageBlock>
+	
+	<c:pageBlock header="Case Resolution">
+		<c:singleColumnRow labelName="Resolution Comments" value="{!NULLVALUE(pkg.Case__r.Claim_Resolution_Comments__c, 'None')}"/>
+		<c:singleColumnRow labelName="House TP Resp. Party" value="{!NULLVALUE(pkg.House_Transport_Responsible_Party__c, 'NA')}" />
+		<c:singleColumnRow labelName="Date of Final Approval" value="{!finalApprovalDate}"/>
+		<c:singleColumnRow labelName="Approvers" value="{!approvers}" lastRow="true"/> 
+	</c:pageBlock>
+	
+	<c:pageBlock header="Vehicle & Transport Sale Information" rendered="{!renderTitleSection}">
+		<c:twoColumnRow labelName1="Handles Title" value1="{!handlesTitle}"
+						labelName2="Date Title Sent to Buyer" value2="{!dateTitleSentToBuyer}" />
+		<c:twoColumnRow labelName1="" value1=""
+						labelName2="Date Title Received Back From Buyer" value2="{!dateTitleReceivedBackFromBuyer}" lastRow="true"/>
+	</c:pageBlock>
+	
+	<c:pageBlock header="Extra Costs">
+
+		<apex:dataTable value="{!extraCosts}" var="ec" styleClass="pageBlockTable">
+			<apex:column >
+				<apex:facet name="header">Extra Cost Type</apex:facet>
+				<apex:outputText value="{!ec.extraCostType}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Net Amount</apex:facet>
+				<apex:outputText value="{!ec.netAmount}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Province</apex:facet>
+				<apex:outputText value="{!ec.regionCode}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Tax Type</apex:facet>
+				<apex:outputText value="{!ec.taxType}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Responsible Party</apex:facet>
+				<apex:outputText value="{!ec.extraCostResponsibleParty}" />
+			</apex:column>
+		</apex:dataTable>
+
+	</c:pageBlock>
+	
+	<c:pageBlock header="Cross-System Integration Results">
+		<c:singleColumnRow labelName="V1/SAP Messages" value="{!NULLVALUE(responseMessages, 'None')}" lastRow="true"/>
+		<div class="cPageBlockHeader" style="margin-top:6px"><h2>FI Documents</h2></div>
+		<apex:dataTable value="{!fiDocs}" var="doc" styleClass="pageBlockTable">
+			<apex:column >
+				<apex:facet name="header">Doc. Number</apex:facet>
+				<apex:outputText value="{!doc.documentNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Company Code</apex:facet>
+				<apex:outputText value="{!doc.companyCode}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Fiscal Year</apex:facet>
+				<apex:outputText value="{!doc.fiscalYear}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Reverse Step</apex:facet>
+				<apex:outputText value="{!doc.reverseStep}" />
+			</apex:column>
+		</apex:dataTable>
+		<div class="cPageBlockHeader" style="margin-top:6px" ><h2>SD Documents</h2></div>
+		<apex:dataTable value="{!sdDocs}" var="doc" styleClass="pageBlockTable">
+			<apex:column >
+				<apex:facet name="header">Order Number</apex:facet>
+				<apex:outputText value="{!doc.documentNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Line Number</apex:facet>
+				<apex:outputText value="{!doc.lineNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Extra Cost Id</apex:facet>
+				<apex:outputText value="{!doc.extraCostId}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Reverse Step</apex:facet>
+				<apex:outputText value="{!doc.reverseStep}" />
+			</apex:column>
+		</apex:dataTable>
+		
+	</c:pageBlock>
+</apex:page>

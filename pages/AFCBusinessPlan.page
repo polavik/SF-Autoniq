@@ -1,0 +1,236 @@
+<apex:page standardController="AFC_Business_Plan__c" extensions="AFCBusinessPlanControllerExtension" showHeader="true" sidebar="false" standardStylesheets="false">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<style>
+      .dateFormat { display: none; }
+      .gridbox {border: 1px solid lightgrey;padding:2px;height:50px;width:200px;}
+      .gridboxmemo {border: 1px solid lightgrey;padding:2px;height:50px;width:300px;}
+      .gridboxshortmemo {border: 1px solid lightgrey;padding:2px;height:50px;width:250px;}
+      .gridboxshort {border: 1px solid lightgrey;padding:2px;height:50px;width:135px;}
+      .inlinecontent{width:99%;height:99%;border:none;}
+
+      .newaction {background:#FFFFCC;padding:2px;}
+      .static {resize:none;}
+
+      .goalpanel {background-color:lightgrey;height:25px;border-top:1px solid gray;border-bottom:1px solid gray;}
+      .goalpanelcontent {font-weight:bold;text-decoration:none;font-size: 1.1em;}
+
+      .h1 {font-weight:bold;font-style:italics;text-decoration:none;font-size: 1.3em;}
+      .requiredfieldserror {color:red;font-style:italics;text-decoration:none;font-size: 1.3em;}
+
+      .missingfield {border:2px solid red;}
+
+</style>
+<script>
+    // Hides the User Type picklist for the User Type Lookup
+    function hideUserType(){
+        j$("[id$=mlktp]").hide();
+    }
+
+    function partialRefresh(){
+        j$('.requiredfieldserror').hide();
+        hideUserType();
+        j$('[id$=progress]').trigger('change');
+        j$('[id$=first]').focus();
+    }
+
+    function setProgressCss(action){
+        if (action.val() == 'On Track') {
+            action.css({
+                "backgroundColor": "green",
+                    "color": "white"
+            });
+        } else if (action.val() == 'Off Track') {
+            action.css({
+                "backgroundColor": "red",
+                    "color": "white"
+            });
+        } else if (action.val() == 'At Risk') {
+            action.css({
+                "backgroundColor": "yellow",
+                    "color": "black"
+            });
+        }
+    }
+
+    function runValidation(){
+        var isError = false;
+        j$('[id$="whoentry"],[id$="first"]').each(function(index,element) {
+            var item = j$(this);
+            if(j$.inArray(item.val(),['','000000000000000','null']) >= 0){
+                item.parent().parent().addClass('missingfield');
+                isError = true;
+            } else {
+                item.parent().parent().removeClass('missingfield');
+            }
+        });
+
+        j$('.requiredentry').each(function(index,element) {
+            var item = j$(this);
+            if(item.val() == ''){
+                item.parent().addClass('missingfield');
+                isError = true;
+            } else {
+                item.parent().removeClass('missingfield');
+            }
+        });
+
+        return !isError;
+    }
+
+    function runNewValidation(){
+        var isError = false;
+        j$('[id$="newwhoentry"],[id$="first"]').each(function(index,element) {
+            var item = j$(this);
+            if(j$.inArray(item.val(),['','000000000000000','null']) >= 0){
+                item.parent().parent().addClass('missingfield');
+                isError = true;
+            } else {
+                item.parent().parent().removeClass('missingfield');
+            }
+        });
+
+        j$('.newrequiredentry').each(function(index,element) {
+            var item = j$(this);
+            if(item.val() == ''){
+                item.parent().addClass('missingfield');
+                isError = true;
+            } else {
+                item.parent().removeClass('missingfield');
+            }
+        });
+
+        return !isError;
+    }    
+
+    function jsSaveAllChanges(){
+        if(runValidation()){
+            saveAllChanges();
+        }
+    }
+
+    function jsAddAction(goalid){
+        if(runNewValidation()){
+            addAction(goalid);
+        }
+    }
+        
+    var j$ = jQuery.noConflict();
+    j$(window).on('beforeunload', function() {
+        j$(window).scrollTop(0);
+    });
+
+    j$(document).ready(function(){
+        hideUserType();
+        j$('.requiredfieldserror').hide();
+        j$("[id$=progress]").trigger("change");
+        if({!businessPlan.Status__c = 'Submitted' || businessPlan.Status__c = 'Complete'}){
+            j$("[id$=entry]").attr('readonly', 'readonly');
+            j$("[id$=statusentry],[id$=progress]").attr('disabled', 'true');
+            j$("[id$=goalactionpanel]").click(function(){alert('This business plan has been {!businessPlan.Status__c} and cannot currently be edited')});
+        }
+
+    });
+</script>
+    <apex:form >
+    <apex:actionFunction name="setNewActionGoalId" reRender="goalactionpanel" immediate="true" oncomplete="partialRefresh();">
+        <apex:param name="goalid" assignTo="{!newActionGoalId}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="addAction" action="{!addAction}" reRender="goalactionpanel" oncomplete="partialRefresh();">
+        <apex:param name="goalid" assignTo="{!newActionGoalId}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="saveAllChanges" action="{!saveAllChanges}" reRender="goalactionpanel"/>
+    <apex:sectionHeader title="AFC Business Plan" subtitle="{!businessPlan.Name}" rendered="{!businessPlanOptions != null || businessPlanId = null}" />
+        <apex:pageBlock mode="maindetail" title="" rendered="{!businessPlanId = null}">
+            <apex:outputLabel value="No Business Plans are were found for your user." rendered="{!businessPlanOptions = null}"/>
+            <div>
+            <apex:selectList value="{!selectedBusinessPlan}" size="1" multiselect="false" rendered="{!businessPlanOptions != null}">
+                <apex:selectOptions value="{!businessPlanOptions}"/>
+            </apex:selectList>
+            <apex:commandButton action="{!selectBusinessPlan}" value="Select Business Plan" rendered="{!businessPlanOptions != null}"/>
+            </div>
+        </apex:pageBlock>
+    <apex:sectionHeader title="AFC Business Plan" subtitle="{!businessPlan.Name}" rendered="{!businessPlanId != null}" />
+        <apex:pageBlock id="mainblock" mode="maindetail" title="" rendered="{!businessPlanId != null}">
+            <apex:pageBlockButtons location="bottom" rendered="{!businessPlan.Status__c != 'Submitted' && businessPlan.Status__c != 'Completed'}">
+                <apex:commandButton onclick="jsSaveAllChanges();return false;" value="Save All Changes" rendered="{!businessPlan.Status__c != 'New' && businessPlan.Status__c != 'Rejected' && businessPlan.Status__c != 'Complete'}" styleClass="button"/>
+                <apex:commandButton action="{!cancelAllChanges}" value="Cancel All Changes" rendered="{!businessPlan.Status__c != 'New' && businessPlan.Status__c != 'Rejected' && businessPlan.Status__c != 'Complete'}"/>
+                <apex:commandButton action="{!submitForApproval}" value="Submit for Approval" rendered="{!businessPlan.Status__c = 'New' || businessPlan.Status__c = 'Rejected'}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection showHeader="true" collapsible="false" title="Business Plan Information">
+                <apex:outputField value="{!businessPlan.AFC_Goals__c}"/>
+                <apex:outputField value="{!businessPlan.Status__c}"/>
+                <apex:outputField value="{!businessPlan.AFC_Goals_Completed__c}"/>
+                <apex:outputField value="{!businessPlan.LastModifiedById}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection showHeader="false" columns="1">
+                <apex:outputField value="{!businessPlan.Comments__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection columns="1" showHeader="false" collapsible="false" title="Business Plan Goals">
+            </apex:pageblocksection>
+        </apex:pageBlock>
+        <apex:outputPanel id="goalactionpanel">
+            <div>
+            <div align="center">
+                <apex:outputLabel value="This business plan is {!businessPlan.Status__c} and cannot currently be edited" rendered="{!businessPlan.Status__c = 'Submitted' || businessPlan.Status__c = 'Complete'}" styleClass="h1"/>
+                <apex:outputLabel value="For each goal listed below, please enter your target goal level.  The default values have been provided for you." rendered="{!businessPlan.Status__c = 'New'}" styleClass="h1"/>
+                <apex:outputLabel value="Please complete all required fields before Save." styleclass="requiredfieldserror"/>
+            </div><br/>
+            <table width="100%" cellspacing="0">
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">What?</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Description (What Else?)</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Success Criteria</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Actual Performance</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Who is Responsible?</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Status</th>
+                <th style="background-color:#000000;color:#ffffff;visibility:{!if(businessPlan.Status__c='In Progress' || businessPlan.Status__c='Approved','visible;','hidden;')}">Risk Level</th>
+                <apex:repeat value="{!businessPlanGoals}" var="goal">
+                    <tr>
+                        <td colspan="6" class="goalpanel">
+                            <apex:outputLink value="/{!goal.id}" target="_blank" styleClass="goalpanelcontent" title="{!goal.Name}">
+                                <apex:outputText value="{!goal.Name}" styleClass="goalpanelcontent" title="{!goal.Short_Description__c}"/>&nbsp;
+                                <apex:outputPanel rendered="{!businessPlan.Status__c != 'New'}">(&nbsp;
+                                    <apex:outputText value="{!goal.Level__c}" styleClass="goalpanelcontent"/>
+                                    <apex:outputLabel value="{!if(goal.Is_Percentage__c,'%','')}"/>)&nbsp;&nbsp;
+                                </apex:outputPanel>
+                            </apex:outputLink>
+                            <apex:outputLink value="#" onclick="setNewActionGoalId('{!goal.id}');" title="Add a new Goal Action" rendered="{!businessPlan.Status__c = 'In Progress' || businessPlan.Status__c = 'Approved'}">
+                                <apex:image url="{!URLFOR($Resource.AFCBusinessPlanImages,'add.png')}" width="12" height="12"/>
+                            </apex:outputLink>
+                        </td>
+                        <td class="goalpanel">
+                            <apex:inputField value="{!goal.Level__c}" rendered="{!businessPlan.Status__c = 'New' || businessPlan.Status__c = 'Rejected'}" style="float:right;"/>
+                        </td>
+                    </tr>
+                    <apex:repeat value="{!goal.AFC_Goal_Actions__r}" var="goalaction">
+                        <tr>
+                            <td class="gridboxshortmemo"><div><apex:inputTextArea id="entry" value="{!goalaction.Achieve_What__c}" styleClass="inlinecontent"/></div></td>
+                            <td class="gridboxmemo"><apex:inputTextArea id="descriptionentry" value="{!goalaction.Description__c}" styleClass="inlinecontent"/></td>
+                            <td class="gridboxmemo"><apex:inputTextArea id="successentry" value="{!goalaction.Success_Criteria__c}" styleClass="inlinecontent"/></td>
+                            <td class="gridboxmemo"><apex:inputField id="actualperformance" value="{!goalaction.Actual_Performance__c}" styleClass="inlinecontent"/></td>
+                            <td class="gridbox"><apex:inputField id="whoentry" value="{!goalaction.Who_is_responsible__c}" styleClass="inlinecontent"/></td>
+                            <td class="gridboxshort"><apex:inputField id="statusentry" value="{!goalaction.Status__c}" styleClass="inlinecontent"/></td>
+                            <td class="gridbox"><apex:inputField id="progress" value="{!goalaction.Progress__c}" styleClass="inlinecontent" onchange="setProgressCss(j$(this));"/></td>
+                        </tr>
+                    </apex:repeat>
+                        <tr style="display:{!if(newActionGoalId = goal.id,'table-row','none')};">
+                            <td class="gridboxshortmemo newaction "><div><apex:inputTextArea id="first" value="{!newGoalActionsMap[goal.id].Achieve_What__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></div></td>
+                            <td class="gridboxmemo newaction"><apex:inputTextArea value="{!newGoalActionsMap[goal.id].Description__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></td>
+                            <td class="gridboxmemo newaction"><apex:inputTextArea value="{!newGoalActionsMap[goal.id].Success_Criteria__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></td>
+                            <td class="gridboxmemo newaction"><apex:inputField value="{!newGoalActionsMap[goal.id].Actual_Performance__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></td>
+                            <td class="gridbox newaction"><apex:inputField id="newwhoentry" value="{!newGoalActionsMap[goal.id].Who_Is_Responsible__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></td>
+                            <td class="gridboxshort newaction"><apex:inputField value="{!newGoalActionsMap[goal.id].Status__c}" rendered="{!newActionGoalId = goal.id}" styleClass="inlinecontent newaction"/></td>
+                            <td class="gridbox newaction" align="center">
+                            <apex:outputLink value="#" onclick="jsAddAction('{!goal.id}');" title="Insert new Goal Action">
+                                <apex:image url="{!URLFOR($Resource.AFCBusinessPlanImages,'accept.png')}" width="24" height="24"/>
+                            </apex:outputLink>&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:outputLink value="#" onclick="setNewActionGoalId(null);" title="Cancel new Goal Action">
+                                <apex:image url="{!URLFOR($Resource.AFCBusinessPlanImages,'delete.png')}" width="24" height="24"/>
+                            </apex:outputLink>                              
+                            </td>
+                        </tr>   
+                </apex:repeat>
+            </table><br/>
+            </div>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

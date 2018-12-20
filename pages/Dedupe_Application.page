@@ -1,0 +1,42 @@
+<apex:page standardController="Application__c" extensions="DedupeApplicationContExt" readOnly="true">
+    <apex:sectionHeader title="{!$ObjectType.Application__c.label} {!$Label.Cosmos_Dedupe_Search}" subtitle="{!Application__c.Name}"/>
+    <apex:pageMessages id="pgMsgs"/>
+	<apex:form >
+	    <apex:pageBlock title="Dedupe Results">
+	    	<apex:pageBlockButtons >
+	    		<apex:commandButton value="{!$Label.Back}" action="{!cancel}"/>
+	    	</apex:pageBlockButtons>
+		    <apex:repeat var="account" value="{!matchingAccountsMap}">
+		    	<apex:pageBlockSection columns="1" title="{!account.Name}" rendered="{!accountsToDisplayMap[account]}">
+		    		<apex:pageBlockTable value="{!matchingAccountsMap[account]}" var="result">
+                        <apex:column value="{!result.Dealership_Entity_Name__c}"/>
+                        <apex:column value="{!result.Dealership_DBA_Name__c}"/>
+		    			<apex:column value="{!result.Dealership_Federal_ID__c}"/>
+		    			<apex:column value="{!result.Dealer_License_Number__c}"/>
+		    			<apex:column value="{!result.Dealer_Id__c}"/>
+		    			<apex:column value="{!result.Contract_Id__c}"/>
+		    			<apex:column value="{!result.Application_Id__c}"/>
+		    			<apex:column value="{!result.Street_1__c}"/>
+		    			<apex:column value="{!result.City__c}"/>
+		    			<apex:column value="{!result.State__c}"/>
+		    			<apex:column value="{!result.Postal_Code__c}"/>
+		    		</apex:pageBlockTable>
+		    	</apex:pageBlockSection>
+		    </apex:repeat>
+		    <apex:repeat var="contact" value="{!matchingContactsMap}">
+		    	<apex:pageBlockSection columns="1" title="{!contact.Name}" rendered="{!contactsToDisplayMap[contact]}">
+		    		<apex:pageBlockTable value="{!matchingContactsMap[contact]}" var="result">
+		    			<apex:column value="{!result.Guarantor_First_Name__c}"/>
+		    			<apex:column value="{!result.Guarantor_Last_Name__c}"/>
+		    			<apex:column value="{!result.SSN_SIN__c}"/>
+		    			<apex:column value="{!result.Person_Party_Id__c}"/>
+		    			<apex:column value="{!result.Person_Street__c}"/>
+		    			<apex:column value="{!result.Person_City__c}"/>
+		    			<apex:column value="{!result.Person_State__c}"/>
+		    			<apex:column value="{!result.Person_Postal_Code__c}"/>
+		    		</apex:pageBlockTable>
+		    	</apex:pageBlockSection>
+		    </apex:repeat>
+	    </apex:pageBlock>
+	</apex:form>
+</apex:page>

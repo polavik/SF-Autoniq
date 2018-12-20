@@ -1,0 +1,128 @@
+<apex:page standardController="Opportunity" recordsetvar="Opp" extensions="OpportunityRecordTypeSelectionExtension">
+    
+    <style>
+        .requiredBlock {
+        background-color: #c00;
+        margin-right: 1px;
+        float: left;
+        left: -4px;
+        width: 3px;
+        height:18px;
+        top: 1px;
+        bottom: 1px;
+        }
+        
+        .tableBorder {
+        border:1px solid #e0e3e5;
+        }
+        
+        .topTableText {
+        margin-top: 25px;
+        margin-bottom: 15px;
+        font-weight: bold;
+        }
+        
+        .tableTitle {
+        background-color: #f8f8f8;
+        }
+        
+        .tableMain {
+        border-spacing: 0px;
+        border-width: thin;
+        }
+    </style>
+    
+    <apex:form id="frm">
+        <apex:outputPanel id="scriptPanel">
+            <script>
+            function recordtypeChanged(){
+                var recId = document.getElementById("{!$Component.frm.pgblk.pgblksection.secItem1.selectRecTypeId}").value;
+                alert(recId);
+                document.getElementById("{!$Component.frm.pgblk.pgblksection.secItem2.oppRecId}").value = recId;
+            }
+            function selectRecordTypeJS() {
+                console.log('{!salesforceOnePage}');
+                if ({!salesforceOnePage}) {
+                    var recId = "{!redirectId}";
+                    console.log(recId);
+                    sforce.one.navigateToSObject(recId);
+                    sforce.one.editRecord(recId);
+                    //sforce.one.navigateToURL('/006/e');
+               }
+            }
+            </script>
+        </apex:outputPanel>
+        <apex:actionFunction name="selectRecordTypeAF" action="{!selectRecordType}" oncomplete="selectRecordTypeJS();" rerender="frm, scriptPanel" Status="status"/>
+        <apex:outputpanel >
+            <apex:actionstatus id="status"> 
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height: 100%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 100px; width: 100px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="{!$Label.Please_Wait}..." />
+                            <span class="waitingDescription">{!$Label.Please_Wait}...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+        </apex:outputpanel>
+        
+        <apex:outputpanel rendered="{!!salesforceOnePage}">
+            <apex:sectionHeader title="New Opportunity" subtitle="Select Opportunity Record Type" />
+            <p style="font-size: 109%;">Select a record type for the new opportunity. To skip this page in the future, change your record type settings on your personal setup page.</p>
+        </apex:outputpanel>    
+        <apex:pageBlock title="Select Opportunity Record Type" id="pgblk">
+            <apex:pageBlockSection id="pgblksection">
+                <apex:pageBlockSectionItem id="secItem1">
+                    <apex:outputPanel rendered="{!salesforceOnePage}">
+                        <apex:outputLabel value="Record Type of new record"/>&nbsp;
+                    </apex:outputPanel>
+                    
+                    <apex:outputpanel >                      
+                        <div class="requiredBlock"></div>
+                        <apex:selectList value="{!selectedOpportunityRecordType}" size="1" required="true" id="selectRecTypeId">
+                            <apex:selectOptions value="{!opportunityRecordTypes}"/>
+                            <apex:actionSupport event="onchange" action="{!updateOppRecordType}" rerender="frm" status="status" />
+                        </apex:selectList>
+                    </apex:outputpanel>
+                </apex:pageBlockSectionItem>
+                <apex:outputpanel rendered="{!salesforceOnePage}">
+                    <br/> <br/> <br/>
+                </apex:outputpanel>
+                <apex:pageBlockSectionItem id="secItem2">
+                    <!-- <apex:inputhidden value="{!opp.RecordTypeId}" id="oppRecId"/> -->
+                    <apex:outputLabel value="Opportunity Type"/>
+                    <apex:inputfield value="{!opp.Type}"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:outputpanel rendered="{!isExistingOpp}">
+                <apex:pageMessage summary="You are attempting to create an Opportunity with the same Record Type and Type of an existing Opportunity. Is this correct ?" severity="warning" strength="3" />
+                <!-- You are attempting to create an Opportunity with the same Record Type and Type of an existing Opportunity. Is this correct ? -->
+            </apex:outputpanel>
+            <apex:outputpanel rendered="{!salesforceOnePage}">
+                <br/> <br/>
+            </apex:outputpanel>
+            <apex:pageBlockButtons location="bottom" >
+                <!--<apex:commandButton value="CoNTinue" action="{!searchExistingOpp}" rendered="{!!isExistingOpp}" rerender="frm" Status="status"/>-->
+                <apex:commandButton value="Continue" onclick="selectRecordTypeAF();return false;"/>
+                <apex:commandButton value="Cancel" action="{!cancel}" />  
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        
+        <div class="topTableText">Available Opportunity Record Types</div>
+        
+        <table class="tableBorder, tableMain">
+            <tr >
+                <th class="tableBorder, tableTitle" style="padding: 5px;">Record Type Name</th>
+                <th class="tableBorder, tableTitle" style="padding: 5px;">Description</th>
+            </tr>
+            <apex:repeat value="{!recordTypeDescription}" var="rtName">
+                <tr >
+                    <th class="tableBorder" style="padding: 5px;">{!rtName}</th>
+                    <td class="tableBorder" style="padding: 5px;">{!recordTypeDescription[rtName]}</td>
+                </tr>
+            </apex:repeat>
+        </table>
+        
+    </apex:form>
+</apex:page>

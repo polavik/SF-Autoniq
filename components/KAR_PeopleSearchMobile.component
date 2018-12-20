@@ -1,0 +1,106 @@
+<apex:component controller="EdgeForceIntranetPeopleSearchController">
+    <style>
+        .employee-list .employees > div .tile > a {
+            display: -webkit-box !important;
+            display: -ms-flexbox !important;
+        }
+        .employee-list .employees > div .tile .gift {
+            margin-top: auto;
+        }
+    </style>
+    <apex:form >
+        <apex:actionfunction name="processPeopleSearch" action="{!processPeopleSearch}" reRender="searchResultPanel"  status="panelsearchStatus">
+            <apex:param name="searchInput" assignTo="{!searchInputinController}" value=""/>
+        </apex:actionfunction>
+
+        <apex:actionfunction name="processPeopleSearchMore" action="{!processPeopleSearchMore}" reRender="searchResultPanel"  status="panelsearchStatus"/>
+        <apex:actionfunction name="RefreshResult" action="{!clear}" reRender="searchResultPanel" />
+    </apex:form>
+
+    <apex:outputpanel id="searchResultPanel" styleClass="tile-grid">
+        <apex:outputPanel layout="none" rendered="{!listofUsers.size < 1}">
+            <p class="empty">{!$Label.EF_ChatterPeopleSearch_UseInputHelper}</p>
+        </apex:outputpanel>
+        <apex:repeat value="{!listofUsers}" var="chatterUser">
+            
+            <div>
+                <div class="tile">
+                    <a href="/apex/KAR_ViewUserProfile_Mobile?id={!chatterUser.id} " >
+                        <img src="{!chatterUser.SmallPhotoUrl}" ></img>
+                        <span class="details">
+                            <span class="name">{!chatterUser.Name}</span>
+                            <span class="role">{!chatterUser.Title}</span>
+                            <span class="dept">{!chatterUser.CompanyName}</span>
+                        </span>
+                    </a>
+                    <div class="gift">
+                        <apex:outputPanel rendered="{!chatterUser.userType=='Standard'}">
+                            <chatter:follow entityId="{!chatterUser.id}" />
+                        </apex:outputPanel>
+<!--                         <apex:outputPanel rendered="{!chatterUser.userType!='Standard'}">{!$Label.EF_Cannot_Follow}</apex:outputPanel> -->
+                    </div>
+                </div><!-- /.tile -->
+            </div>
+        </apex:repeat>
+        <script>
+            function performSearchMore(){
+                if(isScrollBottom() && !{!allResults}){ 
+                    var searchText = $('#people-search-input').val();
+                    if(searchText != null && searchText != '' && searchText.length >=2 ){  
+                        processPeopleSearchMore();
+                    }else{
+                        RefreshResult();
+                    }
+                }
+            }
+        </script>
+    </apex:outputpanel>
+
+    <apex:actionStatus startText="(Retrieving data...)" id="panelsearchStatus" layout="block">
+        <apex:facet name="start">
+            <div class="loading-overlay">
+                <div class="loading-spinner">
+                    <div class="rect1"></div>
+                    <div class="rect2"></div>
+                    <div class="rect3"></div>
+                    <div class="rect4"></div>
+                    <div class="rect5"></div>
+                </div>
+            </div><!-- /.overlay -->
+        </apex:facet>
+        <apex:facet name="stop"></apex:facet>
+    </apex:actionStatus>
+
+    <script>
+        var timer;
+        function performinitialSearch(inputText){  
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                if(inputText != null && inputText != '' && inputText.length>=2){
+                    processPeopleSearch(inputText);
+                    window.history.pushState({}, "Title", "/apex/KAR_EmployeeDirectory_Mobile");
+                }else{
+                    RefreshResult();
+                }
+            }, 750);
+        }
+
+        $(window).scroll(function(){ 
+            performSearchMore();
+        });
+
+        function isScrollBottom() { 
+            var elem = $('.employee-list');
+            var divend = elem[0].scrollHeight + elem.offset().top;
+            var pagescroll = $(this).scrollTop() + $(this).height();
+            return (divend <= pagescroll);
+        }
+        $(document).ready(function(){
+            var peopleInput = $('#people-search-input').val();
+            if(peopleInput != null && peopleInput != ''){
+                processPeopleSearch(peopleInput);
+            }
+        });
+    </script>
+
+</apex:component>

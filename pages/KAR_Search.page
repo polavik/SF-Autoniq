@@ -1,0 +1,423 @@
+<!-- Modified By : Ashish Sharma on 9th October, 2014 Ref : T-325088 -->
+<!-- Modified By : Vandana Kumari on 18th December, 2014 Ref : I-143412 -->
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeforceIntranetSearchController">
+    <title>Search</title>
+    <style>
+    .search-results .filters {
+        height: 100%;
+        padding-bottom: 10px;
+    }
+    .searchResultList {
+        padding-top: 10px !important;
+    }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+        <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/pajinate.css')}"/>
+        <script src="{!URLFOR($Resource.EdgeForce, 'js/pajinate.js')}"/>
+
+        <script>
+            var prevSearch = '';
+            $(document).ready(function() {
+                $('.searchBox').sherlock({
+                    'activeFilter'  : false,
+                    'linkTarget'    : '_blank',
+                    'contentTarget' : null,
+                    'searchButton': null,
+                    'objectLabels'  : {
+                        'FeedItem' : 'Chatter',
+                        'ContentVersion' : 'Documents',
+                        'Intranet_Content_Version__c' : 'Articles'
+                    },
+                    'categoryLimit': '{!categoryLimit}',
+                    'defaultSearch': ['Intranet_Content_Version__c','FeedItem','ContentVersion'],
+                    'onComplete' : function(resultsTable){},
+                    'pageSize' : '{!paginationLimit}'
+                });
+            });
+
+            (function($){
+                $.fn.sherlock = function(options){
+                    $.fn.sherlock.searchResults = new Object();
+                    var settings = $.extend( {
+                        'activeFilter'  : false,
+                        'linkTarget'    : '_blank',
+                        'contentTarget' : null,
+                        'objectLabels'  : {
+                            'FeedItem' : 'Chatter',
+                            'ContentVersion' : 'Documents',
+                            'Intranet_Content_Version__c' : 'Articles'
+                        },
+                        'categoryLimit' : '{!categoryLimit}',
+                        'defaultSearch': ['Intranet_Content_Version__c'],
+                        'onComplete' : function(){ },
+                        'pageSize' : '{!paginationLimit}'
+                    }, options);
+
+                    return this.each(function() {
+                        $.fn.sherlock.settings = settings;
+                        $.fn.sherlock.settings.searchInput = this;
+
+                        if($(this).attr('id') == null){
+                            $(this).attr('id','sherlockSearch_'+Math.floor(Math.random()*100001));
+                        }
+
+                        if((settings.searchButton == null || $(settings.searchButton).length == 0) && !settings.activeFilter){
+
+                            var searchButtonId = $(settings.searchInput).attr('id')+'_submitButton';
+
+                            $(settings.searchInput).after('<a id="_grayBtnId"><span><span><input type="submit" id="'+searchButtonId+'" value="Search" class="searchButton btn-bs btn-primary"/></span></span></a>');
+
+                            $.fn.sherlock.settings.searchButton = $('#'+searchButtonId)[0];
+                        }else if( (settings.searchButton != null || $(settings.searchButton).length > 0) && settings.activeFilter){
+
+                            $(settings.searchButton).hide();
+                        }
+
+                        if(settings.contentTarget == null || $(settings.contentTarget).length == 0){
+                            var searchResultId = $(settings.searchInput).attr('id')+'_results';
+
+                            $(settings.searchInput).parent().after('<div class="searchResultContainer" id="'+searchResultId+'"></div>');
+
+                            $.fn.sherlock.settings.contentTarget = $('#'+searchResultId)[0];
+                        }
+
+                        if(settings.activeFilter){
+                            $(settings.searchInput).keyup(function(){
+                                $.fn.sherlock.runSearch($(settings.searchInput).val(),function(searchResults){
+                                    $.fn.sherlock.drawSearchResultTable(searchResults,settings.onComplete);
+                                });
+                            });
+                        }else{
+                            var searchText = getURLParameter("searchString");
+                            if(searchText != '' && searchText != 'null'){
+                                $.fn.sherlock.runSearch(searchText,function(searchResults){
+                                    $.fn.sherlock.drawSearchResultTable(searchResults,settings.onComplete);
+                                });
+                            }
+                            $($.fn.sherlock.settings.searchButton).click(function(){
+                                $.fn.sherlock.runSearch($(settings.searchInput).val(),function(searchResults){
+                                    $.fn.sherlock.drawSearchResultTable(searchResults,settings.onComplete);
+                                });
+                            });
+
+                            $(settings.searchInput).keydown(function(event,ui){
+                                if(event.keyCode == 13){
+                                    $($.fn.sherlock.settings.searchButton).click();
+                                }
+                            });
+                        }
+                    });
+
+                };
+            })(jQuery);
+
+            $.fn.sherlock.runSearch = function(searchString,callback){
+                var settings = $.fn.sherlock.settings;
+
+                if(searchString.length > 1){
+                    var objectsToQuery = new Array();
+                    var tagsToQuery = new Array();
+                    var fileTypesToQuery = new Array();
+                    var languageToQuery = new Array();
+
+                    //find all the checked object boxes
+                    $.each( $(".objectSelect:checked"), function() {
+                        objectsToQuery.push($(this).val());
+                    });
+
+                    //find all the checked tag boxes
+                    $.each( $(".tagSelect:checked"), function() {
+                        tagsToQuery.push($(this).val());
+                    });
+
+                    //find all the checked file type boxes
+                    $.each( $(".fileTypeSelect:checked"), function() {
+                        fileTypesToQuery.push($(this).val());
+                    });
+
+                    //find all the checked language boxes
+                    $.each( $(".languageSelect:checked"), function() {
+                        console.log('$(this).val():: '+$(this).val());
+                        languageToQuery.push($(this).val());
+                    });
+
+                    //run the visualforce remoting request
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.EdgeforceIntranetSearchController.globalSearch}',
+                        searchString,(screen.width <= 480 || navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i)) ? true : false,objectsToQuery,tagsToQuery,fileTypesToQuery, settings.objectLabels, settings.categoryLimit,languageToQuery,
+                            function(result,event){
+                                if(jQuery.isFunction(callback)){
+                                    callback(result);
+                                }
+                            }, {escape: true});
+                }
+            }
+
+            $.fn.sherlock.drawSearchResultTable = function(result,callback){
+                var settings = $.fn.sherlock.settings;
+                $.fn.sherlock.searchResults = new Object();
+
+                var totalResults = 0;
+                for(category in result){
+                    totalResults += result[category].length;
+                }
+                if(totalResults > 0){
+                    $(settings.contentTarget).empty();
+                    var searchResultContent = '';
+                    var searchResultTags = '';
+                    var searchResultFileTypes = '';
+                    var searchResultLanguage = '';
+                    var searchResultObjectTypes = '';
+                    var paginationObject = 'Intranet_Content_Version__c,FeedItem,ContentVersion';
+                    var isPagiantionRequired = false;
+                    for(category in result){
+                        searchResultContent = '<div class="searchResultCategory '+category.replace(/ /g,'')+' container" id="searchResultCategory'+category.replace(/ /g,'')+'"><h3  class="searchCategoryHeader '+category.replace(/ /g,'')+'">'+category+' ('+result[category].length+')</h3><div class="searchResultSpacer"></div>';
+
+                        if(result[category].length > 0){
+                            if(searchResultObjectTypes.indexOf(result[category])==-1){
+                                searchResultObjectTypes += '<div class="checkbox"><label for="'+result[category][0].type+'"><input class="objectSelect" type="checkbox" id="'+result[category][0].type+'" value="'+result[category][0].type+'" onChange="runSearch();"> '+category+'</label></div>';
+                            }
+
+                            searchResultContent += '<div class="page_navigation"></div><ul class="searchResultList content" id="'+category.replace(/ /g,'')+'_list">';
+
+                            for(var i = 0; i < result[category].length; i++){
+                                if(result[category][i].tags.length > 0){
+                                    for(var m = 0; m < result[category][i].tags.length; m++){
+                                        if(searchResultTags.indexOf(result[category][i].tags[m])==-1){
+                                            searchResultTags += '<div class="checkbox"><label for="'+result[category][i].tags[m]+'"><input class="tagSelect" type="checkbox" id="'+result[category][i].tags[m]+'" value="'+result[category][i].tags[m]+'" onChange="runSearch();"> '+result[category][i].tags[m]+'</label></div>';
+                                        }
+                                    }
+                                }
+                                //Add File Types to select panel if not already added
+                                if(result[category][i].hasOwnProperty('fileType') && searchResultFileTypes.indexOf(result[category][i].fileType)==-1){
+                                    var typeName = result[category][i].fileType;
+                                    searchResultFileTypes += '<div class="checkbox"><label for="'+typeName+'"><input class="fileTypeSelect" type="checkbox" id="'+typeName+'" value="'+typeName+'" onChange="runSearch();"> '+(typeName.indexOf('_') > -1 ? typeName.substr(0,typeName.indexOf('_')) : typeName)+'</label></div>';
+                                }
+
+                                $.fn.sherlock.searchResults[result[category][i].recordId] = result[category][i];
+                                searchResultContent += '<li id="'+result[category][i].recordId+'" class="searchResultListItem">';
+
+                                //if this search result has a non null thumbnail image, then create an img and show it.
+                                if(result[category][i].hasOwnProperty('thumbnail') && result[category][i].thumbnail.length > 0){
+                                    searchResultContent += '<div class="searchResultPhotoContainer"><img src="'+result[category][i].thumbnail+'" class="searchResultItemPhoto" /></div>';
+                                }
+
+                                //if this search result has a title, display it, and turn it into a link. 
+                                if(result[category][i].hasOwnProperty('title') && result[category][i].title.length > 0 && result[category][i].type != 'ContentVersion'){
+                                   searchResultContent += '<span class="searchResultItemTitle"><a href="' + 
+                                                                 result[category][i].link + '" target="' + 
+                                                                 settings.linkTarget + '" id="' + 
+                                                                 result[category][i].recordId + '" class="searchResultLink" >' + 
+                                                                 result[category][i].title+'</a> </span>';
+                                }
+
+                                //if this search result has a title & is ContentVersion, display it, and turn it into a link to open a modal
+                                if(result[category][i].hasOwnProperty('title') && result[category][i].title.length > 0 && result[category][i].type == 'ContentVersion'){
+                                    if(result[category][i].fileType == 'LINK'){
+                                        searchResultContent += '<span class="searchResultItemTitle"><a href="'+result[category][i].link+'" id="'+result[category][i].recordId+'" class="searchResultLink">'+result[category][i].objectData.Title+'</a> </span>';
+                                    }else{
+                                        searchResultContent += '<span class="searchResultItemTitle"><a href="#" id="'+result[category][i].recordId+'" class="searchResultLink" onclick="processContent({ Title: \''+result[category][i].title+'\', FileType: \''+result[category][i].fileType+'\', Id: \''+result[category][i].objectData.Id+'\', ContentDocumentId: \''+result[category][i].objectData.ContentDocumentId+'\', TagCsv: \''+result[category][i].tags+'\'});return false;">'+result[category][i].objectData.Title+'</a> </span>';
+                                    }
+                                }
+
+                                //if this search result has a description, display it. The description will be trimmed down to the descriptionLength
+                                //specified in the plugin settings. This isnt a hard break, as it finds the next space available in the result and trims it there
+                                //so it doesnt cut off words.
+                                if(result[category][i].hasOwnProperty('description') && result[category][i].description.length > 0){
+                                    var description = result[category][i].description;
+                                    if(description.length > settings.descriptionLength){
+                                        description = description.substring(0,description.indexOf('',settings.descriptionLength)) + '...';;
+                                    }
+                                    if(result[category][i].type == 'Intranet_Content_Version__c') {
+                                        searchResultContent += '<div><span class="searchResultDate">'+result[category][i].startDate+' </span></div>';
+                                    }else if(result[category][i].type == 'ContentVersion') {
+                                        searchResultContent += '<span class="searchResultItemDescription">'+description+' </span>';
+                                    }else if(result[category][i].type == 'FeedItem') {
+                                        searchResultContent += '<span class="searchResultItemDescription">'+description+' </span>';
+                                        searchResultContent += '<span class="searchResultDate">'+ result[category][i].startDate +'</span>';
+                                    }else {
+                                        searchResultContent += '<span class="searchResultItemDescription">'+description+' </span>';
+                                    }
+                                }
+                                // If this item is a chatter post, provide links to the post.
+                                if(result[category][i].type == 'FeedItem') {
+                                   searchResultContent += '<span class="searchResultItemTitle"><a target = "_newWin" href="/' + 
+                                                                 result[category][i].recordId + '">See Post</a> ';
+                                   if(result[category][i].objectData.ParentId.substring(0,3)!='005') 
+                                      searchResultContent +='<a target="_newWin" href="/apex/KAR_ChatterGroup?g=' + 
+                                                                 result[category][i].objectData.ParentId + '">See Group</a> ';
+                                   searchResultContent += '</span>';
+                                }
+                                else
+                                //if this search result has a size, display it. The size is assumed to by in bytes, so it is divided by 1024 to get the kilobytes.
+                                if(result[category][i].hasOwnProperty('size') && result[category][i].size > 0){
+                                    searchResultContent += '<span class="searchResultItemSize"> ('+Math.round(result[category][i].size/1024)+'KB)</span>';
+                                }
+                                searchResultContent += '</li>';
+                            }
+                            searchResultContent += '<br class="clear" /></ul>';
+                            isPagiantionRequired = paginationObject.indexOf(result[category][0].type) >= 0 ? true : false;
+                        }
+                        searchResultContent += '</div>';
+                        //put the search results into the container.
+                        $(settings.contentTarget).append(searchResultContent);
+
+                        if(isPagiantionRequired) {
+                                $('#searchResultCategory'+category.replace(/ /g,'')).pajinate({items_per_page:settings.pageSize,abort_on_small_lists:true,num_page_links_to_display:'3'});
+                        }
+                    }
+                    //if(searchResultLanguage.indexOf(result[category])==-1){
+                        searchResultLanguage += '<div class="checkbox"><label for="English"><input class="languageSelect" type="checkbox" id="English" value="English" onChange="runSearch();">English</label></div>';
+                        searchResultLanguage += '<div class="checkbox"><label for="French Canadian"><input class="languageSelect" type="checkbox" id="French(Canadian)" value="French Canadian" onChange="runSearch();">French Canadian</label></div>';
+                    //}
+                    if(prevSearch != $(settings.searchInput).val()){
+                        prevSearch = $(settings.searchInput).val();
+                        // Object Types
+                        if(searchResultObjectTypes==''){
+                            $('#leftFiltersType').hide();
+                        } else {
+                            $('#typeContainer').empty().append(searchResultObjectTypes);
+                            $('#leftFiltersType').show();
+                        }
+                        // Tags
+                        if(searchResultTags==''){
+                            $('#leftFiltersTags').hide();
+                        } else {
+                            $('#tagContainer').empty().append(searchResultTags);
+                            $('#leftFiltersTags').show();
+                        }
+                        // File Types
+                        if(searchResultFileTypes==''){
+                            $('#leftFiltersFileType').hide();
+                        } else {
+                            $('#fileTypeContainer').empty().append(searchResultFileTypes);
+                            $('#leftFiltersFileType').show();
+                        }
+                        if(searchResultLanguage==''){
+                            $('#leftFiltersLanguage').hide();
+                        } else {
+                            $('#languageContainer').empty().append(searchResultLanguage);
+                            $('#leftFiltersLanguage').show();
+                        }
+                    }
+                    $('.noFilters').hide();
+                    highlightTermsIn($(".searchResultItemDescription"),$(settings.searchInput).val());
+
+                }else{
+                    $(settings.contentTarget).html('<div class="searchResultCategory"><h3  class="searchCategoryHeader">Search Returned 0 Results</h3><div class="searchResultSpacer"></div><div class="no-results-title">You can try the following</div><ul class="no-results"><li>Include a wildcard in your search to increase results by include a * at the end of the search term</li><li>Change the objects searched by using the search options</li><li>Decrease the search term complexity</li></ul></div>');
+                    $('#leftFiltersType').hide();
+                    $('#leftFiltersTags').hide();
+                    $('#leftFiltersFileType').hide();
+                    $('#leftFiltersLanguage').hide();
+                    $('.noFilters').show();
+                }
+
+                if(jQuery.isFunction(callback)){
+                    callback($(settings.contentTarget)[0]);
+                }
+            }
+
+            $.fn.sherlock.getSearchResults = function(){
+                return $.fn.sherlock.searchResults;
+            }
+
+            function runSearch(){
+                $($.fn.sherlock.settings.searchButton).click();
+            }
+        </script>
+
+        <div class="secondary-nav">
+            <div class="container-bs">
+                <!-- <c:KAR_BusinessUnitNav /> -->
+                <c:KAR_StockTicker />
+                <!-- <c:KAR_QuickSearch /> -->
+            </div><!-- /.container-bs -->
+        </div><!--/.secondary-nav -->
+
+        <div id="form1" class="search-results">
+            <div class="container-bs desktop-pad-t">
+                <div class="r1-c2 one-third sm">
+                    <div class="widget-left filters">
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_SearchFiltersTitle}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="content">
+                            <div class="noFilters">
+                                <p>{!$Label.EF_SearchNoResults}</p>
+                            </div>
+                            <div class="searchResultContainer panel-heading" id="leftFiltersType" style="display:none;">
+                                <a href="#typeContainer" data-toggle="collapse" role="button" class="collapsed"><h3>{!$Label.EF_SearchTypeLabel}</h3><span class="icon-minus"></span></a>
+                                <div class="searchResultCategory Type container collapse" id="typeContainer">
+                                </div>
+                            </div>
+                            <div class="searchResultContainer panel-heading" id="leftFiltersTags" style="display:none;">
+                                <a href="#tagContainer" data-toggle="collapse" role="button" class="collapsed"><h3 class="searchCategoryHeader Type">{!$Label.EF_SearchTagsLabel}</h3><span class="icon-minus"></span></a>
+                                <div class="searchResultCategory Type container collapse" id="tagContainer">
+                                </div>
+                            </div>
+                            <div class="searchResultContainer panel-heading" id="leftFiltersFileType" style="display:none;">
+                                <a href="#fileTypeContainer" data-toggle="collapse" role="button" class="collapsed"><h3 class="searchCategoryHeader Type">{!$Label.EF_SearchFileTypesLabel}</h3><span class="icon-minus"></span></a>
+                                <div class="searchResultCategory Type container collapse" id="fileTypeContainer">
+                                </div>
+                            </div>
+                            <div class="searchResultContainer panel-heading" id="leftFiltersLanguage" style="display:none;">
+                                <a href="#languageContainer" data-toggle="collapse" role="button" class="collapsed"><h3 class="searchCategoryHeader Type">{!$Label.EF_SearchLanguageLabel}</h3><span class="icon-minus"></span></a>
+                                <div class="searchResultCategory Type container collapse" id="languageContainer">
+                                </div>
+                            </div>
+                        </div><!-- /.content -->
+                    </div>
+
+                    <div class="widget-right results">
+                        <div class="widget-heading">
+                            <h1>{!$Label.EF_SearchResultsTitle}</h1>
+                        </div>
+                        <div class="content">
+                            <div class="search-again">
+                                <input class="searchBox form-control" type="text" />
+                            </div>
+                            <div class="searchResultClear"></div>
+                        </div><!-- /.content -->
+                    </div><!-- /.widget-right -->
+
+
+                </div>
+            </div>
+        </div><!-- /.search-results -->
+
+        <script>
+                function getURLParameter(name) {
+                        return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]);
+                }
+
+                function highlightTermsIn(jQueryElements, terms) {
+                    var regex = new RegExp(terms, "gi");
+                    jQueryElements.each(function(i) {
+                        this.innerHTML = this.innerHTML.replace(
+                                                regex,
+                                                "<span class=\"highlight\">" + terms + "</span>"
+                                );
+                     });
+                }
+
+                $(document).ready(function(){
+                    var searchString = getURLParameter("searchString");
+                    if(searchString != 'null'){
+                        $('.srch-term').attr('value',searchString);
+                        $('.searchBox').attr('value',searchString);
+                    }
+                    $('#accordProfile').on('shown', function () {
+                       $(".icon-chevron-down").removeClass("icon-chevron-down").addClass("icon-chevron-up");
+                    });
+
+                    $('#accordProfile').on('hidden', function () {
+                       $(".icon-chevron-up").removeClass("icon-chevron-up").addClass("icon-chevron-down");
+                    });
+                });
+
+        </script>
+        <c:EF_DocPreview />
+        </apex:define>
+    </apex:composition>
+</apex:page>

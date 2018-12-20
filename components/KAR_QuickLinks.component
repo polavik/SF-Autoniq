@@ -1,0 +1,13 @@
+<apex:component controller="EdgeForceIntranetLinkComponentController" layout="none">
+
+    <apex:variable value="{!IF((intranetList.size>0),100/intranetList.size,"100")}" var="blockWidth"/>
+    <apex:repeat value="{!intranetList}" var="intranetLink">
+        <a class="" href="{!IF(contains(intranetLink.content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ intranetLink.contentVersionforDisplay.URL__c  + '&height=' + TEXT(intranetLink.content.Frame_Height__c), IF(contains(intranetLink.contentVersionforDisplay.URL__c, 'http') || contains(intranetLink.contentVersionforDisplay.URL__c, 'https'), intranetLink.contentVersionforDisplay.URL__c, 'https://' + intranetLink.contentVersionforDisplay.URL__c))}" target="{!IF(contains(intranetLink.content.Target__c, 'Frame'), "_parent", intranetLink.content.Target__c)}">
+            <div class="circle">
+                <apex:image alt="{!intranetLink.contentversionfordisplay.Name}" value="/servlet/servlet.FileDownload?file={!intranetLink.content.Attachments[0].Id}&otherId=" rendered="{!IF(intranetLink.content.Attachments.size > 0, true, false)}" />
+            </div><!-- /.circle -->
+            <div class="name">{!intranetLink.contentversionfordisplay.Name}</div>
+        </a>
+    </apex:repeat>
+
+</apex:component>

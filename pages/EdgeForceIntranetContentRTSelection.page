@@ -1,0 +1,35 @@
+<apex:page standardController="Intranet_Content__c" extensions="EdgeForceIntranetContentRTSelController" >
+ <apex:form >
+  <apex:outputpanel >
+     <apex:actionstatus id="status">
+       <apex:facet name="start">
+         <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 100px; width: 100px;">
+                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                <span class="waitingDescription">{!$Label.Please_Wait}...</span>
+            </div>
+         </div>
+       </apex:facet>
+     </apex:actionstatus>
+   </apex:outputpanel>
+   
+   <apex:sectionHeader title="{!$Label.New_Intranet_Content}" subtitle="{!$Label.Select_Intranet_Content_Record_Type}" />
+   
+   <apex:pageBlock >
+      <apex:pageBlockSection >
+         <apex:pageBlockSectionItem >
+            <apex:outputLabel value="{!$Label.Intranet_Content_Record_Type}"/>
+            <apex:selectList value="{!selectedContentRecordType}" size="1" required="true">
+	            <apex:selectOptions value="{!intranetContentRecordTypes}"/>
+	        </apex:selectList>
+         </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockButtons location="bottom">
+        <apex:commandButton value="{!$Label.Continue}" action="{!selectRecordType}" rerender="frm" Status="status" />
+        <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}" />  
+      </apex:pageBlockButtons>
+   </apex:pageBlock>
+ </apex:form>
+</apex:page>

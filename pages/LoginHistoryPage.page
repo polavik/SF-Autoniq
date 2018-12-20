@@ -1,0 +1,39 @@
+<apex:page controller="UserLoginHistory">
+
+<style>
+.odd {
+      background-color:#d3d3d3;
+     }
+.even {
+       background-color:#f5f5f5;
+       }
+</style>
+  <apex:pageBlock title="Login History for {!u.Name}">
+    <apex:pageBlockTable value="{!Records}" var="Record">
+      <apex:column >
+        <apex:facet name="header">Login Time</apex:facet>
+        <apex:outputText value=" {!Record.LoginTime}"/>
+      </apex:column>
+      <apex:column >
+        <apex:facet name="header">Status</apex:facet>
+        <apex:outputText value="{!Record.Status}"/>
+      </apex:column>
+      <apex:column >
+        <apex:facet name="header">Login Type</apex:facet>
+        <apex:outputText value="{!Record.LoginType}"/>
+      </apex:column>
+      <apex:column >
+        <apex:facet name="header">Client Type</apex:facet>
+        <apex:outputText value="{!Record.Application}"/>
+      </apex:column>
+      <apex:column >
+        <apex:facet name="header">Browser</apex:facet>
+        <apex:outputText value="{!Record.Browser}"/>
+      </apex:column>
+      <apex:column >
+        <apex:facet name="header">Login URL</apex:facet>
+        <apex:outputText value="{!Record.LoginURL}"/>
+      </apex:column>
+    </apex:pageBlockTable>
+  </apex:pageBlock>
+</apex:page>

@@ -1,0 +1,46 @@
+<apex:page showHeader="false">
+<!-- This script takes the endpoint URL parameter passed from the deployment page and makes
+it the action for the form -->
+<script type="text/javascript">
+(function() {
+function handlePageLoad() {
+var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+document.getElementById('prechatForm').setAttribute('action',
+decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+} if (window.addEventListener) {
+window.addEventListener('load', handlePageLoad, false);
+} else { window.attachEvent('onload', handlePageLoad, false);
+}})();
+</script>
+<apex:image id="theImage" value="{!$Resource.AdesaCustomerConnection}" width="484" height="96"/>
+<br />
+<br />
+<h1>Welcome to ADESA Customer Connection Live Support!</h1>
+<br />
+<br />
+<form method='post' id='prechatForm'>
+Name: <input type='text' name='liveagent.prechat.name' id='prechat_field' /><br />
+Email Address: <input type='text' name='liveagent.prechat:Email' /><br />
+Dealer Name: <input type='text' name='liveagent.prechat:Dealer Name' /><br />
+Country: <input type='text' name='liveagent.prechat:Country' /><br />
+Please select from the following topics: <select name="liveagent.prechat.buttons">
+<option value="57313000000CwAT, 57313000000CwAU">General ADESA Inquiry</option>
+<option value="57313000000CwAT, 57313000000CwAU">Account Access</option>
+<option value="57313000000CwAT, 57313000000CwAU">How do I Register with ADESA</option>
+<option value="57313000000CwAT, 57313000000CwAU">Technical Assistance</option>
+<option value="57313000000CwAT, 57313000000CwAU">Physical Auction Inquiry</option>
+<option value="57313000000CwAT, 57313000000CwAU">Public Sale Inquiry</option>
+</select><br />
+<!-- Creates an auto-query for a matching Contact record’s Email field based on the
+value of the liveagent.prechat:Email field -->
+<input type="hidden" name="liveagent.prechat.query:Email"
+value="Contact,Contact.Email" />
+<input type="hidden" name="liveagent.prechat.query:name"
+value="Contact,Contact.Name" />
+<input type="hidden" name="liveagent.prechat.save:Email" value="Email__c" />
+<input type='submit' value='Request Chat' id='prechat_submit'/>
+<style type="text/css">
+p {font-weight: bolder }
+</style>
+</form>
+</apex:page>

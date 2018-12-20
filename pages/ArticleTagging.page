@@ -1,0 +1,101 @@
+<apex:page standardController="Intranet_Content__c" extensions="ArticleTaggingController" showHeader="false" sidebar="false">
+    <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/jquery/dist/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/jquery-ui.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/tag-it.min.js')}" />
+    
+    <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/jquery.tagit.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/jquery-ui.css')}"/>
+    
+    
+    <style>
+        body{
+            padding: 5px 5px;
+        }
+    </style>
+    
+    <apex:form >
+        <apex:actionFunction name="refresh" reRender="tagPanel" oncomplete="getListOfTags();"/>
+    
+    
+        <apex:outputPanel id="tagPanel">
+            <ul id="myTags">
+                <!-- Existing list items will be pre-added to the tags -->
+                <apex:repeat value="{!ListOfArticleTags}" var="tag">
+                    <li><apex:outputText value="{!tag.Tags__r.Tag__c}"/></li>
+                </apex:repeat>
+                
+            </ul>
+            <apex:commandButton value="Save Tags" style="float:left" onclick="addArticleTags()" reRender="xxx"/>
+            <!-- <a id="tagButton" class="btn" style="float:right" href="javascript: addArticleTags()">Add</a> -->
+        </apex:outputPanel>
+        
+    </apex:form>    
+        <script type="text/javascript">
+            
+            var listOfTags;
+            var nonAdminPages;
+            
+            $(document).ready(function() {
+                getListOfTags();
+            });
+            
+            function getListOfPages(){
+
+            }
+            
+            function getListOfTags(){
+                //$('#tagButton').button();
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ArticleTaggingController.fetchListOfTags}',
+                    function(result, event){
+                        if(event.status){
+                            listOfTags = new Array();
+                            nonAdminPages = new Array();
+                            for(var i=0; i<result.listOfTags.length; i++){
+                                listOfTags.push(result.listOfTags[i].Tag__c.replace(/{!HTMLENCODE('&')}/g, '&'));
+                            }
+                            for(var i=0; i<result.adminPages.length; i++){
+                                nonAdminPages.push(result.adminPages[i].replace(/{!HTMLENCODE('&')}/g, '&'));
+                            }
+                            $("#myTags").tagit({
+                                autocomplete: {
+                                    source : listOfTags
+                                },
+                                
+                                allowSpaces : true,
+                                beforeTagAdded: function(event, ui) {
+                                    if(nonAdminPages.indexOf(ui.tagLabel) !== -1){
+                                        alert('You are not an admin of the '+ui.tagLabel+' page.');
+                                        return false;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                );
+            }
+            
+            
+            function addArticleTags(){
+                var tagString = $('#myTags li').map(function(i,n) {
+                    return $(n).find('.tagit-label').text();
+                }).get().join(',');
+                
+                var tagArray = tagString.split(',');
+                
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.ArticleTaggingController.addTags}',
+                    tagString, '{!articleID}',
+                    function(result, event){
+                        if(event.status){
+                            refresh();
+                        }
+                    }
+                );
+            }
+        </script>
+    
+    
+     
+        
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:component access="global" controller="SPCaseCommentNotificationController">
+	<apex:attribute name="caseId" description="Case Id" 
+					type="String" required="required" assignTo="{!caseId}"/>
+
+	<apex:outputPanel >
+		<p>The following comment has been added to Case Escalation #{!escalationNumber} by {!commentBy}:</p>
+		<div style="margin-left:20px; font-style:italic"><apex:outputText value="{!commentBody}" escape="false"/></div>
+		<p>Additional details can be found in the OPENLANE Customer Service Portal on Case Escalation #{!escalationNumber}.</p>
+	</apex:outputPanel>
+
+</apex:component>

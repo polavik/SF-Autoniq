@@ -1,0 +1,69 @@
+<apex:page docType="html-5.0"
+           showHeader="false"
+           sidebar="false"
+           standardStylesheets="true"
+           applyHtmlTag="false"
+           applyBodyTag="false"
+           controller="KAR_HomeController" >
+
+  <title>Chatter</title>
+  <style>
+    .pollfieldset legend {
+      border-bottom: 0;
+    }
+    .group-header {
+      background: #edf4fa;
+      border-bottom: 1px solid #cde1f1;
+      display: block;
+      width: 100%;
+      height: 55px;
+      padding: 10px;
+    }
+    .sub-header {
+      padding-left:10px;
+    }
+    .reset-scroll .content {
+      padding:0;
+      background:none;
+    }
+    .reset-scroll .scroll-container {
+      display:block;
+      max-height:auto;
+      height:calc(100vh - 100px);
+    }
+    .reset-scroll .scroll-container > .content {
+      position:relative;
+      padding:0;
+      margin:0;
+    }
+    .reset-scroll .widget-heading form {
+      flex-basis:100%;
+    }
+  </style>
+  <apex:composition template="KAR_TemplateNewMobile">
+    <apex:define name="body">
+      <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/user-autocomplete.js')}" />
+      <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/user-autocomplete.css')}"/>
+
+      <div class="container-bs">
+        <div class="r1-c1 reset-scroll">
+          <div class="content">
+            <c:KAR_ChatterFeeds />
+          </div><!-- /.content -->
+        </div>
+      </div>
+
+      <script type="text/javascript">
+        $( document ).ready(function() {
+          createAutocomplete('emp-search-text','Name','{!$RemoteAction.KAR_HomeController.searchFilters}');
+          $("#emp-search-text").click(function() {
+            if( $('label[for="nav-trigger"]').css('display')!='none') {
+              $('html, body').scrollTop($("#emp-search-text").offset().top);
+            }
+          });
+        });
+      </script>
+    </apex:define>
+  </apex:composition>
+
+</apex:page>

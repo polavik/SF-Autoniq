@@ -1,0 +1,156 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+   <aura:attribute name="accounts" type="Account"/>
+	<aura:attribute name="contacts" type="Contact"/>
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+	<aura:attribute name="record" type="Object"/>
+    <aura:attribute name="simpleRecord" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>
+
+    <force:recordData aura:id="forceRecordCmp"
+        recordId="{!v.recordId}"        
+        fields="Name, Phone, Account.Name"
+        mode="VIEW"
+        targetRecord="{!v.record}"
+        targetFields="{!v.simpleRecord}"
+        targetError="{!v.recordError}" />
+
+    <lightning:card title="User Details" iconName="standard:contact" footer="">
+        <aura:set attribute="actions">
+        </aura:set>
+        <p class="slds-p-horizontal_small">
+            <!-- panel -->					
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col">
+				   <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+				      <div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+				         <div class="slds-panel__section">
+				            <h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+				            <ul>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Name</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">{!v.simpleRecord.Name}</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Account Name</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">{!v.simpleRecord.Account.Name}</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Phone</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">{!v.simpleRecord.Phone}</span>
+				                  </div>
+				               </li>				              
+			               </ul>
+		               </div>
+	               </div>
+               </div>
+           </div>
+                <div class="slds-col">
+				   <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+				      <div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+				         <div class="slds-panel__section">
+				            <h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+				            <ul>
+                 <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">AutoCheck Login</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">C123456</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Mailing Address</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">123 Main St, Chicago, IL, 61234</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Email</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">test@test.com</span>
+				                  </div>
+				               </li>
+				  </ul>
+		               </div>
+	               </div>
+               </div>
+           </div>
+
+       </div>
+        </p>
+    </lightning:card>
+    <lightning:card title="Dealer Details" iconName="standard:contact" footer="">
+        <aura:set attribute="actions">            
+           <!-- <lightning:button label="Edit"/>-->
+        </aura:set> 
+        <p class="slds-p-horizontal_small">
+            <!-- panel -->					
+			<div class="slds-grid slds-gutters">
+				<div class="slds-col">
+				   <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+				      <div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+				         <div class="slds-panel__section">
+				            <h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+				            <ul>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Name</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">Test User</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Account Name</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">Test Dealership</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Phone</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">123-444-5555</span>
+				                  </div>
+				               </li>				              
+			               </ul>
+		               </div>
+	               </div>
+               </div>
+           </div>
+                <div class="slds-col">
+				   <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+				      <div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+				         <div class="slds-panel__section">
+				            <h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+				            <ul>
+                 <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">AutoCheck Login</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">C123456</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Mailing Address</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">123 Main St, Chicago, IL, 61234</span>
+				                  </div>
+				               </li>
+				               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                  <span class="slds-form-element__label">Email</span>
+				                  <div class="slds-form-element__control">
+				                     <span class="slds-form-element__static">test@test.com</span>
+				                  </div>
+				               </li>
+				  </ul>
+		               </div>
+	               </div>
+               </div>
+           </div>
+
+       </div>
+        </p>
+    </lightning:card>
+
+</aura:component>

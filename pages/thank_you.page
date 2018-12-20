@@ -1,0 +1,29 @@
+<apex:page showHeader="false" standardStyleSheets="false">
+	<style type="text/css">
+		body 
+		{
+			margin-top: 200px;
+			font-family: Sans-serif;
+			font-size: 1em;
+		}
+		
+		#Content
+		{
+			text-align: center;
+			margin: 0px auto;
+		}
+		
+		.close
+		{
+			font-size: .8em;
+			text-transform: capitalize;
+		}
+	</style>
+	
+	<div id="Content">
+		<p>Thank You for Your Feedback!</p>
+		<a href="javascript:window.close();" class="close">Close Window</a>
+	</div>
+	
+	
+</apex:page>

@@ -1,0 +1,87 @@
+<apex:page tabStyle="Task" standardController="Task"  extensions="TaskExtController"> 
+   
+     <!--    <script src="/static/111213/js/spch.js"></script>-->
+    
+
+<!-- <script src="https://cs23.salesforce.com/resource/1424457954000/SpellCheckScript"></script> -->
+
+<apex:form >
+   <apex:pageBlock title="Task Edit" mode="Edit" >    
+      <apex:pageBlockButtons >
+          <apex:commandButton value="Save" action="{!save}" />
+          <apex:commandButton value="Save & New Task" action="{!SaveNewTask}" />
+          <apex:commandButton value="Save & New Event" action="{!SaveNewEvent}" />
+          <!-- <apex:commandButton value="Check Spelling" action="{!save}" /> -->
+         <apex:commandButton value="Cancel" action="{!Cancel}"/>
+    <!--     <input type="button" onclick="doSpell({ctrl:'j_id0:j_id2:j_id3:j_id36:tsk6',lang:'en_US',title:'Check Spelling',intLang:'en_US',organizationId:'00D180000000PHS',userId:'00518000000HiSh'}, '/servlet/SProxyWrapper', document.location.protocol + '//' + 'spell-chi.salesforce.com/spellcheck', 'There is nothing to check', 'We are sorry,our spellchecker currently does not support the browser you are using. Please upgrade your browser.', 'The Spell Checker is not available in this language.');" name="spell" title="Check Spelling (New Window)" class="btn" value="Check Spelling"/> -->
+ <!--<input type="button" onclick="doSpell({ctrl:'j_id0:j_id2:j_id3:j_id36:tsk6',lang:'en_US',title:'Check Spelling',intLang:'en_US'}, '/servlet/SProxyWrapper', document.location.protocol + '//' + 'spell-chi.salesforce.com/spellcheck', 'There is nothing to check', 'We are sorry,our spellchecker currently does not support the browser you are using. Please upgrade your browser.', 'The Spell Checker is not available in this language.');" name="spell" title="Check Spelling (New Window)" class="btn" value="Check Spelling"/>-->
+      </apex:pageBlockButtons>     
+      
+
+      <apex:pageBlockSection title="Task Information" columns="1"  id="whole_page">
+         <apex:inputfield value="{!task.status}"/>  
+         <apex:outputText />
+         <apex:inputfield value="{!task.ownerid}"/>         
+         <apex:inputfield value="{!task.whatid}" ></apex:inputField>
+        
+          <apex:OutputText label="Auction Access #" value="{!Activity_Detail.Auction_Access_Number__c}" /> 
+          <apex:inputfield value="{!task.whoid}"/>
+         <apex:inputfield value="{!task.subject}"/>
+         <apex:inputfield value="{!task.Created_Date_Time__c}"/>         
+         <apex:inputfield value="{!task.ActivityDate}"/>
+          <apex:inputfield value="{!task.Customer_Type__c}" required="true" />
+         
+         <apex:inputfield value="{!task.Priority}"/>
+       </apex:pageBlockSection>  
+      
+        <apex:pageBlockSection title="Sale Event Information" columns="2" > 
+              
+              <apex:inputfield value="{!Activity_Detail.Activity_Type1__c}"> </apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.Activity_Type2__c}"> </apex:inputfield>
+              
+              
+              <apex:inputfield value="{!task.Sale_Event_Date__c}" > </apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.Sale_Event_Date_2__c}"> </apex:inputfield>
+              
+              <apex:inputfield value="{!task.Auction__c}" > </apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.sharedresourceauction__c}"> </apex:inputfield>
+              
+              <apex:inputfield value="{!task.ADESA_Sale_Type__c}"></apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.ADESA_Sale_Type_2__c}"> </apex:inputfield>
+              
+              <apex:inputfield value="{!task.Institutional_Sellers_Pitched__c}"></apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.Consignors_Pitched_2__c}"> </apex:inputfield>
+              
+              <apex:inputfield value="{!task.Buy_Commitments__c}"></apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.Buy_Commitments_2__c}"> </apex:inputfield>
+              
+              <apex:inputfield value="{!task.Buy_No_Commitment_Reasons__c}"></apex:inputfield>
+              <apex:inputfield value="{!Activity_Detail.Buy_No_Commitment_Reasons_2__c}"> </apex:inputfield>
+              
+            
+              
+        </apex:pageBlockSection>
+        
+          <apex:pageBlockSection title="Feedback" columns="2">
+          
+           <apex:inputfield label="Promotional Feedback" value="{!task.Promotions_Feedback__c}" id="tsk6"/>
+           
+        </apex:pageBlockSection> 
+      
+       <apex:pageBlockSection title="Call Comments" columns="2">
+         <apex:inputfield value="{!task.Description}"/>
+       </apex:pageBlockSection>  
+     
+      <apex:pageBlockSection title="Reminder" columns="2"> 
+       
+           <apex:inputfield value="{!task.IsReminderSet}"/>       
+           <apex:inputfield value="{!task.ReminderDateTime}"/>
+          
+      </apex:pageBlockSection>   
+      
+    </apex:pageBlock>
+
+  </apex:form>
+  
+
+</apex:page>

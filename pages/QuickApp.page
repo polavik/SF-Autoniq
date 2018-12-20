@@ -1,0 +1,70 @@
+<apex:page controller="QuickAppController" showHeader="true" sidebar="true">
+	<apex:form id="theForm">
+		<h1>Quick Application</h1>
+		<apex:pageBlock >
+			<apex:commandButton action="{!selectSearch}" value="Search for Account" reRender="theForm"/>
+			<apex:commandButton action="{!sendToFlow}" value="Create Application without Account" />
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!stage == 'contactprompt' || stage == 'account' || stage == 'contact' || stage == 'final'}">
+			<h4>Select An Account</h4>	
+			<apex:outputPanel layout="block">
+				<label for="accName">Account Name</label>
+				<apex:inputText id="accName" value="{!accountName}" />
+				<label for="dealerID">AFC Dealer ID</label>
+				<apex:inputText id="dealerID" value="{!dealerID}" />
+				<label for="dealerLN">Dealer License Number</label>
+				<apex:inputText id="dealerLN" value="{!dealerLN}" />
+				<apex:commandButton action="{!filterAccounts}" value="Filter" reRender="accountSection"/>
+			</apex:outputPanel>
+			<apex:outputPanel id="accountSection" layout="block">
+				<apex:outputText rendered="{!accounts.size == 0}">
+					No search results
+				</apex:outputText>
+				<apex:pageBlockTable value="{!accounts}" var="acc" rendered="{!accounts.size > 0}">
+					<apex:column ><a href="javascript:selectAccount('{!acc.Id}');">Select</a></apex:column>
+					<apex:column headerValue="Name" >
+						<a href="/{!acc.Id}">{!acc.Name}</a>
+					</apex:column>
+						<apex:column value="{!acc.AFC_Dealer_ID__c}" headerValue="AFC Dealer ID" />
+					<apex:column value="{!acc.Tax_Identification_Number__c}" headerValue="Tax ID Number" />
+					<apex:column value="{!acc.Dealer_License_Number__c}" headerValue="Dealer License Number" />
+				</apex:pageBlockTable>
+			</apex:outputPanel>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!stage == 'contactprompt' || stage == 'contact' || stage == 'final'}">
+			<apex:commandButton action="{!selectSearchContact}" value="Search for Contact" reRender="theForm"/>
+			<apex:commandButton action="{!sendToFlow}" value="Create Application with Account '{!selectedAccount.Name}' and no Contact" />
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!stage == 'contact' || stage == 'final'}">
+			<h4>Select A Contact</h4>	
+			<apex:outputPanel layout="block">
+				<label for="contactSIN">Social ID Number</label>
+				<apex:inputText id="contactSIN" value="{!contactSIN}" />
+				<apex:commandButton action="{!filterContacts}" value="Filter" reRender="contactSection"/>
+			</apex:outputPanel>
+			<apex:pageMessages />
+			<apex:outputPanel id="contactSection" layout="block">
+				<apex:outputText rendered="{!contacts.size == 0}">
+					No search results
+				</apex:outputText>		
+				<apex:pageBlockTable value="{!contacts}" var="con" rendered="{!contacts.size > 0}">
+					<apex:column ><a href="javascript:selectContact('{!con.Id}');">Select</a></apex:column>
+					<apex:column value="{!con.Name}" headerValue="Full Name" />
+					<apex:column value="{!con.Email}" headerValue="Email" />
+					<apex:column value="{!con.Phone}" headerValue="Phone" />
+					<apex:column value="{!con.SSN__c}" headerValue="SSN" />
+				</apex:pageBlockTable>	
+			</apex:outputPanel>
+		</apex:pageBlock>
+		<apex:pageBlock rendered="{!stage == 'final'}">
+			<apex:commandButton action="{!sendToFlow}" value="Create Application with Account '{!selectedAccount.Name}' and Contact '{!selectedContact.Name}'" />
+		</apex:pageBlock>
+
+		<apex:actionFunction name="selectAccount" action="{!selectAccount}" reRender="theForm">
+			<apex:param name="selectedAccountIdStr" id="selectedAccountIdStr" assignTo="{!selectedAccountIdStr}" value="" />
+		</apex:actionFunction>
+		<apex:actionFunction name="selectContact" action="{!selectContact}" reRender="theForm">
+			<apex:param name="selectedContactIdStr" id="selectedContactIdStr" assignTo="{!selectedContactIdStr}" value="" />
+		</apex:actionFunction>
+	</apex:form>
+</apex:page>

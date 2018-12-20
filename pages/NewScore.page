@@ -1,0 +1,4 @@
+<apex:page standardController="Application__c" extensions="NewScoreController" action="{!navigateToNewApplicationScoring}">
+    <apex:sectionHeader title="Application Scoring" subtitle="{!Application__c.Name}"/>
+    <apex:pageMessages />
+</apex:page>

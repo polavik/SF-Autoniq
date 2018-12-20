@@ -1,0 +1,16 @@
+<apex:component access="global">
+	<apex:attribute name="labelName" description="Label Text" 
+					type="String" required="required" /> 
+	<apex:attribute name="value" description="Value Text" 
+					type="String" required="required" />
+	<apex:attribute name="lastRow" description="Is this the last row on the page?"
+					type="boolean" required="false" default="false" />
+
+	<div class="cPageBlockRow singleColumn" style="{!IF(lastRow, 'border-bottom:none', '')}">
+		<div class="cFieldLabel"><apex:outputText value="{!labelName}" escape="false"/></div>
+		<div class="cFieldValue"><apex:outputText value="{!value}" escape="false"/></div>
+		<div class="clearDiv"> </div>
+	</div>
+
+	
+</apex:component>

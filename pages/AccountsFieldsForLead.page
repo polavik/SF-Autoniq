@@ -1,0 +1,28 @@
+<!--*
+*Appirio Inc. 2016
+*Name  : AccountsFieldsForLead
+*Author: Amit SanWariya (Appirio)
+*Date  : 7 Oct, 2016
+*Description: To show account fields on Lead Detail page
+*-->
+<apex:page standardController="Lead" extensions="AccountsFieldsForLeadExtension">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:pageBlockSection >
+                <apex:repeat value="{!accFieldSet}" var="f">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!IF(LEFT(f.Label,7) == 'Account','','Account')} {!f.Label}"/>
+                        <apex:outputField value="{!acc[f.fieldPath]}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+                <apex:repeat value="{!territoryFieldSet}" var="f">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!'Territory'} {!f.Label}"/>
+                        <apex:outputField value="{!territory[f.fieldPath]}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

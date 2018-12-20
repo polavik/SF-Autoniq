@@ -1,0 +1,243 @@
+@isTest
+public class TestDataGatewayAccount {
+    public static String currentTest = '';
+
+    static testMethod void testCheckNumberOfChanges(){
+        currentTest = 'testCheckNumberOfChanges';
+//        Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+//        insert dataGatewayUser;
+
+        Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        Account a = new Account(name='Test',Auction_Access_Number__c='12082015');
+        insert a;
+
+//                req.setEndpoint(Data_Gateway_MDMService_Endpoint__c.getInstance('MDMServiceEndpoint').Environment_URL__c);
+        Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+        insert endpoint;
+        Data_Gateway_Flip_Fields__c flipField1 = new Data_Gateway_Flip_Fields__c(Name='Auction_Access_Number__c',Object_Name__c='Account',Timeframe__c=2);
+        Data_Gateway_Flip_Fields__c flipField2 = new Data_Gateway_Flip_Fields__c(Name='Name',Object_Name__c='Account',Timeframe__c=2);
+        Map<String,Data_Gateway_Flip_Fields__c> flipFieldMap = new Map<String,Data_Gateway_Flip_Fields__c>();
+        flipFieldMap.put('Auction_Access_Number__c',flipField1);
+        insert flipField1;
+        insert flipField2;
+        flipFieldMap.put('Name',flipField2);
+        
+        DateTime dateReference = System.now();
+        Test.startTest();
+            // Note: We are using the JSON method in this Test because is allows us to set the CreatedDate for the History (which is relevant to our test).
+            // Testing that the second Auction_Access_Number__c is not considered, because it is out of range for the custom setting's Time_Reference__c value.
+            List<AccountHistory> historyList = new List<AccountHistory>();
+            historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Federal_Tax_Identification_Id__c","CreatedDate":"'+dateReference.addDays(-1).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Integration_Id__c","CreatedDate":"'+dateReference.addDays(-2).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-3).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            Map<String,Integer> changes = DataGatewayAccountHelper.checkNumberOfChanges(flipFieldMap,historyList);
+            System.assertEquals(1, changes.get('Auction_Access_Number__c'));
+            System.assertEquals(0, changes.get('Name'));
+            System.assertEquals(null, changes.get('Federal_Tax_Identification_Id__c')); 
+
+            // Testing that both values for Auction_Access_Number__c are considered.
+            List<AccountHistory> historyList2 = new List<AccountHistory>();
+            historyList2.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            historyList2.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-1).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+            System.debug(historyList2);
+            Map<String,Integer> changes2 = DataGatewayAccountHelper.checkNumberOfChanges(flipFieldMap,historyList2);
+            System.assertEquals(2, changes2.get('Auction_Access_Number__c'));
+            System.assertEquals(0, changes2.get('Name'));
+            System.assertEquals(null, changes2.get('Federal_Tax_Identification_Id__c'));
+        Test.stopTest();
+        currentTest = '';
+    }
+
+    static testMethod void testWrongUser(){
+        currentTest = 'testWrongUser';
+        Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        insert dataGatewayUser;
+
+        Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        Data_Gateway_Users__c dataGatewayUsers = new Data_Gateway_Users__c(Name='Test User Name');
+        insert dataGatewayUsers;
+        Account a = new Account(name='Test',Auction_Access_Number__c='12082015');
+        insert a;
+        
+        Test.startTest();
+            a.Integration_Id__c = '12345';
+            update a;
+            // If we do not get an exception from the AccountAfterInsertUpdate trigger, this test passes
+        Test.stopTest();
+        currentTest = '';
+    }
+
+    static testMethod void testWithViolations(){
+        currentTest = 'testWithViolations';
+        Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        insert dataGatewayUser;
+
+        Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+        insert endpoint;
+        Account a = new Account(name='Test',Auction_Access_Number__c='12082015');
+        insert a;
+
+        Map<String,Data_Gateway_Flip_Fields__c> flipFieldMap = null;
+        List<AccountHistory> historyList = new List<AccountHistory>();
+        DateTime dateReference = System.now();
+        
+        // We are using this method because is allows us to set the CreatedDate for the History (which is relevant to our test).
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-1).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-2).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-3).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+
+        Test.startTest();
+            Map<String,Integer> changes = DataGatewayAccountHelper.checkNumberOfChanges(flipFieldMap,historyList);
+            System.assertEquals(0, changes.keySet().size());
+        Test.stopTest();
+        currentTest = '';
+    }
+
+    static testMethod void testMockWithViolations(){
+        //currentTest = 'testMockWithViolations';    
+        //Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        //insert dataGatewayUser;
+
+        //Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        //Account a = new Account(name='Test',Auction_Access_Number__c='12082015');
+        //insert a;
+
+        //Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+        //insert endpoint;
+        //Data_Gateway_Flip_Fields__c flipField1 = new Data_Gateway_Flip_Fields__c(Name='Auction_Access_Number__c',Object_Name__c='Account',Timeframe__c=2);
+        //Data_Gateway_Flip_Fields__c flipField2 = new Data_Gateway_Flip_Fields__c(Name='Name',Object_Name__c='Account',Timeframe__c=2);
+        //Map<String,Data_Gateway_Flip_Fields__c> flipFieldMap = new Map<String,Data_Gateway_Flip_Fields__c>();
+        //flipFieldMap.put('Auction_Access_Number__c',flipField1);
+        //insert flipField1;
+        //insert flipField2;
+        //flipFieldMap.put('Name',flipField2);
+        
+        //DateTime dateReference = System.now();
+        //Test.startTest();
+        //    a.Auction_Access_Number__c = '12082015';
+        //    update a;
+
+        //    List<Account> a2 = [select id, Gateway_Flip_Lock__c from Account where id = :a.id];
+        //    System.assertEquals(a2[0].Gateway_Flip_Lock__c,true);
+        //Test.stopTest();
+        //currentTest = '';
+    }  
+
+    static testMethod void testNoCustomSettings(){
+        currentTest = 'testNoCustomSettings';
+        Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        insert dataGatewayUser;
+
+        Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+        insert endpoint;
+        Account a = new Account(name='Test',Auction_Access_Number__c='12082015');
+        insert a;
+
+        Map<String,Data_Gateway_Flip_Fields__c> flipFieldMap = null;
+        List<AccountHistory> historyList = new List<AccountHistory>();
+        DateTime dateReference = System.now();
+        
+        // We are using this method because is allows us to set the CreatedDate for the History (which is relevant to our test).
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-1).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-2).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+        historyList.add((AccountHistory) JSON.deserialize('{"AccountId":"'+a.id+'","Field":"Auction_Access_Number__c","CreatedDate":"'+dateReference.addDays(-3).format('yyyy-MM-dd\'T\'hh:mm:ss\'Z\'')+'"}', AccountHistory.class));
+
+        Test.startTest();
+            Map<String,Integer> changes = DataGatewayAccountHelper.checkNumberOfChanges(flipFieldMap,historyList);
+            System.assertEquals(0, changes.keySet().size());
+        Test.stopTest();
+        currentTest = '';
+    }  
+
+    static testMethod void testKeyFieldDeletion(){
+        //currentTest = 'testKeyFieldDeletion';
+        //Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        //insert dataGatewayUser;
+
+        //Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        //Account a = new Account(name='Test',Auction_Access_Number__c='12082015', Phone='(123) 456-7890');
+        //insert a;
+        //Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+        //insert endpoint;
+        //Data_Gateway_Key_Fields__c keyField1 = new Data_Gateway_Key_Fields__c(Name='AccountAuction_Access_Number__c',Field_Name__c='Auction_Access_Number__c',Object_Name__c='Account');
+        //insert keyField1;
+        //Data_Gateway_Key_Fields__c keyField2 = new Data_Gateway_Key_Fields__c(Name='AccountPhone',Field_Name__c='Phone',Object_Name__c='Account');
+        //insert keyField2;
+        
+        //Set<String> keyFieldSet = new Set<String>{'Auction_Access_Number__c','Phone'};
+        
+        //Test.startTest();
+        //    // Testing that the second Auction_Access_Number__c is not considered, because it is out of range for the custom setting's Time_Reference__c value.
+        //    a.Auction_Access_Number__c = null;
+        //    a.Phone = null;
+        //    update a;
+        //    List<Gateway_Violation__c> gvList = [select Violations_Content__c from Gateway_Violation__c];
+        //    System.assertEquals(1,gvList.size());
+        //    List<DataGatewayManager.GatewayViolation> gv = (List<DataGatewayManager.GatewayViolation>)JSON.deserialize(gvList[0].Violations_Content__c, List<DataGatewayManager.GatewayViolation>.class);
+        //    System.assertEquals(2,gv.size());
+        //    System.assertEquals('Key Field Deletion',gv[0].type);
+        //    System.assertEquals(a.id,gv[0].recordId);
+        //    System.assertEquals('Update Declined',gv[0].result);
+        //    System.assertEquals(1,gv[0].reasonList.size());
+        //    System.assert(keyFieldSet.contains(gv[0].reasonList[0].field));
+            
+
+        //    System.assertEquals('Key Field Deletion',gv[1].type);
+        //    System.assertEquals(a.id,gv[1].recordId);
+        //    System.assertEquals('Update Declined',gv[1].result);
+        //    System.assertEquals(1,gv[1].reasonList.size());
+        //    System.assert(keyFieldSet.contains(gv[1].reasonList[0].field));
+            
+        //    List<Account> aList = [select id, Auction_Access_Number__c, Phone from Account where id = :a.id];
+        //    System.assertEquals('12082015',aList[0].Auction_Access_Number__c);
+        //    System.assertEquals('(123) 456-7890',aList[0].Phone);
+        //Test.stopTest();
+        //currentTest = '';
+    }    
+
+
+    static testMethod void testMiscellaneous(){
+        currentTest = 'testMiscellaneous';
+        Test.startTest();
+            DataGatewayManager.GatewayViolation gv = new DataGatewayManager.GatewayViolation();
+            gv.recordId = '000000000000000000';
+            gv.type = 'Attribute Flipping';
+            System.assertEquals(gv.result,'Update Applied'); // The default value
+            System.assert(gv.reasonList != null);
+
+            DataGatewayManager.GatewayChange gc = new DataGatewayManager.GatewayChange('name','1','2');
+            System.assertEquals(gc.field,'name');
+            System.assertEquals(gc.oldValue,'1');
+            System.assertEquals(gc.newValue,'2');
+        Test.stopTest();
+        currentTest = '';
+    }
+
+    static testMethod void testInsertUser(){
+        currentTest = 'testInsertUser';
+        Data_Gateway_Users__c dataGatewayUser = new Data_Gateway_Users__c(Name=UserInfo.getUsername());
+        insert dataGatewayUser;
+
+        Test.setMock(HttpCalloutMock.class,new TestDataGatewayMDMServiceMock('Organization'));
+        Test.startTest();
+            Data_Gateway_MDMService_Endpoint__c endpoint = new Data_Gateway_MDMService_Endpoint__c(Name='MDMServiceEndpoint',Environment_URL__c='http://inthub.test.auctionintegrationhub.com/karcustomermdm/KARCMDMService');
+            insert endpoint;
+
+            Data_Gateway_Update_Only_Users__c updateUser = new Data_Gateway_Update_Only_Users__c(Name='Test Name',Username__c=UserInfo.getUsername(),Object_Name__c='Account');
+            insert updateUser;
+            Account a = new Account(name='Test',Auction_Access_Number__c='12082015', Phone='(123) 456-7890');
+            try{
+                insert a; 
+            } catch (Exception e){
+                System.debug('*****Exception:'+e.getMessage());
+                System.assert(e.getMessage().contains('This user is not authorized to insert Account records'));
+            }   
+        Test.stopTest();
+        currentTest = '';
+    }
+}

@@ -1,0 +1,27 @@
+<apex:component controller="KAR_WhatsNewController">
+  <style>
+    .whats-new-link:hover {
+      text-decoration: none !important;
+    }
+    .whats-new {
+      background-size: cover;
+      padding-top: 20px;
+    }
+  </style>
+  <apex:repeat value="{!banners}" var="banner">
+    <apex:outputText escape="false" value="{!'<a href=\"'+banner.contentVersionforDisplay.URL__c+'\" class=\"whats-new-link\" target=\"'+banner.content.Target__c+'\">'}" rendered="{!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}"/>
+    <div class="whats-new" style="background-image:url('{!IF(banner.content.Attachments.size > 0,'/servlet/servlet.FileDownload?file='+banner.content.Attachments[0].Id,'')}');" title="{!banner.contentVersionforDisplay.Image_Description__c}">
+      <apex:outputPanel layout="block" styleClass="overlay" rendered="{!banner.content.Image_Overlay__c}"></apex:outputPanel>
+<!--       <div class="widget-heading" style="background:none;">
+        <h2>{!banner.contentVersionforDisplay.Name}</h2>
+      </div><!-- /.widget-heading --> 
+      <div class="content" style="{!IF(ISBLANK(banner.contentVersionforDisplay.Button_Label__c),'padding-bottom:10px;','')}">
+        <div class="title">{!banner.contentVersionforDisplay.Header__c}</div><!-- /.title -->
+        <div class="copy">{!banner.contentVersionforDisplay.Summary__c}</div><!-- /.copy -->
+        <apex:outputLink value="{!banner.contentVersionforDisplay.URL__c}" styleClass="btn-bs btn-default btn-xl" target="{!banner.content.Target__c}" rendered="{!!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}">{!banner.contentVersionforDisplay.Button_Label__c}</apex:outputLink>
+      </div><!-- /.content -->
+      <apex:outputPanel layout="block" style="width:100%;height:100%" rendered="{!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}" ></apex:outputpanel>
+    </div><!-- /.whats-new -->
+    <apex:outputText escape="false" value="{!'</a>'}" rendered="{!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}"/>
+  </apex:repeat>
+</apex:component>

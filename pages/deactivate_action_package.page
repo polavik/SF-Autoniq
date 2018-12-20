@@ -1,0 +1,20 @@
+<apex:page standardController="Action_Package__c" extensions="DeactivateActionPackageController" >
+	<apex:form >
+		<apex:pageBlock title="Deactivate Action Package">
+			<apex:pageMessages />
+			<apex:pageBlockSection title="Comments" collapsible="false" columns="1" rendered="{!isAvailable}">
+				<!-- <apex:pageBlockSectionItem >
+					<apex:outputLabel value="Comments" for="deactivationComments" />
+					<apex:inputTextarea id="deactivationComments" style="width:80%; min-height:100px" value="{!pkg.Deactivation_Comments__c}" rows="3" />
+				</apex:pageBlockSectionItem> -->
+				<apex:outputPanel layout="block" style="text-align: center">
+					<apex:inputTextarea id="deactivationComments" style="width:80%; min-height:3em" value="{!pkg.Deactivation_Comments__c}"/>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:outputPanel layout="block" style="margin-top: 10px; text-align: center">
+				<apex:commandButton action="{!deactivate}" value="Continue" rendered="{!isAvailable}"/>
+				<apex:commandButton action="{!back}" value="Back" /> 
+			</apex:outputPanel>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

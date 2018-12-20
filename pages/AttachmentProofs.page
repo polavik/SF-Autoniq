@@ -1,0 +1,169 @@
+<apex:page controller="AttachmentProofsCtrl">
+    <script type="text/javascript" src="{!URLFOR($Resource.Scripts,'/jquery-1.8.2.min.js')}"></script>
+    <script type="text/javascript" src="{!$Resource.blockUI}"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.3/css/jquery.dataTables.min.css"/>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.3/js/jquery.dataTables.min.js"></script>
+
+    <style>
+        #upload-another-icon{
+            vertical-align: middle;
+            cursor: pointer;
+        }
+        
+        .doc-to-upload, .theRecordSelected, .dataTables_filter, .dataTables_length{
+            display: none;
+        }
+
+    </style>
+    <script>
+        var $j = jQuery.noConflict();
+
+        $j(function(){
+            defineDataTable();
+            appendUploadBtn();
+            
+            $j('#upload-another-icon').click(function(){
+                appendUploadBtn();
+            });
+
+            $j('#upload-attachments').click(function(){
+                var recordSelected = findSelectedRecord();
+                if( recordSelected ){
+	                setSelectedRecord( recordSelected );
+                    uploadAttachments();
+                }
+                else{
+                	alert('Please select an object to attach documents to via the radio button');
+                }
+            });
+        });
+        
+        function findSelectedRecord(){
+        	var recordToAttachTo = $j('.record-to-attach:checked');
+        	var id;
+			if( recordToAttachTo.length != 0 ){
+            	id = recordToAttachTo.attr('record-id');
+            }
+            return id;
+        }
+        
+        function setSelectedRecord( rec ){
+            $j('.theRecordSelected').eq(0).val( rec ).change();
+        }
+        
+        function displayInput(){
+        	var record = findSelectedRecord();
+        	setSelectedRecord( record );
+			displayRequiredFields( record );
+        }
+        
+        function defineDataTable(){
+        	var table = jQuery('#recordsToAttachTo');
+        	var cols = determineColTypes( table );
+
+            table = table.DataTable({
+                  "columns": cols
+              }
+            );
+            table.page.len(10).draw();
+        }
+        
+        function determineColTypes( table ){
+        	var headers = table.children().find('th');
+        	var cols = [];
+        	for( var i = 0; i < headers.length; i++ ){
+        		var dataType = headers.eq(i).attr('data-type');
+        		if( dataType == 'date' ){
+        			cols.push( { "orderDataType": "date-eu" } );
+        		}
+        		else if( dataType == 'boolean' ){
+        			cols.push( null );
+        		}
+        		else{
+        			cols.push( { "orderDataType": "dom-text" } );
+        		}
+        	}
+        	return cols;
+        }
+        
+        function appendUploadBtn(){
+            var docs = $j('.doc-to-upload');
+            for( var i = 0; i < docs.length; i++ ){
+                var doc = docs.eq(i);
+                if( doc.css('display') == 'none' ){
+                    doc.css('display', 'block');
+                    break;
+                }
+                if( docs.length - 1 == i ){
+                    $j('#upload-additional-section').hide();
+                }
+            }
+        }
+    </script>    
+    
+    <apex:form >
+        <apex:actionRegion >
+            <apex:actionFunction name="displayRequiredFields" rerender="fieldsToEnter">
+            	<apex:param name="selectedToAttachTo" value=""/>
+            </apex:actionFunction>
+            <apex:inputText value="{!selectedToAttachTo}" styleClass="theRecordSelected"/>
+        </apex:actionRegion>
+
+        <apex:actionFunction name="uploadAttachments" action="{!uploadAttachments}"/>
+        <apex:pageBlock title="Please Select the Record to Attach File" id="recordsToAttachTo">
+            <apex:pageMessages id="messages"/>
+            <apex:outputPanel id="panelRecordsToAttachTo">
+                <table class="list" id="recordsToAttachTo">
+                    <thead>
+                        <tr class="headerRow">
+                            <th class="headerRow" data-type="boolean">Action</th>
+                            <apex:repeat value="{!fieldMembers}" var="f">
+                                <th class="headerRow" data-type="{!f.Type}">{!f.label}</th>
+                            </apex:repeat>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <apex:repeat value="{!records}" var="record">
+                            <tr class="dataRow">
+                                <td>
+	                            	<input type="radio" name="recordToAttach" class="record-to-attach" value="false" record-id="{!record.Id}" onclick="displayInput();"/>
+                                </td>
+                                <apex:repeat value="{!fieldMembers}" var="f">
+                                    <td><apex:outputField value="{!record[f]}"/></td>
+                                </apex:repeat>
+                            </tr>
+                        </apex:repeat>
+                    </tbody>
+                </table>
+            </apex:outputPanel>
+        </apex:pageBlock>
+        
+        <apex:outputPanel id="fieldsToEnter">
+            <apex:pageBlock title="Required Input" rendered="{!displayFields}" >
+                <apex:repeat value="{!additionalInput}" var="f">
+                	{!f.label}
+                    <apex:inputField value="{!selectedObj[f]}" required="{!f.required}"/>
+                </apex:repeat>
+            </apex:pageBlock>
+        </apex:outputPanel>
+        
+        <apex:pageBlock title="Please Select and Upload the File">
+            <div id="docs-to-upload">
+                <apex:repeat value="{!attachments}" var="attachment">
+                    <apex:inputFile value="{!attachment.Body}" filename="{!attachment.name}" styleClass="doc-to-upload"/>
+                </apex:repeat>
+            </div>
+
+            <div id="additional-uploads">
+                <div id="upload-additional-section">
+                    <img src="{!$Resource.plus_50}" id="upload-another-icon"/>
+                    <span>Upload Another File</span>
+                </div>
+                <div>
+                    <input type="button" class="btn" value="Upload and Save" id="upload-attachments" />
+                    <apex:commandButton action="{!returnBack}" value="Cancel" immediate="true"/>
+                </div>
+            </div>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,11 @@
+<apex:component access="global">	
+	<div class="cPageBlock">
+		<apex:attribute name="header" description="Header for the pageBlock" 
+					type="String" required="required" /> 
+		<div class="cPageBlockBody">
+			<div class="cPageBlockHeader"><h2>{!header}</h2></div>
+			<apex:componentBody />
+		</div>
+		<div class="cPageBlockFooterRight"/>
+	</div>
+</apex:component>

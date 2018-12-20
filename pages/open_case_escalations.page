@@ -1,0 +1,1 @@
+<apex:page standardController="Case_Escalation__c" extensions="OpenCaseEscalationsController" recordSetVar="Escalation" tabStyle="Case_Escalation__c" action="{!redirect}" />

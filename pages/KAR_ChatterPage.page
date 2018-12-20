@@ -1,0 +1,241 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeForceIntranetChatterController" >
+    <title>Chatter</title>
+    <style>
+        .pollfieldset legend {
+            border-bottom: 0;
+        }
+        .group-header {
+            background: #edf4fa;
+            border-bottom: 1px solid #cde1f1;
+            display: block;
+            width: 100%;
+            height: 55px;
+            padding: 10px;
+        }
+        .sub-header {
+            padding-left:10px;
+        }
+
+
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <div class="container-bs chatter-page desktop-pad-t">
+                <div class="r1-c2 one-third md">
+                    <div class="widget-left user-sidebar">
+                        <div class="widget-heading">
+                            <h2><a href="/apex/KAR_ViewUserProfile?Id={!$User.Id}">{!currentUser.Name}</a></h2>
+                        </div><!-- /.widget-heading -->
+                        <apex:form styleClass="sidebar-nav with-icons">
+                            <apex:commandLink onComplete="performAllActions();" action="{!showFeed}" reRender="rightpagepanel"><span class="icon-feed"></span>{!$Label.Feed}</apex:commandLink>
+                            <apex:commandLink onComplete="performAllActions();" action="{!showMyFeed}" reRender="rightpagepanel"><span class="icon-user"></span>{!$Label.EF_My_Feed}</apex:commandLink>
+                            <apex:commandLink action="{!showGroup}" reRender="rightpagepanel"><span class="icon-collaboration"></span>{!$Label.Communities}</apex:commandLink>
+                            <apex:commandLink onComplete="performAllActions();" action="{!showMyFollowers}" reRender="rightpagepanel"><span class="icon-users2"></span>My Followers</apex:commandLink>
+                            <apex:commandLink onComplete="performAllActions();" action="{!showFollowing}" reRender="rightpagepanel"><span class="icon-users2"></span>Following</apex:commandLink>
+                        </apex:form>
+                    </div><!-- /.widget-left -->
+                    <div class="widget-right">
+                        <apex:outputPanel id="rightpagepanel" layout="block" styleClass="chatter-panel">
+                            <apex:outputPanel rendered="{!isFeed}">
+                                <div class="widget-heading">
+                                    <h2>{!$Label.Feed}</h2>
+                                </div>
+                                <div class="content">
+                                    <div class="chatterPanel">
+                                        <chatter:newsFeed />
+                                        <c:EF_CustomChatter />
+                                    </div><!-- /.chatterPanel -->
+                                </div><!-- /.content -->
+                            </apex:outputPanel><!--/.feeds panel -->
+
+                            <apex:outputPanel rendered="{!isMyFeed}">
+                                <div class="widget-heading">
+                                    <h2>{!$Label.Feed}</h2>
+                                </div>
+                                <div class="content">
+                                    <div class="chatterPanel">
+                                        <apex:dynamicComponent componentValue="{!userFeed}"/>
+                                        <c:EF_CustomChatter />
+                                    </div><!-- /.chatterPanel -->
+                                </div>
+                            </apex:outputPanel><!--/.feeds panel -->
+
+                            <apex:outputPanel rendered="{!isMyFollowers || isFollowing}">
+                                <div class="widget-heading">
+                                    <h2>{!IF(isMyFollowers,'My Followers','Following')}</h2>
+                                </div>
+                                <div class="content tile-grid">
+                                    <apex:repeat value="{!lstUsersSelected}" var="chatterUser">
+                                        <div>
+                                            <div class="tile">
+                                                <a href="/apex/KAR_ViewUserProfile?id={!chatterUser.id} " >
+                                                    <img src="{!chatterUser.SmallPhotoUrl}" ></img>
+                                                    <span class="details">
+                                                        <span class="name">{!chatterUser.Name}</span>
+                                                        <span class="role">{!chatterUser.Title}</span>
+                                                        <span class="dept">{!chatterUser.CompanyName}</span>
+                                                    </span>
+                                                </a>
+                                                <div class="gift">
+                                                    <apex:outputPanel rendered="{!chatterUser.userType=='Standard'}">
+                                                        <chatter:follow entityId="{!chatterUser.id}" />
+                                                    </apex:outputPanel>
+                                                </div>
+                                            </div><!-- /.tile -->
+                                        </div>
+                                    </apex:repeat>
+                                </div><!-- /.content -->
+                            </apex:outputPanel><!--/.feeds panel -->
+
+                            <apex:outputPanel rendered="{!isGroup}">
+                                <div class="widget-heading">
+                                    <h2>{!$Label.Communities}</h2>
+                                    <a data-toggle="modal" data-target="#create-group" class="create-new-community">{!$Label.EF_ChatterCreateNewCommunity}</a>
+                                </div>
+                                <div class="content">
+
+                                    <h3>{!$Label.EF_ChatterMyGroups}</h3>
+                                    <div class="tile-grid">
+                                        <apex:repeat value="{!userGroups}" var="userGroup">
+                                            <div>
+                                                <div class="tile">
+                                                    <a href="/apex/KAR_ChatterGroup?g={!userGroup.id}">
+                                                        <img height="45" width="45" src="{!userGroup.SmallPhotoUrl}" />
+                                                        <span class="details">
+                                                            <span class="name">{!userGroup.Name}</span>
+                                                            <span class="title">{!userGroup.MemberCount} {!$Label.EF_ChatterGroup_MembersLabel}</span>
+                                                        </span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </apex:repeat>
+                                    </div><!-- /.tile-grid -->
+
+                                    <h3>{!$Label.EF_ChatterActiveGroups}</h3>
+                                    <div class="tile-grid">
+                                        <apex:repeat value="{!activeGroups}" var="userGroup">
+                                            <div>
+                                                <div class="tile">
+                                                    <a href="/apex/KAR_ChatterGroup?g={!userGroup.id}">
+                                                        <img  height="45" width="45" src="{!userGroup.SmallPhotoUrl}" />
+                                                        <span class="details">
+                                                            <span class="name">{!userGroup.Name}</span>
+                                                            <span class="title">{!userGroup.MemberCount} {!$Label.EF_ChatterGroup_MembersLabel}</span>
+                                                        </span>
+                                                    </a>
+                                                    <apex:form >
+                                                        <apex:commandLink styleClass="btn-bs btn-default btn-xs" action="{!joinGroup}" value="{!$Label.EF_ChatterJoinLabel}">
+                                                            <apex:param value="{!userGroup.Id}" name="id" assignTo="{!groupId}" ></apex:param>
+                                                        </apex:commandLink>
+                                                    </apex:form>
+                                                </div><!-- /.tile -->
+                                            </div>
+                                        </apex:repeat>
+                                    </div><!-- /.tile-grid -->
+                                </div><!--/.content -->
+
+                                <div class="modal fade" id="create-group" tabindex="-1" role="dialog" aria-labelledby="create-groupLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="create-groupLabel">{!$Label.EF_ChatterCreateNewCommunity} <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h5>
+                                            </div><!--/.modal-header -->
+
+                                            <div class="modal-body">
+                                                <apex:form >
+                                                    <div class="form-group">
+                                                        <label for="grpNameText">{!$Label.EF_ChatterGroupName}</label>
+                                                        <apex:inputtext value="{!groupName}"  styleClass="form-control" id="grpNameText"></apex:inputtext>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>{!$Label.EF_ChatterDescription}</label>
+                                                        <apex:inputTextarea value="{!groupDesc}" styleClass="form-control"></apex:inputTextarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>{!$Label.EF_ChatterGroupAccess}</label>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" value="public" name="accessRadio" onclick="updateAccessField(this);" checked="true"/>
+                                                                {!$Label.EF_ChatterPublicText}
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" value="private" name="accessRadio" onclick="updateAccessField(this);" />
+                                                                {!$Label.EF_ChatterPrivateText}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <hr />
+                                                    <div class="form-group">
+                                                        <label>{!$Label.EF_ChatterAutomaticArchiving}</label>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" value="false" name="archiveRadio" onclick="updateArchiveField(this);" checked="true"/>
+                                                                {!$Label.EF_ChatterAutoArchiving}
+                                                            </label>
+                                                        </div>
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" value="true" name="archiveRadio" onclick="updateArchiveField(this);"/>
+                                                                {!$Label.EF_ChatterDontAutoArchive}
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                    <apex:inputHidden value="{!access}" id="accessHidden"></apex:inputHidden>
+                                                    <apex:inputHidden value="{!isAutoArchieve}" id="archiveHidden"></apex:inputHidden>
+                                                    <apex:actionFunction name="createGroup" action="{!createNewGroup}"></apex:actionFunction>
+                                                </apex:form>
+                                            </div><!--/.modal-body -->
+                                            <div class="modal-footer">
+                                                <button type="button"  onclick="validate()" class="btn-bs btn-default">{!$Label.EF_ChatterSave}</button>
+                                                <button type="button" class="btn-bs btn-primary" data-dismiss="modal">{!$Label.EF_ChatterCancelLabel}</button>
+                                            </div>
+                                        </div><!--/.modal-content -->
+                                    </div><!--/.modal-dialog -->
+                                </div><!--/.modal -->
+
+                            </apex:outputPanel><!--/.group panel -->
+
+                        </apex:outputPanel>
+
+                    </div><!-- /.widget-right -->
+                </div><!--/.r1-c2 -->
+            </div><!--/.container-bs -->
+
+            <script>
+                function updateAccessField(ref){
+                    $("input[id$=accessHidden]").val($(ref).val());
+                    if($(ref).val()=="private"){
+                        $("input[id$=allowCustomerchk]").removeAttr("disabled");
+                    }
+                    else{
+                        $("input[id$=allowCustomerchk]").attr("disabled","true");
+                    }
+                }
+                function updateArchiveField(ref){
+                    $("input[id$=archiveHidden]").val($(ref).val());
+                }
+                function validate(){
+                    if($("input[id$=grpNameText]").val()==""){
+                        alert('Please enter Group Name');
+                    }
+                    else{
+                        createGroup();
+                    }
+                }
+            </script>
+
+        </apex:define>
+    </apex:composition>
+</apex:page>

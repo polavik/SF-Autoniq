@@ -1,0 +1,198 @@
+<apex:page sidebar="false"  Controller="DuplicateContactMergeController" title="Duplicate Contact Merge">
+
+<script>
+  function printalert()
+  {
+      var r = confirm("Are you sure want to proceed?");
+        if (r == true) {            
+            //callController();
+            setTimeout(callController(),10000 );
+        } else {
+            return false;
+        }  
+  }  
+</script> 
+<style>
+.z-modal-mask {
+    width:100%;
+    height:100%;
+    background: grey;
+    opacity: 0.6;
+    position:absolute;
+    background-image: url({!$Resource.ProcessingImage2}); background-repeat: no-repeat;
+    background-size: 300px 63px;
+    background-position: center; 
+}
+
+
+#{!$Component.Section1} tr:nth-child(even) {background: #FFFAFA}
+#{!$Component.Section1} tr:nth-child(odd) {background: #FFFFFF}
+
+.detailtable tr:nth-child(even) {background: #FFFAFA}
+.detailtable tr:nth-child(odd) {background: #FFFFFF}
+
+
+</style>
+<apex:form id="frmWaiting">
+<apex:actionStatus id="AddStatus">
+<apex:facet name="start">
+    <div class="z-modal-mask">    
+    </div>    
+</apex:facet>
+</apex:actionStatus>
+</apex:form>
+ <!--<img src="/img/loading.gif" alt="Loading graphic" />-->
+<apex:form id="mainform" styleClass="detailtable">
+<apex:pageMessages id="msg" escape="false"/>   
+<apex:actionFunction name="callController" action="{!mergeContact}"  rerender="msg,mainBlock" status="AddStatus"  />  
+<apex:sectionHeader title="Contact" subtitle="Duplicate Contact Merge"/>
+<apex:pageBlock id="mainBlock" mode="detail"  >
+<apex:outputText id="outText1" value="{!strOut}" escape="false">
+</apex:outputText>
+<apex:pageBlockSection columns="2" showHeader="false"  >
+
+    <apex:pageBlockSection columns="1" title="Winner Contact" collapsible="false" >
+        <apex:pageBlockSection columns="3" title="Search Winner Contact" showHeader="false">        
+            <apex:outputText value="Enter Master Index ID: "/>       
+            <apex:inputText id="txtSearch" value="{!searchText}" title="Enter Master Index to be search" />
+            <apex:commandButton id="btnSearchMasterContact" title="Search for Winner Contact" value=" Search " action="{!search}" rerender="msg,mainBlock" status="AddStatus"/>            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" title="Contact Details" showHeader="true" id="Section1"  >
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Master Index"/>
+                    <apex:outputText value="{!conMaster.Master_Index__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Contact Name"/>
+                    <apex:outputLink value="/{!conMaster['Id']}" target="_blank">{!conMaster.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Account Name"/>
+                    <apex:outputLink value="/{!conMaster.accountId}" target="_blank">{!conMaster.Account.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem>          
+             <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email"/>
+                    <apex:outputText value="{!conMaster.Email}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Phone"/>
+                    <apex:outputText value="{!conMaster.Phone}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Address"/>
+                    <apex:outputText value="{!conMaster.MailingStreet},{!conMaster.MailingCity},{!conMaster.MailingState},{!conMaster.MailingPostalCode},{!conMaster.MailingCountry}" />                    
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Active"/>                      
+                    <apex:outputField value="{!conMaster.Active__c}"/>                 
+            </apex:pageBlockSectionItem>                        
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mdm ID"/>
+                    <apex:outputText value="{!conMaster.Mdm_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Party Id"/>
+                    <apex:outputText value="{!conMaster.Party_Id__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Person ID"/>
+                    <apex:outputText value="{!conMaster.Person_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Login ID"/>
+                    <apex:outputText value="{!conMaster.Login_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Login Name"/>
+                    <apex:outputText value="{!conMaster.Login_Name__c}" />                    
+            </apex:pageBlockSectionItem>
+            
+        </apex:pageBlockSection>    
+    </apex:pageBlockSection>
+    
+
+    <apex:pageBlockSection columns="1" title="Duplicate Contact" collapsible="false">    
+        <apex:pageBlockSection columns="3" title="Search Duplicate Contact" showHeader="false">        
+            <apex:outputText value="Enter Master Index ID: "/>       
+            <apex:inputText id="txtSearchDuplicate" value="{!searchTextDuplicate}" title="Enter Master Index to be search" />
+            <apex:commandButton id="btnSearchMasterContact" title="Search for Duplicate Contact" value=" Search " action="{!searchDuplicate}" rerender="msg,mainBlock" status="AddStatus"/>            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" title="Contact Details" showHeader="true" >
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Master Index" />
+                    <apex:outputText value="{!conDuplicate.Master_Index__c}" />                    
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Contact Name"/>
+                    <apex:outputLink value="/{!conDuplicate['Id']}" target="_blank">{!conDuplicate.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem> 
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Account Name"/>
+                    <apex:outputLink value="/{!conDuplicate.AccountId}" target="_blank">{!conDuplicate.Account.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem>          
+             <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email"/>
+                    <apex:outputText value="{!conDuplicate.Email}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Phone"/>
+                    <apex:outputText value="{!conDuplicate.Phone}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mailing Address"/>
+                    <apex:outputText value="{!conDuplicate.MailingStreet},{!conDuplicate.MailingCity},{!conDuplicate.MailingState},{!conDuplicate.MailingPostalCode},{!conDuplicate.MailingCountry}" />                    
+            </apex:pageBlockSectionItem>            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Active"/>                      
+                    <apex:outputField value="{!conDuplicate.Active__c}"/>                 
+            </apex:pageBlockSectionItem>                        
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mdm ID"/>
+                    <apex:outputText value="{!conDuplicate.Mdm_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Party Id"/>
+                    <apex:outputText value="{!conDuplicate.Party_Id__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Person ID"/>
+                    <apex:outputText value="{!conDuplicate.Person_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Login ID"/>
+                    <apex:outputText value="{!conDuplicate.Login_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Login Name"/>
+                    <apex:outputText value="{!conDuplicate.Login_Name__c}" />                    
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>  
+        
+        <apex:pageBlockSection columns="1"  showHeader="false" >
+         <apex:pageBlockSectionItem dataStyle="border-top:1px solid;" >
+                    <apex:outputLabel value="Duplicate?" style="color:blue;"/>
+                    <apex:inputCheckbox value="{!conDuplicate.Duplicate__c }" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyle="border-bottom:1px solid;">
+                <apex:outputLabel value="Winner Contact Master Index" style="color:blue;"/>
+                <apex:inputText id="txtMasterIndex"  value="{!MasterIndex}"  title="Enter Master Index of Winner Contact" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlockSection>
+    
+</apex:pageBlockSection>
+
+<apex:pageBlockSection columns="3"  showHeader="false" rendered="{!ShowDetail}"    >
+    <apex:outputLabel />    
+    <apex:pageBlockSection columns="3"  showHeader="false"   >
+         <apex:outputLabel />    
+          <apex:commandButton id="btnMergeContact" onclick="printalert()" rerender="mainBlock" value=" Merge Contact " title="Click to mark right side Contact of page is duplicate Contact " />            
+          <!-- action="{!mergeContact}" -->
+         <apex:outputLabel />
+    </apex:pageBlockSection>
+    <apex:outputLabel />
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+ </apex:form>
+</apex:page>

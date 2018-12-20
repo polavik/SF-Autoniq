@@ -1,0 +1,33 @@
+<apex:page standardController="Case_Escalation__c" extensions="CaseEscalationCommentController">
+    <apex:form >
+        <apex:pageBlock title="Add Comment to Case Escalation">
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!submit}" value="Submit"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:messages />
+            <apex:pageBlockSection id="section" showHeader="false" columns="2" rendered="{!editCommentPermission}" >
+                <apex:pageBlockSectionItem id="section1">
+                    <apex:outputLabel value="Show dealer this comment" for="visible_to_buyer"/>
+                    <apex:inputCheckbox value="{!visibleToBuyer}" id="visible_to_buyer"  onChange="setCheckBox('{!$Component.section.section1.visible_to_buyer}', '{!$Component.section.section2.send_email_notification}', true);"/>
+                </apex:pageBlockSectionItem>
+                <apex:pageBlockSectionItem id="section2">
+                    <apex:outputLabel value="Send notification to dealer" for="send_email_notification"/>
+                    <apex:inputCheckbox value="{!sendEmailToBuyer}" id="send_email_notification" onChange="setCheckBox('{!$Component.section.section1.visible_to_buyer}' , '{!$Component.section.section2.send_email_notification}', false);"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            <apex:inputTextarea style="width:100%; min-height:8em" value="{!newComment}"/>
+        </apex:pageBlock>
+    </apex:form>
+    <script>
+        function setCheckBox(visibleCheckBox, emailCheckBox, first){
+            checkBox1 = document.getElementById(visibleCheckBox);
+            checkBox2 = document.getElementById(emailCheckBox);
+            if(checkBox2.checked && !checkBox1.checked && !first){
+                checkBox1.checked = 'Checked';
+            }else if(!checkBox1.checked && checkBox2.checked && first){
+                checkBox2.checked = '';
+            }
+        }
+    </script>
+</apex:page>

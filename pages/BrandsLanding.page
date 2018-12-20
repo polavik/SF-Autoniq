@@ -1,0 +1,335 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false"
+    standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false"
+    title="Brands" controller="BrandsLandingController">
+
+    <!-- HEADER -->
+    <title>KAR</title>
+    <style>
+        .hero .back-btn {
+             width: 20px;
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+            <div class="team-page brand-landing">
+
+                <div class="secondary-nav">
+                    <div class="container-bs">
+                        <c:KAR_StockTicker />
+                    </div>
+                </div><!--/.secondary-nav -->
+
+                <div class="container-bs hero team" style="background-image: url(/servlet/servlet.FileDownload?file={!homePageInfo[0].content.Attachments[bannerFileLoc].Id}&amp;otherId=);">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content {!IF($User.UIThemeDisplayed !="Theme4t",'','hide')}">
+                        <a class="back-btn" onclick="history.back();">
+                                <img src="{!URLFOR($Resource.KARDesign, 'img/arrow-left_white.svg')}"/> BACK
+                            </a>
+                    </div>
+                    <div class="flex-row hero-content">
+                        <div>
+                            <img src="{!URLFOR($Resource.KARDesign, 'img/logo_kar-auction-services.png')}" class="brands-logo" />
+                        </div>
+                        <div>
+                            <h1 class="hero-title">{!homePageInfo[0].contentVersionforDisplay.Title__c}</h1>
+                            <div class="intro">{!homePageInfo[0].contentVersionforDisplay.Description__c}</div>
+                            <div class="controls">
+                                <!-- <a class="btn-bs btn-bordered" href="#explore-brand">Explore the brands</a> -->
+                                <div class="dropdown">
+                                    <a id="select-brand" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon">Select a Brand</a>
+                                    <ul class="dropdown-menu" aria-labelledby="select-brand" style="height:100%; overflow-y: scroll;">
+                                        <li class="mobile-drop-controls">
+                                            <div class="title">Select a Brand</div><a href="#">&times;</a>
+                                        </li>
+                                        <apex:repeat value="{!brands}" var="br">
+                                            <li>
+                                                <a href="{!IF(contains(br.content.Target__c, 'Frame'), '/apex/KAR_Frame?url=' + br.contentVersionForDisplay.URL__c  + '&height=' + TEXT(br.content.Frame_Height__c), IF(br.contentVersionForDisplay.URL__c <> '', br.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + br.content.name + '&tabName=Our+Brands'))}" target="{!IF(contains(br.content.Target__c, 'Frame'), "_parent", br.content.Target__c)}">{!br.content.Name}</a>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </div>
+                            </div><!-- /.controls -->
+                        </div>
+                    </div><!-- /.flex-row -->
+                </div><!-- /.hero -->
+
+                <!-- MAIN VIEW -->
+                <apex:outputPanel rendered="{!chosenView =='brandshome'}">
+                    <div class="container-bs">
+                        <a name="explore-brand"></a>
+                        <div class="r1-c1">
+                            <div class="widget-heading white has-controls ">
+                                <div class="flex-row">
+                                    <h2>Explore KAR Brands</h2>
+                                </div>
+                                <div class="controls"></div>
+                                <!-- /.controls -->
+                            </div>
+                            <!-- /.widget-header -->
+                            <div class="card-grid brands">
+                                <div class="content">
+                                <a href="{!IF(contains(visionData[0].content.Target__c, 'Frame'),
+                                      '/apex/KAR_Frame?url=' + visionData[0].contentVersionForDisplay.URL__c  + '&height=' + TEXT(visionData[0].content.Frame_Height__c),
+                                       IF(visionData[0].contentVersionForDisplay.URL__c <> '', visionData[0].contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + visionData[0].content.name + '&tabName=Our+Brands'))}"
+                            target="{!IF(contains(visionData[0].content.Target__c, 'Frame'),
+                                      "_parent",
+                                      visionData[0].content.Target__c)}" class="card">
+                                        <div class="photo">
+                                            <img src="/servlet/servlet.FileDownload?file={!homePageInfo[0].content.Attachments[visionFileLoc].Id}" class="img-responsive" />
+                                        </div>
+                                        <div class="title">KAR Corporate</div>
+                                        <div class="description">View the vision and strategy of
+                                            the KAR brands</div>
+                                        <div class="controls">
+                                            <div class="btn-bs btn-primary">View</div>
+                                        </div>
+                                    </a> <a href="/apex/BrandsLanding?view=remkt" class="card">
+                                        <div class="photo">
+                                            <img src="/servlet/servlet.FileDownload?file={!homePageInfo[0].content.Attachments[remarketFileLoc].Id}" class="img-responsive" />
+                                        </div>
+                                        <div class="title">Remarketing Lifecycle</div>
+                                        <div class="description">Explore how the KAR brand fits
+                                            into our full remarketing lifecycle</div>
+                                        <div class="controls">
+                                            <div class="btn-bs btn-primary">View</div>
+                                        </div>
+                                    </a> <a href="/apex/BrandsLanding?view=list" class="card">
+                                        <div class="photo">
+                                            <img src="/servlet/servlet.FileDownload?file={!homePageInfo[0].content.Attachments[bListFileLoc].Id}" class="img-responsive" />
+                                        </div>
+                                        <div class="title">Brand List</div>
+                                        <div class="description">Explore the KAR brands
+                                            alphabetically</div>
+                                        <div class="controls">
+                                            <div class="btn-bs btn-primary">View</div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <!-- /.content -->
+                            </div>
+                            <!-- /.card-grid -->
+                        </div>
+                        <!-- /.r1-c1 -->
+                    </div>
+                    <!-- /.container-bs -->
+
+                </apex:outputPanel>
+
+                <!-- VISION AND STRATEGY VIEW -->
+                <apex:outputPanel rendered="{!chosenView =='vision'}">
+                    <h1>Vision &amp; Strategy</h1>
+                </apex:outputPanel>
+
+                <!-- REMARKETING LIFECYCLE VIEW -->
+                <apex:outputPanel rendered="{!chosenView =='remkt'}">
+                    <div class="container-bs">
+                        <a name="explore-brand"></a>
+                        <div class="r1-c1">
+                            <div class="widget-heading white has-controls ">
+                                <div class="flex-row">
+                                   <div class="button-group">
+                                      <a href="#"><img src="{!URLFOR($Resource.KARDesign, 'img/grid.svg')}" alt="Grid View" /></a>
+                                      <a href="/apex/BrandsLanding?view=list"><img src="{!URLFOR($Resource.KARDesign, 'img/list.svg')}" alt="List View" /></a>
+                                   </div>
+                                    <!-- /.button-group -->
+                                    <h2>Explore KAR Brands</h2>
+                                </div>
+                                <div class="controls"></div>
+                                <!-- /.controls -->
+                            </div>
+                            <!-- /.widget-header -->
+
+                            <h2 class="explore-heading">Remarketing Brand Cycle</h2>
+                            <div class="brand-list remarketing-cycle">
+                                <div class="side-nav">
+                                    <div class="title">One KAR Menu</div>
+                                    <apex:repeat value="{!brandsForRemarket}" var="bfr">
+                                        <div class="group">
+                                            <a href="#{!bfr.rawLabelNoSpaces}" class="active"><span
+                                                class="letters">{!bfr.rawLabel}</span><span class="count">{!bfr.pairedCount}</span></a>
+                                        </div>
+                                    </apex:repeat>
+                                </div>
+                                <div class="content">
+                                    <apex:repeat value="{!brandsForRemarket}" var="bfrr">
+                                        <a name="{!bfrr.rawLabelNoSpaces}" class="section-heading">{!bfrr.rawLabel}</a>
+                                        <div class="section">
+                                            <apex:repeat value="{!bfrr.pb}" var="pb">
+                                            <div class="item">
+                                                <a href="#"> <span></span>
+                                                </a> <img
+                                                     src="/servlet/servlet.FileDownload?file={!pb.LHS.content.Attachments[pb.lhsFlipCardFrontLoc]}&amp;otherId="
+                                                    alt="" class="tile-logo" />
+                                                <div class="tile">
+                                                    <div class="flipper">
+                                                        <div class="front"></div>
+                                                        <div class="back">
+                                                            <a class="close-tile">&times;</a>
+                                                            <img src="/servlet/servlet.FileDownload?file={!pb.LHS.content.Attachments[pb.lhsFlipCardLoc]}&amp;otherId="
+                                                                class="img-responsive img-responsive" />
+                                                            <div class="title">{!pb.LHS.content.name}</div>
+                                                            <div class="summary">{!pb.LHS.content.Team_Mission_Statement__c}</div>
+                                                            <div class="controls">
+                         <a href="{!IF(contains(pb.LHS.content.Target__c, 'Frame'),
+                                      '/apex/KAR_Frame?url=' + pb.LHS.contentVersionForDisplay.URL__c  + '&height=' + TEXT(pb.LHS.content.Frame_Height__c),
+                                       IF(pb.LHS.contentVersionForDisplay.URL__c <> '', pb.LHS.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + pb.LHS.content.name + '&tabName=Our+Brands'))}"
+                            target="{!IF(contains(pb.LHS.content.Target__c, 'Frame'),
+                                      "_parent",
+                                      pb.LHS.content.Target__c)}" class="btn-bs btn-sm btn-default">View</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="item" style="visibility:{!if(pb.count == 2, 'visible','hidden')};">
+                                                <a href="#"> <span></span>
+                                                </a> <img
+                                                     src="/servlet/servlet.FileDownload?file={!pb.RHS.content.Attachments[pb.rhsFlipCardFrontLoc]}&amp;otherId="
+                                                    alt="" class="tile-logo" />
+                                                <div class="tile">
+                                                    <div class="flipper">
+                                                        <div class="front"></div>
+                                                        <div class="back">
+                                                            <a class="close-tile">&times;</a>
+                                                            <img src="/servlet/servlet.FileDownload?file={!pb.RHS.content.Attachments[pb.rhsFlipCardLoc]}&amp;otherId="
+                                                                class="img-responsive img-responsive" />
+                                                            <div class="title">{!pb.RHS.content.name}</div>
+                                                            <div class="summary">{!pb.RHS.content.Team_Mission_Statement__c}</div>
+                                                            <div class="controls">
+                         <a href="{!IF(contains(pb.RHS.content.Target__c, 'Frame'),
+                                      '/apex/KAR_Frame?url=' + pb.RHS.contentVersionForDisplay.URL__c  + '&height=' + TEXT(pb.RHS.content.Frame_Height__c),
+                                       IF(pb.RHS.contentVersionForDisplay.URL__c <> '', pb.RHS.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + pb.RHS.content.name + '&tabName=Our+Brands'))}"
+                            target="{!IF(contains(pb.RHS.content.Target__c, 'Frame'),
+                                      "_parent",
+                                      pb.RHS.content.Target__c)}" class="btn-bs btn-sm btn-default">View</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            </apex:repeat>
+                                        </div>
+                                    </apex:repeat>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+
+                <!-- LIST VIEW -->
+                <apex:outputPanel rendered="{!chosenView =='list'}">
+                    <div class="container-bs">
+                        <a name="explore-brand"></a>
+                        <div class="r1-c1">
+                            <div class="widget-heading white has-controls ">
+                                <div class="flex-row">
+                                   <div class="button-group">
+                                      <a href="/apex/BrandsLanding?view=remkt"><img src="{!URLFOR($Resource.KARDesign, 'img/grid.svg')}" alt="Grid View" /></a>
+                                      <a href="#"><img src="{!URLFOR($Resource.KARDesign, 'img/list.svg')}" alt="List View" /></a>
+                                   </div>
+                                    <!-- /.button-group -->
+                                    <h2>Explore KAR Brands</h2>
+                                </div>
+                                <div class="controls"></div>
+                                <!-- /.controls -->
+                            </div>
+                            <!-- /.widget-header -->
+                            <div class="brand-list">
+                                <div class="side-nav">
+                                    <div class="title">One KAR Menu</div>
+                                    <div class="group">
+                                        <a href="All" class="active"><span class="letters">All</span><span
+                                            class="count">{!allBrands.count}</span></a>
+                                    </div>
+                                    <apex:repeat value="{!brandsForList}" var="bfl">
+                                        <div class="group">
+                                            <a href="#{!bfl.firstName}" class="active"><span
+                                                class="letters">{!bfl.label}</span><span class="count">{!bfl.count}</span></a>
+                                        </div>
+                                    </apex:repeat>
+                                </div>
+                                <a name="all-brands"></a>
+                                <div class="content">
+                                    <apex:repeat value="{!brands}" var="b2">
+                         <a href="{!IF(contains(b2.content.Target__c, 'Frame'),
+                                      '/apex/KAR_Frame?url=' + b2.contentVersionForDisplay.URL__c  + '&height=' + TEXT(b2.content.Frame_Height__c),
+                                       IF(b2.contentVersionForDisplay.URL__c <> '', b2.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + b2.content.name + '&tabName=Our+Brands'))}"
+                            target="{!IF(contains(b2.content.Target__c, 'Frame'),
+                                      "_parent",
+                                      b2.content.Target__c)}" class="card" id="{!b2.content.Name}">
+                                            <div class="photo">
+                                                <img
+                                                    src="/servlet/servlet.FileDownload?file={!b2.content.Attachments[b2.baseImageLocation]}&amp;otherId="
+                                                    class="img-responsive" />
+                                            </div>
+                                            <div>
+                                                <div class="title">{!b2.content.Name}</div>
+                                                <div class="description">{!b2.content.Team_Mission_Statement__c}</div>
+                                            </div>
+                                        </a>
+                                    </apex:repeat>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.r1-c1 -->
+                    </div>
+                    <!-- /.container-bs -->
+
+                </apex:outputPanel>
+            </div>
+
+        </apex:define>
+    </apex:composition>
+ <script>
+      $(".search-brands").not('active').click(function(){
+        $(this).addClass('active');
+        $(".search-controls").addClass('active');
+      });
+      $(".item > a").click(function(){
+        $(this).parent().toggleClass('active');
+        $(this).closest('.tile-logo').fadeToggle();
+      });
+      $(".close-tile").click(function(){
+        $(".item").removeClass('active');
+        $('.tile-logo').fadeIn();
+      });
+      $(".tile-logo").click(function(){
+         $(this).parent().toggleClass('active');
+         $(this).fadeToggle();
+      });
+      $(document).click(function (e) {
+        if ($(e.target).parents(".item").length === 0) {
+          $(".item").removeClass('active');
+          $('.tile-logo').fadeIn();
+        }
+      });
+
+      // Sidebar sticks after scrolling 600px
+      $(function(){
+        var SideNav = 900;
+        $(window).scroll(function() {
+          var scroll = getCurrentScroll();
+          if ( scroll >= SideNav ) {
+            $('body').addClass('scrolled');
+          }
+          else {
+            $('body').removeClass('scrolled');
+          }
+        });
+        function getCurrentScroll() {
+          return window.pageYOffset || document.documentElement.scrollTop;
+        }
+      });
+
+      // Smooth scroll to the anchor
+      //$('.item > a').click(function(){
+      //    $('html, body').animate({
+      //        scrollTop: $('[name="' + $.attr(this, 'href').substr(1) + '"]').offset().top
+      //    }, 500);
+      //    return false;
+      //});
+    </script>
+
+</apex:page>

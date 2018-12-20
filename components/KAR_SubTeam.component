@@ -1,0 +1,17 @@
+<apex:component layout="none" controller="EFISubTeamCompController">
+   <a name="explore-subteams"></a>
+   <div class="sub-teams card-grid">
+      <div class="widget-heading blue">
+         <h2><apex:outputText value="{!$Label.KAR_Explore_The_Sub_Teams}"/></h2>
+      </div>
+      <div class="content">
+        <apex:repeat value="{!subTeamList}" var="stl">
+            <a class="card" href="{!IF(stl.content.URL__c == null || stl.content.URL__c == '', '/apex/KAR_SubTeam_jc?&name='+stl.content.Name+'&parent='+pageName+'&tabName=Our+Teams', stl.content.URL__c)}">
+               <div class="card-img" style="background-image:url(/servlet/servlet.FileDownload?file={!stl.content.Attachments[0].Id}&otherId=)"></div>
+               <div class="title">{!stl.contentVersionforDisplay.Title__c}</div>
+               <div class="description">{!stl.contentVersionforDisplay.Description__c}</div>
+            </a>
+         </apex:repeat>
+      </div>
+   </div>
+</apex:component>

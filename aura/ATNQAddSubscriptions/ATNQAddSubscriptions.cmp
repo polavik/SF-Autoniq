@@ -1,0 +1,73 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+	controller="ATNQSubscriptionPanelController" access="global" >
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:handler name="ATNQSubItemSelected" event="c:ATNQSubItemSelected" action="{!c.ATNQSubItemSelected}"/>
+	<!--<aura:attribute name="subitems" type="Object[]" access="public" />-->
+	<aura:attribute name="subscriptionItems" type="Object[]" access="public" />
+	<aura:attribute name="contactId" type="String" access="public" />
+
+	<div class="demo-only" style="height: 640px;">
+		<section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_large slds-list-builder" aria-labelledby="id-of-modalheader-h2" aria-modal="true" aria-describedby="modal-content-id-1">
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+
+						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 id="id-of-modalheader-h2" class="slds-text-heading_medium">Add Subscriptions</h2>
+					<p class="slds-m-top_x-small">Subscription Items</p>
+				</header>
+				<div class="slds-modal__content slds-grid slds-grow" id="modal-content-id-1">
+					<div class="slds-grid slds-grid_vertical">
+						<div class="slds-p-vertical_x-small slds-p-horizontal_large slds-shrink-none slds-theme_shade">
+							
+						<div class="slds-text-title slds-m-top_x-small" aria-live="polite">0 Item(s) Selected</div>
+					</div>
+					<div class="slds-scrollable slds-grow">
+						
+							<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+								<thead>
+									<tr class="slds-text-title_caps">
+										<th scope="col">
+											
+										</th>
+									
+										<th scope="col">
+											Name
+										</th>
+									
+										<th scope="col">
+											test
+										</th>
+
+										<th scope="col">
+											test
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+								<!--<div aura:id="container">     
+								
+
+								</div>-->
+								 <aura:iteration items="{!v.subscriptionItems}" var="subscriptionItem">
+							        <c:ATNQSubItem item="{!subscriptionItem}" isViewMode="{!subscriptionItem.isViewMode}" />
+							    </aura:iteration>
+								
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<footer class="slds-modal__footer">
+				<!--
+				<button class="slds-button slds-button_neutral">Cancel</button>
+				<button class="slds-button slds-button_brand">Add</button>
+			-->
+			</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</div>
+</aura:component>

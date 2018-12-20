@@ -1,0 +1,10 @@
+<apex:component layout="none">
+  <div class="search hidden-xs">
+    <label for="quick-search" class="sr-only">{!$Label.EF_SearchLabel}</label>
+    <input type="text" class="form-control srch-term" placeholder="{!$Label.EF_SearchLabel}" id="quick-search" />
+    <button class="btn-bs btn-default" type="submit" onclick="searchResult();">
+      <span class="icon-search"></span>
+      <span class="sr-only">{!$Label.EF_SearchButtonText}</span>
+    </button>
+  </div>
+</apex:component>

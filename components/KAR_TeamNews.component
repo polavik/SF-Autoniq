@@ -1,0 +1,28 @@
+<apex:component controller="EdgeForceIntranetNewsFeedCompController">
+
+	<apex:attribute name="newsfeedpageId" description="This is the Page Id for displaying intranet news feeds" type="String" assignTo="{!pageId}"/>
+	<apex:attribute name="contentNews" description="This is the Page Id for displaying intranet news feeds" type="String" assignTo="{!pageIdForContent}"/>
+
+	<div class="team-news">
+		<div class="widget-heading red">
+			<h2>{!$Label.News}</h2>
+			<a href="/apex/KAR_NewsPage?name={!groupName}">{!$Label.EF_View_All}</a>
+		</div>
+		<div class="content">
+			<apex:outputPanel id="NewsPanel" styleClass="news-list">
+				<apex:repeat value="{!newsList}" var="news">
+					<article>
+						<apex:image value="/servlet/servlet.FileDownload?file={!news.content.Attachments[0].Id}&otherId=" alt="{!news.content.Name}" rendered="{!news.content.Attachments != null && news.content.Attachments.size > 0}"/>
+						<div class="detail">
+							<a class="title" href="/apex/KAR_Content?id={!news.content.Id}&category={!news.content.Type__c}&Name={!URLENCODE(pageId)}">{!news.contentVersionforDisplay.Name}</a>
+							<div class="category"><apex:outputField value="{!news.content.Category__c}"/></div>
+							<apex:outputText value="{!news.contentVersionforDisplay.Summary__c}" escape="false" styleClass="copy" />
+							<a class="read-more" href="/apex/KAR_Content?id={!news.content.Id}&category={!news.content.Type__c}&Name={!URLENCODE(pageId)}" >{!$Label.EF_ReadMoreText}</a>
+						</div><!-- /.detail -->
+					</article>
+				</apex:repeat>
+			</apex:outputPanel>
+		</div><!-- /.content -->
+	</div><!-- /.team-news -->
+
+</apex:component>

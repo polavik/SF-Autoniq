@@ -1,0 +1,120 @@
+<apex:component controller="EdgeForceIntranetResourcesCompController">
+    <style>
+    .currentLang {
+        font-weight: 600 !important;
+        pointer-events: none;
+    }
+    </style>
+    <apex:outputPanel id="resourcePanel">
+        <apex:form id="resourceForm">
+            <div class="widget-heading">
+                <h2>{!$Label.EF_Resource_Library}</h2>
+                <!-- apex:outputPanel rendered="{!contentFlag}" -->
+                <apex:outputPanel >
+                    <div class="dropdown widget-heading">
+                        <a class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">{!$Label.EF_Resource_Options}</a>
+                        <ul id="lang-dropdown" class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenu1">
+                            <apex:repeat value="{!langLibraries}" var="language">
+                               <li><a class="{!IF(language==selectedLang,'currentLang','')}" href="#" onclick="setLanguage('{!language}');return false;">{!language}</a></li>
+                            </apex:repeat>
+                            <li><a href="{!IF(isMobile==true,'/apex/KAR_DocumentDirectory?name='+selectedLib,'/apex/KAR_DocumentDirectory?name='+selectedLib)}">{!$Label.EF_View_All}</a></li>
+                        </ul>
+                    </div>
+                </apex:outputPanel>
+            </div><!-- /.widget-heading -->
+            <div class="content">
+                <div class="panel-group" id="resource-library" role="tablist" aria-multiselectable="true">
+                    <apex:outputPanel rendered="{!contentFlag}">
+                        <apex:variable value="{!1}" var="rowNum"/>
+                        <apex:repeat value="{!langLibraries[selectedLang]}" var="lib">
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="panel-row{!rowNum}" >
+                                    <a role="button" class="{!If(rowNum ==1, '', 'collapsed')}" data-toggle="collapse" data-parent="#accordion" href="#panel-row{!rowNum}Content" aria-expanded="true" aria-controls="panel-row{!rowNum}">
+                                        <span class="panel-title">{!lib}</span>
+                                        <span class="icon-minus"></span>
+                                    </a><!--/.panel-heading -->
+                                </div>
+
+                                <div id="panel-row{!rowNum}Content" class="panel-collapse collapse {!If(rowNum ==1, 'in', '')}" role="tabpanel" aria-labelledby="panel-row{!rowNum}">
+                                    <div class="panel-body">
+                                        <ul class="bullet-list">
+                                            <apex:repeat value="{!langLibraries[selectedLang][lib]}" var="resource">
+                                                <li><!-- {!resource.FileType} {!resource.ContentURL} --><a id="docLink{!resource.Id}" href="{!IF(resource.FileType=='LINK',resource.ContentURL,'')}" onclick="{!IF(resource.FileType=='LINK','','processContent(\"{'+resource.Id+'\");return false;')}">{!resource.Title}</a></li>
+                                            </apex:repeat>
+                                        </ul>
+                                        <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                                     </div><!--/.panel-body -->
+                                </div><!--/.panel-row -->
+                            </div><!--/.panel -->
+
+                        </apex:repeat>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!!contentFlag}">
+                        <p class="empty">{!$Label.EF_Resources_NoContent}</p><!-- /.empty -->
+                    </apex:outputpanel>
+                </div><!--/.panel-group -->
+            </div><!-- /.content -->
+<!--             <apex:actionFunction reRender="resourcePanel" action="{!setLang}" name="setLanguage">
+                <apex:param assignTo="{!selectedLang}" name="selectedLang" value="" />
+            </apex:actionFunction> -->
+        </apex:form>
+        <script>
+            var langMap = {!jsonMap};
+            var selectedLang = '{!selectedLang}';
+
+            function createPanel(name, lib, row) {
+                var headClass = row === 1 ? '' : 'collapsed';
+                var panClass = row === 1 ? 'in' : '';
+                return '<div class="panel panel-default">'+
+                            '<div class="panel-heading" role="tab" id="panel-row'+row+'" >'+
+                                '<a role="button" class="'+headClass+'" data-toggle="collapse" data-parent="#accordion" href="#panel-row'+row+'Content" aria-expanded="true" aria-controls="panel-row'+row+'">'+
+                                    '<span class="panel-title">'+name+'</span>'+
+                                    '<span class="icon-minus"></span>'+
+                                '</a>'+
+                            '</div>'+
+                            '<div id="panel-row'+row+'Content" class="panel-collapse collapse '+panClass+'" role="tabpanel" aria-labelledby="panel-row'+row+'">'+
+                                '<div class="panel-body">'+
+                                    '<ul class="bullet-list">'+
+                                    createResourceLinks(lib)+
+                                    '</ul>'+
+                                '</div>'+
+                            '</div>'+
+                        '</div>';
+            }
+
+            function createResourceLinks(obj) {
+                return obj.reduce(function(prev, curr) {
+                    if(curr.FileType === 'LINK') {
+                        return prev + '<li><a id="'+curr.Id+'" target="_blank" href="'+curr.ContentUrl+'">'+curr.Title+'</a></li>';
+                    } else {
+                        return prev + '<li><a id="'+curr.Id+'" onclick=\'processContent('+JSON.stringify(curr)+');return false;\'>'+curr.Title+'</a></li>';
+                    }
+                }, '');
+            }
+
+            function setLanguage(lang) {
+                var panels;
+                $('.currentLang').removeClass('currentLang');
+                $('#lang-dropdown').find('a:contains("'+lang+'")').addClass('currentLang');
+
+                var i = 0;
+                if(Object.keys(langMap).length > 0 && Object.keys(langMap[lang]).length > 0) {
+                    panels = Object.keys(langMap[lang]).reduce(function(prev, curr) {
+                        i++;
+                        return prev + createPanel(curr, langMap[lang][curr], i);
+                    }, '');
+                } else {
+                    panels = '<span><p class="empty">{!$Label.EF_Resources_NoContent}</p></span>';
+                }
+
+                $('#resource-library').html(panels);
+            }
+
+            $(document).ready(function() {
+                setLanguage(selectedLang);
+            });
+        </script>
+    </apex:outputPanel>
+    <c:EF_DocPreview />
+</apex:component>

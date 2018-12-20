@@ -1,0 +1,98 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="false" applyHtmlTag="false" applyBodyTag="false"  controller="EdgeForceIntranetHomeController" id="EF_Template">
+
+    <html dir="ltr" lang="en-US" >
+        <head>
+            <meta name="format-detection" content="telephone=no" />
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <link rel="shortcut icon" href="{!$Resource.Intranetfavicon}" type="shortcut/ico" />
+
+            <apex:stylesheet value="{!URLFOR($Resource.KARDesign, 'css/custom-bootstrap.css')}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.KARDesign, 'css/main.css')}"/>
+
+            <script src="{!URLFOR($Resource.KARDesign, 'js/modernizr.custom.js')}"></script>
+
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+
+            <script src="//code.jquery.com/ui/1.10.4/jquery-ui.min.js" ></script>
+            
+            <script src="{!IF($CurrentPage.parameters.hideHeaders == 'ios', URLFOR($Resource.KAR_cordova, '/ios/cordova.js'), IF($CurrentPage.parameters.hideHeaders == 'android', URLFOR($Resource.KAR_cordova, '/android/cordova.js'), ''))}"></script>
+            <c:KAR_MobileNavJSON rendered="{!isMobile==true}"/>
+            <script>
+            if({!isMobile==true}){
+                var wucount = "{!whatsUpChatterCount}";
+
+                  document.addEventListener("deviceready", function() {
+                            console.log("onDeviceReady: cordova ready");
+                            cordova.exec(function(winParam){ console.log("Cordova Returned Successfully:" + winParam);}, function(error){ console.log("Error in Cordova: " + error);}, "KARMenuPlugin", "updateMenu", [menuJSON]);
+                                         
+                            cordova.exec(function(winParam) {console.log("Cordova Returned Successfully " + winParam);},
+                                                      function(error) {console.log("Error"); console.log(error); },
+                                                      "KARNotificationPlugin",
+                                                      "updateChatterBadge",
+                                                      [wucount]);
+                     
+                  });
+            }
+            </script>
+            <script>
+              //S-372749
+              (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+              (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+              m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+              })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+              ga('create', '{!$Label.EF_AnalyticsCode}', 'auto');
+              ga('send', 'pageview');
+            </script>
+        </head>
+        <style>
+            .chatterPanel {
+                -webkit-overflow-scrolling: touch;
+            }
+        </style>
+
+
+
+        <body class="v2">
+
+            <c:KAR_MobileNav />
+
+            <div class="content-wrapper">
+                <c:KAR_Header_new rendered="{!isMobile==false}" />
+                <!-- c:KAR_Header / -->
+                <apex:insert name="body"/>
+                <c:KAR_Footer />
+            </div>
+
+
+            <script src="{!URLFOR($Resource.KARDesign, 'bower_components/twbs-bootstrap-sass/assets/javascripts/bootstrap.min.js')}"></script>
+            <script src="{!URLFOR($Resource.KARDesign, 'js/search.js')}"></script>
+            <script src="{!URLFOR($Resource.KARDesign, 'js/main.js')}"></script>
+
+            <script>
+                // Search
+                new UISearch( document.getElementById( 'sb-search' ) );
+
+                $(document).ready(function() {
+                    $('.srch-term, #srch-term').on('keyup', function(e) {
+                        if (e.which == 13) {
+                           searchResult();
+                        }
+                    });
+                    $('.mobile-nav a:not(".dropdown-toggle,[data-toggle=dropdown]")').click(function(){
+                        $('#nav-trigger').prop('checked', false);
+                    });
+                });
+
+                $(window).unload(function(){
+                    $('#nav-trigger').prop('checked', false);
+                    $("body").removeClass('body-overlay');
+                    $(".mobile-nav").hide();
+                });
+            </script>
+        </body>
+    </html>
+
+</apex:page>

@@ -1,0 +1,81 @@
+<apex:component controller="EdgeForceChatterPollController" allowDML="true" >
+	<style>
+	/*@media screen and (max-width: 479px){*/
+		.form-group.flex {
+			display: block !important;
+		}
+		.weekly-poll label {
+			margin-bottom: 5px;
+		}
+		.weekly-poll .form-group.flex .progress {
+			width: 100% !important;
+		}
+	/*}*/
+	@media screen and (max-width: 320px) {
+		.weekly-poll .widget-heading > a {
+			padding-left: 30px;
+		}
+	}
+	</style>
+	<div class="weekly-poll">
+		<div class="widget-heading">
+			<h2>{!$Label.EF_Weekly_Poll}</h2>
+			<apex:outputPanel styleClass="resultsLink" rendered="{!ISBLANK(errorMsg)}" layout="none">
+				<a href="/apex/KAR_ChatterGroup?g={!entityIdString}">{!$Label.EF_Poll_Results}</a>
+			</apex:outputPanel>
+		</div><!-- /.widget-heading -->
+		<div class="content" style="{!IF(!ISBLANK(errorMsg),'height:100%','')}">
+			<apex:form id="form">
+				<apex:outputPanel id="pollBody">
+					<apex:outputPanel layout="block" styleClass="title" rendered="{!ISBLANK(errorMsg)}" >{!pollPost.Body}</apex:outputPanel>
+					<apex:outputPanel layout="block" styleClass="title" rendered="{!!ISBLANK(errorMsg)}">{!errorMsg}</apex:outputPanel>
+					<apex:outputPanel rendered="{!ISBLANK(errorMsg)&&voted!=true}" id="selectOpts">
+						<fieldset id="selectOptions">
+							<apex:repeat value="{!pollChoices}" var="choice">
+								<div class="form-group">
+									<label for="{!pollChoices[choice].choiceId}">
+										<input type="radio" name="choice" value="{!pollChoices[choice].choiceId}" id="{!pollChoices[choice].choiceId}" />
+										<span>{!pollChoices[choice].choiceText}</span>
+									</label>
+								</div>
+							</apex:repeat>
+							<apex:outputPanel rendered="{!voted}"></apex:outputPanel>
+						</fieldset>
+						<apex:outputPanel styleClass="submitButton" rendered="{!errorMsg==null}">
+							<button class="btn-bs btn-primary btn-lg" onclick="submitPoll();return false;">{!$Label.EF_Submit}</button>
+						</apex:outputPanel>
+					</apex:outputPanel>
+	
+					<apex:outputPanel rendered="{!ISBLANK(errorMsg)&&voted==true}" id="results">
+						<apex:repeat value="{!pollChoices}" var="choice">
+							<div class="form-group flex">
+								<label>{!pollChoices[choice].choiceText}</label>
+								<div class="progress">
+									<div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="{!pollChoices[choice].voteCount}" aria-valuemin="0" aria-valuemax="{!totalCount}" style="width:{!IF(pollChoices[choice].voteCount>0,((pollChoices[choice].voteCount/totalCount)*100),'0')}%;">
+										<apex:outputText rendered="{!(pollChoices[choice].voteCount > 0)}" value="{!pollChoices[choice].voteCount}" />
+									</div>
+								</div>
+							</div>
+						</apex:repeat>
+					</apex:outputPanel>
+				</apex:outputPanel>
+
+				<apex:actionFunction action="{!submit}" name="submitPollAF" rerender="form">
+					<apex:param name="choiceId" assignTo="{!selectedChoice}" value="" />
+				</apex:actionFunction>
+			</apex:form>
+		</div><!-- /.content -->
+	</div><!-- /.weekly-poll -->
+
+	<script>
+		function submitPoll(){
+			var selectedVal = '';
+			var selected = $("#selectOptions input[type='radio']:checked");
+			if (selected.length > 0) {
+				selectedVal = selected.val();
+			}
+			submitPollAF(selectedVal);
+		}
+	</script>
+
+</apex:component>

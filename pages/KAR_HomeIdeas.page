@@ -1,0 +1,155 @@
+<apex:page controller="KAR_HomeController" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" >
+    <title>KAR - Social Intranet</title>
+
+    <style>
+    	@media (min-width: 992px) {
+    		.widget-left.two-column {
+    			display: -webkit-box;
+    			display: -webkit-flex;
+    			display: -ms-flexbox;
+    			display: flex;
+    		}
+    		.widget-left .widget-split {
+    			width: 50%;
+    		}
+    		.ideas {
+    			min-height: 600px;
+    		}
+    	}
+    	.ideas .widget-heading {
+				background-color:#512B1E;
+    	}
+    	.ideas {
+    		background-color: white;
+    	}
+    	.ideas .content {
+    		padding: 20px 30px;
+			}
+			.ideas .header {
+
+			}
+			.ideas .status {
+				font-style: italic;
+			}
+			.ideas .author {
+				
+			}
+			.ideas .body {
+				
+			}
+    </style>
+    <apex:composition template="KAR_Template">
+        <apex:define name="body">
+            <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/user-autocomplete.js')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/user-autocomplete.css')}"/>
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <c:KAR_BusinessUnitNav />
+                    
+                    <c:KAR_StockTicker />
+                    
+                    <c:KAR_QuickSearch />
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <c:KAR_NewsGrid />
+
+            <div class="quick-links">
+                <div class="container-bs">
+                    <c:KAR_QuickLinks />
+                </div><!-- /.container-bs -->
+            </div>
+
+            <div class="container-bs">
+                <div class="r1-c2 two-thirds">
+                    <div class="widget-left">
+                        <div class="company-dir">
+                            <div class="widget-heading">
+                                <h2>{!$Label.EF_Employee_Directory}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <div class="user-search">
+                                    <label for="emp-search-text" class="sr-only">{!$Label.EF_EmpDir_Placeholder}</label>
+                                    <input id="emp-search-text" type="text" class="form-control input-lg" placeholder="Find Someone" />
+                                    <a href="#" onclick="empSearch();return false;" class="btn-bs btn-lg btn-primary">Search</a>
+                                    <script>
+                                        function empSearch(){
+                                            var searchInput = $('#emp-search-text').val();
+                                            if(searchInput != ''){
+                                                window.location.href = '/apex/KAR_EmployeeDirectory?searchInput='+searchInput;
+                                            }
+                                        }
+                                    </script>
+                                </div><!-- /.user-search -->
+                                <div class="title">{!$Label.EF_Home_EmpDir_Header}</div><!-- /.title -->
+                                <div class="description">{!$Label.EF_Home_EmpDir_Summary}</div><!-- /.description -->
+                                <ul class="people" style="margin-top:20px;">
+                                    <apex:repeat value="{!featuredUsers}" var="user">
+                                        <li>
+                                            <a href="{!IF(user.URL__c == '','/apex/KAR_ViewUserProfile?Id='+user.Featured_User__r.Id,user.URL__c)}" target="{!user.Target__c}">
+                                                <img src="{!user.Featured_User__r.SmallPhotoUrl}" alt="{!user.Featured_User__r.FirstName} {!user.Featured_User__r.LastName}" />
+                                                <span>{!user.Featured_User__r.FirstName} {!user.Featured_User__r.LastName}</span>
+                                            </a>
+                                        </li>
+                                    </apex:repeat>
+                                </ul><!-- /.people -->
+                            </div><!-- /.content -->
+                        </div><!-- /.company-dir -->
+                        
+                        <c:KAR_WeeklyPoll />
+                        
+                    </div><!-- /.widget-left -->
+                    <div class="widget-right flex-height" aria-hidden="true">
+                        <c:KAR_ChatterFeeds />
+                    </div><!-- /.widget-right -->
+                </div><!-- /.r1-c2 -->
+
+                <div class="r1-c2 two-thirds">
+                    <div class="widget-left two-column">
+                    	<div class="widget-split">
+	                        <div class="ideas">
+	                            <div class="widget-heading">
+	                                <h2>{!$Label.EF_IdeasTitle}</h2>
+	                            </div><!-- /.widget-heading -->
+	                            <div class="content">
+	                            	<div class="header"><h2>Lorem Ipsum Dolor Sit</h2></div>
+	                            	<div class="status"><h3>Under Consideration</h3></div>
+	                            	<div class="author"><h4>Posted By Jhon Snow</h4></div>
+	                            	<div class="body"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam sapien mi, ullamcorper et pulvinar et, maximus ut mi. Vivamus sit amet maximus mi. Integer pellentesque massa a accumsan cursus. Vestibulum nec augue id dolor scelerisque imperdiet nec at arcu. Pellentesque arcu ipsum, rhoncus ut eleifend sit amet, tristique et risus. Aenean sit amet venenatis mauris, tempus dignissim nisl. Etiam tincidunt rutrum laoreet. Sed vitae turpis vitae massa mollis aliquet. Suspendisse fringilla quis velit ut eleifend.</p></div>
+	                            	<button class="btn-bs btn-primary btn-lg">+ Promote</button>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <div class="widget-split">
+	                        <div class="quick-info">
+	                            <div class="widget-heading">
+	                                <h2>{!$Label.EF_Home_Collapsible_Title}</h2>
+	                            </div><!-- /.widget-heading -->
+	                            <c:KAR_Collapsible />
+	                        </div><!-- /.quick-links -->
+	                    </div>
+	                  </div><!-- /.widget-left -->
+                    <div class="widget-right flex-height social-feed">
+                        <c:KAR_SocialFeed />
+                    </div><!-- /.widget-right -->
+                </div><!-- /.r1-c2 -->
+
+                <c:KAR_WhatsNew />
+                
+            </div><!-- /.container-bs -->
+
+            <script type="text/javascript">
+                $( document ).ready(function() {
+                    createAutocomplete('emp-search-text','Name','{!$RemoteAction.KAR_HomeController.searchFilters}');
+                    $("#emp-search-text").click(function() {
+                        if( $('label[for="nav-trigger"]').css('display')!='none') {
+                            $('html, body').scrollTop($("#emp-search-text").offset().top);
+                        }
+                    });
+                });
+            </script>
+        </apex:define>
+
+   </apex:composition>
+</apex:page>

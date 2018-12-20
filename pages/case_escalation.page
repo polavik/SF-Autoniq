@@ -1,0 +1,233 @@
+<apex:page standardController="Case_Escalation__c" extensions="CaseEscalationController" tabStyle="Case_Escalation__c">
+        <style>
+        .cPageTitle {
+            background-color: #1D5085;
+            color: #FFFFFF;
+            padding-top: 15px;
+            padding-left: 10px;
+            padding-bottom: 20px;
+            border: 1px solid black;
+            margin-bottom: 5px;
+        }
+        .cPageTitleLinks {
+            float: right;
+            padding-right: 5px;
+        }
+        .cPageTitleLinks a {
+            color: white;
+        }
+        .cQuickLinks {
+            width:100%; 
+            text-align:center; 
+            margin-bottom: 3px;
+        }
+    </style>
+    
+    
+    <div class="cPageTitle">
+        <h2>Case Escalation</h2> <br/>
+        <h1>#{!escalation.Name}</h1>
+        <div class="clearDiv">&nbsp;</div>
+    </div>  
+    <div class="cQuickLinks">  
+        <a href="#case">Case</a> | <a href="#comments">Comments ({!allComments.size})</a> | <a href="#attachments">Attachments ({!allAttachments.size})</a> | <a href="#manage">Manage Case</a> | <a href="#history">Case History</a>
+    </div>
+    <apex:form >
+        <a name="case">
+            <apex:pageBlock title="Case Escalation Detail" >
+            
+                <apex:pageBlockSection title="Case Information" columns="2">
+                
+                    <apex:outputField value="{!escalation.Case__c}" rendered="{!ISPICKVAL($User.UserType,'Standard')}"/>
+                    <apex:outputField value="{!escalation.Name}" rendered="{!NOT(ISPICKVAL($User.UserType,'Standard'))}"/>
+                    <apex:pageBlockSectionItem >  
+                        <apex:outputLabel value="Case Owner"/> 
+                        <apex:outputText value="{!escalation.Owner.Name}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Previous Escalation Number</apex:outputLabel>
+                        <apex:outputText >{!escalation.Openlane_CaseEsc_Number__c}&nbsp;</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:outputField value="{!escalation.Consignee__c}"/>
+                    <apex:outputField value="{!escalation.Segment__c}"/> 
+                    <apex:outputField value="{!escalation.Date_Time_Opened__c}"/>
+                    <apex:outputField value="{!escalation.Case_Type__c}"/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Date Escalated"/>
+                        <apex:outputText value="{!escalation.CreatedDate}"/>
+                    </apex:pageBlockSectionItem>
+                    <apex:outputField value="{!escalation.Date_Time_Closed__c}"/> 
+                    <apex:outputField value="{!escalation.Days_Escalated__c}"/>
+
+                    
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Contact Information" columns="2">
+                    <apex:outputField value="{!escalation.Account_Name__c}"/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Location</apex:outputLabel>
+                        <apex:outputText >{!escalation.Location__c}</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Contact Name</apex:outputLabel>
+                        <apex:outputText >{!escalation.Contact_Name__c}&nbsp;</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Alt. Contact Name</apex:outputLabel>
+                        <apex:outputText >{!escalation.Alternative_Contact_Name__c}&nbsp;</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Contact Phone</apex:outputLabel>
+                        <apex:outputText >{!escalation.Contact_Phone__c}&nbsp;</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Alt. Contact Phone</apex:outputLabel>
+                        <apex:outputText >{!escalation.Alternative_Contact_Phone__c}&nbsp;</apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Contact Email</apex:outputLabel>
+                        <apex:outputText >
+                            <apex:outputLink value="mailto:{!escalation.Contact_Email__c}}">{!escalation.Contact_Email__c}</apex:outputLink>&nbsp;
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel >Alt. Contact Email</apex:outputLabel>
+                        <apex:outputText >
+                            <apex:outputLink value="mailto:{!escalation.Alternative_Contact_Email__c}">{!escalation.Alternative_Contact_Email__c}</apex:outputLink>&nbsp;
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection title="Description Information" columns="1"> 
+                    <apex:outputField value="{!escalation.VIN__c}"/>
+                    <apex:outputField value="{!escalation.YMMS__c}"/>
+                    <apex:outputField value="{!escalation.Grounding_Dealership__c}"/>
+                    <apex:outputField value="{!escalation.Sale_Date__c}"/>
+                    <apex:outputField value="{!escalation.Sale_Price__c}"/>
+                    <apex:outputField value="{!escalation.Actual_Dropoff__c}"/>
+                    <apex:outputField value="{!escalation.Case_Reason__c}"/>
+                    <apex:outputField value="{!escalation.Case__r.Description}"/>
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </a>
+<!-- 
+        <a name="Reasons">
+           <apex:pageBlock title="Additional Misrepresentation Reasons">
+                
+                <apex:pageBlockButtons location="top" title="Please Click Edit to modify" >
+                    <apex:outputLabel value="Click Edit button to modify"/>
+                    <apex:commandButton action="{!editMiscReasons}" value="Edit" title="Please Click Edit to modify" />
+                </apex:pageBlockButtons>
+            
+                <apex:pageBlockSection showHeader="false" columns="1">
+                    <apex:inputField value="{!escalation.Case__r.Addl_Mechanical_Issues__c}" />
+                    <apex:inputField value="{!escalation.Case__r.Addl_Missing_Equipment__c}" />
+                    <apex:inputField value="{!escalation.Case__r.Addl_Structural_Frame_Damage__c}" />
+                    <apex:inputField value="{!escalation.Case__r.Addl_Undisclosed_Damage__c}" />
+                    <apex:inputField value="{!escalation.Case__r.Addl_Undisclosed_Poor_Previous_Repairs__c}" />
+                    <apex:inputField value="{!escalation.Case__r.Addl_Undisclosed_Previous_Repairs__c}" />
+     
+                </apex:pageBlockSection>
+            </apex:pageBlock>
+        </a>
+-->
+        <a name="comments">
+            <apex:pageBlock title="Comments">
+                <apex:pageBlockButtons location="top">
+                    <apex:commandButton action="{!addComment}" value="Add Comment"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockTable value="{!allComments}" var="c">
+                    <apex:column headerValue="Comment">
+                        <b>Created By: {!c.createdBy} ({!c.formattedCreatedDate})</b><br/> 
+                        {!c.body}<br/>
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </a>
+        <a name="attachments">
+            <apex:pageBlock title="Attachments">
+                <apex:pageBlockButtons location="top">
+                    <apex:commandButton action="{!addAttachment}" value="Add Attachment"/>
+                </apex:pageBlockButtons>
+                <apex:pageBlockTable value="{!allAttachments}" var="a">
+                    <apex:column headerValue="Action">
+                        <a href="{!a.url}">View</a>
+                    </apex:column>
+                    <apex:column headerValue="File Name" value="{!a.name}" />
+                    <apex:column headerValue="Size" value="{!a.bodyLength}" />
+                    <apex:column headerValue="Date Created" value="{!a.formattedCreatedDate}" />
+                    <apex:column headerValue="Created By" value="{!a.createdBy}" />
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </a>
+        <a name="manage">
+            <apex:pageBlock title="Manage Case">
+                <apex:pageBlockButtons location="top">
+                    <apex:commandButton action="{!editResolution}" value="Edit"/>
+                </apex:pageBlockButtons>
+                
+                <apex:PageBlockSection showHeader="false" columns="2">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Assigned To"/>
+                        <apex:outputText >
+                            <apex:outputLink value="mailto:{!escalation.Assigned_To__r.Email}">{!escalation.Assigned_To__r.Name}</apex:outputLink>&nbsp;
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Case Status" />
+                        <apex:outputField value="{!escalation.Status__c}"/>
+                    </apex:pageBlockSectionItem>
+<apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Goodwill" />
+                        <apex:outputField value="{!escalation.Goodwill__c}" />
+</apex:pageBlockSectionItem>
+                    
+                    <apex:outputField value="{!escalation.Escalation_Resolution__c}"/>
+                    <apex:outputField value="{!escalation.Concession_Amount__c}"/>
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="Approver" />
+                        <apex:outputText >
+                            <apex:outputLink value="mailto:{!escalation.Approver__r.Email}">{!escalation.Approver__r.Name}</apex:outputLink>&nbsp;
+                        </apex:outputText>
+                    </apex:pageBlockSectionItem>
+                    <apex:outputField value="{!escalation.Payment_sent_to_OPENLANE__c}"/>
+                    <apex:outputField value="{!escalation.Approval_Status__c}"/>
+                    <apex:outputField value="{!escalation.Reference_Number__c}"/>
+                </apex:PageBlockSection>
+                <!--  I added a div here so I could get a border at the top of this section-->
+                <div style="border-top: 1px solid #919191" >
+                    <apex:PageBlockSection showHeader="false" columns="1">
+                        <apex:outputField value="{!escalation.Resolution_Details__c}" />
+                    </apex:PageBlockSection>
+                </div>
+            </apex:pageBlock>
+        </a>
+        <a name="history">
+            <apex:pageBlock title="History">
+                <apex:pageBlockTable value="{!histories}" var="h">
+                    <apex:column width="20%">
+                        <apex:facet name="header">
+                            Date
+                        </apex:facet>
+                        <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                            <apex:param value="{!h.createdDate}"/>
+                        </apex:outputText>
+                    </apex:column>
+                    <apex:column width="20%">
+                        <apex:facet name="header">
+                            User
+                        </apex:facet>
+                        {!h.userName}
+                    </apex:column>
+                    <apex:column >
+                        <apex:facet name="header">
+                            Action
+                        </apex:facet>
+                        {!h.action}
+                    </apex:column>
+                </apex:pageBlockTable>
+            </apex:pageBlock> 
+        </a>
+    </apex:form>
+    <apex:pageMessages />
+</apex:page>

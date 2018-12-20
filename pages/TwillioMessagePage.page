@@ -1,0 +1,125 @@
+<apex:page showHeader="false" standardController="Contact" extensions="TwilioServiceOutgoingController" id="TwillioMessagePage">
+	<style type="text/css">
+  		
+        .sms_input_area{
+            text-align: center;
+            margin: 0 auto;
+            width: 60%;
+        }
+
+        .message_area{
+            text-align: center;
+            margin: 0 auto;
+            height: 320px;
+            width: 60%;
+            overflow-y: scroll;
+        }
+
+        .message_area .incoming-outer{
+            padding: 3px 20% 0 0;
+        }
+        
+        .message_area .incoming{
+            position:relative;
+        	margin: auto;
+        	font-size: 120%;
+            color: #ffffff;
+            background: #65B045;
+        	text-align: right;
+        	border: 2px solid #65B045;
+        	border-radius: 12px;
+            width: fit-content;
+            padding: 1px 1px 1px 1px; 
+        }
+
+        .message_area .incoming:after{
+            content: "";
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            border-top: 12px solid #65B045;
+            border-top-color: inherit; 
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;                     
+        }        
+        
+        .message_area .outgoing-outer{
+            padding: 3px 0 0 20%;
+        }
+
+		.message_area .outgoing{
+            position:relative;
+        	margin: 1px;
+        	font-size: 120%;
+            color: #ffffff;
+            background: #00bfff; 
+        	text-align: left;
+        	border: 2px solid #00bfff;
+        	border-radius: 12px; 
+            width: fit-content;
+            padding: 2px 2px 2px 2px; 
+        }
+
+        .message_area .outgoing:after{
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 20px;
+            border-top: 12px solid #00bfff;
+            border-top-color: inherit; 
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;                     
+        }
+
+        .message_area .datetime{
+        	font-size: 85%
+        }        
+    
+    </style>
+       
+    <apex:outputPanel id="main_block" >
+        <apex:form id="the_form">
+            <apex:actionRegion id="message_action_region">
+                <apex:actionFunction name="message_panel_rerender" rerender="message_panel" />
+                <apex:outputPanel id="dummy_panel" rendered="{!hasUpdates}">
+                        <script type="text/javascript">
+                            {   
+                                message_panel_rerender();
+                            }
+                        </script>                    
+                </apex:outputPanel>
+                <apex:actionPoller interval="20" action="{!setHasUpdates}" reRender="dummy_panel"/>             
+                <apex:outputPanel id="message_panel">
+                    <div id="message_area" name="message_area" class="message_area">
+                        <apex:repeat value="{!SMSMessages}" var="sms">
+                            <div class="{!IF(sms.incoming,'incoming-outer','outgoing-outer')}">
+                                <div class="{!IF(sms.incoming,'incoming','outgoing')}">
+                                    <apex:outputText escape="false" styleClass="display:inline-block;" value="{!sms.message}"/>
+                                    <br />
+                                    <span class="datetime">{!sms.formateCreatedDate}</span>
+                                </div>
+                                <br />
+                            </div>        
+                        </apex:repeat>
+                    </div>
+                        <script type="text/javascript">
+                            {	
+                                var theDiv = document.getElementById("message_area");
+                                theDiv.scrollTop = theDiv.scrollHeight;
+                            }
+                        </script>
+                  </apex:outputPanel>  
+            </apex:actionRegion>
+            
+            <br />
+            <hr />
+            <br />
+            
+            <div class="sms_input_area">
+                 <apex:inputTextarea id="sms_input_area" value="{!outgoing_sms}" cols="90" rows="3"/><br />
+                 <apex:commandButton action="{!send}" value="Send SMS" rerender="the_form" /> 
+            </div> 
+
+        </apex:form>
+    </apex:outputPanel>
+</apex:page>

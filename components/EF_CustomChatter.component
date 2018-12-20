@@ -1,0 +1,274 @@
+<apex:component >
+
+  <style>
+  /*.topics { display:none !important; }*/
+  /*.overlayDialog {
+    width: 700px !important;
+	}*/
+  .contentThumbnail-a {
+    width: auto !important;
+    height: 105px !important;
+  }
+  .contentThumbnail {
+    max-width: inherit !important;
+  }
+  .chatterHover.chatterHover-above, .chatterHover.chatterHover-below {
+    display: none !important;
+  }
+  .publishercontainer .LinkPost .contentPublisherSlideDown table.postInput th {
+    width: 25% !important;
+  }
+  </style>
+
+
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+  <script type="text/javascript">
+      //Global variables to store the links
+   var USER_LINK  = '{!$Site.CurrentSiteUrl}'+'/apex/KAR_ViewUserProfile';
+   var GROUP_LINK = '{!$Site.CurrentSiteUrl}'+'/apex/KAR_ChatterGroup';
+   var TOPIC_LINK = '{!$Site.CurrentSiteUrl}'+'/apex/KAR_ChatterTopic';
+   var CONTENT_LINK = '{!$Site.CurrentSiteUrl}'+'/apex/KAR_Content';
+	
+	/*------ BJ 1/30/17 ------*/
+    //Utility method for strings.
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.split(search).join(replacement);
+    };
+	
+	document.addEventListener("deviceready", function() {
+    	$(".cxcontentcommentaction").each(function(index, value){
+            //console.log($(value).attr("onclick"));
+            var onclick = $(value).attr("onclick");
+            var prepend = "cordova.exec(function(winParam){console.log(\"Plugin Executed!\", winParam);}, function(e){console.log(\"Error\", e);}, \"KARChatterPlugin\", \"createCommentPost\", [\"";
+            var append = "\"]);"
+            onclick = onclick.replace("chatter.getFeed().createContentComment(this,'", prepend);
+            onclick = onclick.replace("', false, true);", append);
+            //console.log(onclick);
+            $(value).attr("onclick", onclick);
+        }); 
+		$(".publisherFeedItemTypeChoice[label='ContentPost']").css("display", "inline");
+        $(".publisherFeedItemTypeChoice[label='ContentPost'] a").attr("onclick", "").click(function(e){
+            var publisherData = $(".publishercontainer.zen.cxchattertextareacontainer").attr("data-publisher");
+            var idIndex = publisherData.indexOf("\"subjectId\":\"");
+            if(idIndex >= 0){
+            	var feedId = publisherData.substr(idIndex + 13, 15);
+                cordova.exec(function(winParam){console.log("Plugin Executed!", winParam);}, function(e){console.log("Error", e);}, "KARChatterPlugin", "createFilePost", [feedId]);
+            } else {
+                alert("Unable to retrieve Feed identifier. Contact an admin to report this issue.");
+            }
+            e.preventDefault(); 
+            e.stopPropagation();});
+    });
+    
+    /*------ BJ 1/30/17 ------*/
+	//Call functions on document load
+    $(document).ready(function(){
+        $('.feedcontainer').on('DOMNodeInserted', function(e) {
+            if ($(e.target).is('.cxfeeditem')) {
+               performAllActions();
+            }
+        });
+
+        $('[data-chatter-widget=subscribeBtn]').click(function(){
+          setTimeout(function(){
+            replaceGroupAndUserLinks();
+            setFollowerLink();
+          },200);
+        });
+
+        performAllActions();
+        $(document).delegate( '.cxshowmorefeeditemscontainer', 'click', function(e) {
+        $(this).find('a').remove();
+        var modify_links_cycle = 0;
+        var modify_links_interval = null;
+        clearInterval(modify_links_interval);
+        modify_links_interval = setInterval(function() {
+            performAllActions();
+            if($('.cxshowmorefeeditemscontainer a').length >0){
+              $('.cxshowmorefeeditemscontainer a').each(function(){
+                  performAllActions();
+                      clearInterval(modify_links_interval);
+               });
+            }else if(modify_links_cycle>50){
+              performAllActions();
+              clearInterval(modify_links_interval);
+            }
+            modify_links_cycle++;
+            }, 200);
+        } );
+     })
+
+      function setFollowerLink(){
+        $('.dialog_followerDialog').click(function(){
+          setTimeout(function(){replaceGroupAndUserLinks()},200);
+        });
+      }
+
+      //Call all the functions which perform necessary actions
+      function performAllActions(){
+            replaceHashTags();
+            removeBookmarkAndTopics();
+            removeMoreFileActionsMenu();
+            removeLinkOnOriginallyPostedByText();
+            removeLinkOnDateText();
+            modifyDocumentDownloadLink();
+            replaceChatterAvatarLink();
+            replaceGroupAndUserLinks();
+            overridingcommentlikes();
+            replaceCustomerAndCompanyNameNameWithCustomValues();
+            setFollowerLink();
+            //findChatterUserIds();
+       }
+
+        //This function removes Bookmarks and Add topics links from dropdown
+        function removeBookmarkAndTopics(){
+            $('span.feeditemActionMenu').find('li').each( function(index, Element) {
+                if( $(Element).text() == 'Bookmark' || $(Element).text() == 'Add topics' || $(Element).text() == 'Edit topics' ) {
+                    $(Element).remove();
+                }
+            })
+        }
+
+        //This functions removes more file actions link as well as the dot separation
+        function removeMoreFileActionsMenu(){
+            $('.more-file-actions').siblings('.feeditemseparatingdot').remove();
+            $('.more-file-actions').remove();
+        }
+
+        //This function replaces originally posted link with plain text
+        function removeLinkOnOriginallyPostedByText(){
+            $('.rechatOriginalFeedItem').replaceWith('<span>originally posted</span>');
+        }
+
+        // Added by NLG
+        //This function replaces date links with plain text
+        function removeLinkOnDateText(){
+            $('.feeditemtimestamp').css({'pointer-events':'none','cursor':'default'});
+        }
+
+        //This function replaces link on file with direct download link
+        function modifyDocumentDownloadLink(){
+            $('div.contentFileTitle a.contentActionLink').each(function(index, Element){
+                var newHref = $(Element).closest('table.contentdetails').find('td.moreFileActions-td a.contentActionLink').attr('href');
+                $(Element).attr('href', newHref);
+            })
+        }
+
+        //This function replaces link on chatter photo with custom user link
+        function replaceChatterAvatarLink(){
+            $('.chatter-avatar').each(function(index, Element){
+                if($(Element).attr('data-hovid')){
+                  var id = $(Element).attr('data-hovid');
+                  $(Element).parent('a').attr('href',USER_LINK + '?id='+id);
+                  $(Element).parent('a').attr('target', '_blank');
+                }
+            })
+        }
+
+        //This function removes the links from all the '#' tags
+        function removeHashTags() {
+           $('a').each(function(index,Element){
+           var textoflink=$(Element).text();
+                if(textoflink.substring(0,1)=='#')
+                   {
+                   $(Element).css({'pointer-events':'none','cursor':'default'});
+                   }
+               });
+         }
+
+        //This function replaces the links from all the '#' tags
+        function replaceHashTags() {
+           $('a').each(function(index,Element){
+             var textoflink=$(Element).text();
+             if(textoflink.substring(0,1)=='#' || $(Element).hasClass("topic")){
+               topic = textoflink.substring(0,1)=='#' ? textoflink.substring(1) : textoflink;
+               $(Element).attr('href',TOPIC_LINK + '?t='+topic);
+             }
+           });
+         }
+
+        //This function overrides all the links of user and group.
+        function replaceGroupAndUserLinks()
+        {
+           $('a').each(function(index,Element){
+             var id=$(Element).attr('href');
+             if(id && id.length>=15)
+             {
+                 var obj=id.substring(id.length-15,id.length-12);
+                 if(obj=='005')
+                 {
+                     $(Element).attr('target', '_blank');
+                     $(Element).attr('href',USER_LINK + '?id='+id.substring(id.length-15,id.length));
+                 }
+                 else if(obj=='0F9')
+                 {
+                     $(Element).attr('target', '_blank');
+                     $(Element).attr('href',GROUP_LINK + '?g='+id.substring(id.length-15,id.length))
+                 }
+                 else if(obj=='{!$ObjectType.Intranet_Content__c.keyPrefix}')
+                 {
+                     $(Element).attr('target', '_blank');
+                     $(Element).attr('href',CONTENT_LINK + '?id='+id.substring(id.length-15,id.length)+'&category=Content');
+                 }
+                 else if($(Element).parent().is('.feeditemfirstentity'))
+                 {
+                    $(Element).css({'pointer-events':'none','cursor':'default'});
+                 }
+             }
+         });
+
+     }
+
+    //This function overrides links of all the comment likes
+    function overridingcommentlikes()
+    {
+
+    $(document).delegate( '.liketext', 'click', function(e) {
+
+        var modify_links_cycle = 0;
+        var modify_links_interval = null;
+        clearInterval(modify_links_interval);
+        modify_links_interval = setInterval(function() {
+        $('.overlayListTable a').each(function(index,element){
+           $(element).attr('target', '_blank');
+           var id=$(element).attr('href');
+           $(element).attr('href', USER_LINK + '?id='+id.substring(id.length-15,id.length));
+         });
+        modify_links_cycle++;
+        if (modify_links_cycle === 50) {
+        clearInterval(modify_links_interval);
+            }
+            }, 200);
+       } );
+
+    }
+
+    function replaceCustomerAndCompanyNameNameWithCustomValues() {
+       $('.chatterUserGuestBadge').each(function(i){
+           if( $( this ).html() == '(Customer)' ){
+               $( this ).text('(Student)');
+           }
+
+           if( $( this ).html() == '(Argosy)' ){
+               $( this ).text('(Staff)');
+           }
+       });
+    }
+
+     function findChatterUserIds(){
+      var allUserIds = '';
+      $('.chatter-photo').each(function(index, Element){
+        var usrId = $(Element).parent('span').attr('data-hovid');
+        if(allUserIds == ''){
+          allUserIds = usrId;
+        }
+        else if(allUserIds.indexOf(usrId) == -1){
+          allUserIds = allUserIds + ',' + usrId;
+        }
+      });
+     }
+
+
+</script>
+</apex:component>

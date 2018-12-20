@@ -1,0 +1,3 @@
+<apex:page standardController="Case" extensions="DispatcherCaseTabController" recordSetVar="Case" tabStyle="Case" 
+    action="{!redirect}"> 
+</apex:page>

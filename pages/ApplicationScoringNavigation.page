@@ -1,0 +1,9 @@
+<apex:page standardController="ApplicationScoring__c" extensions="ApplicationScoringNavigationController" action="{!navigateToNextPage}">
+    <apex:sectionHeader title="Application Scoring" subtitle="{!ApplicationScoring__c.Application_Name__c}"/>
+    <apex:pageMessages />
+    <apex:form >
+        <apex:inputHidden value="{!ApplicationScoring__c.Id}"/>
+        <apex:inputHidden value="{!ApplicationScoring__c.Application__c}"/>
+        <apex:inputHidden value="{!ApplicationScoring__c.Opportunity_Id__c}"/>        
+    </apex:form>
+</apex:page>

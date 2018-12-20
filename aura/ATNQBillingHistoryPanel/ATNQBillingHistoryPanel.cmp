@@ -1,0 +1,12 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="mydata" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    	
+	<lightning:card title="Order History" iconName="standard:contact" footer="">
+		<lightning:datatable data="{! v.mydata }" 
+	        columns="{! v.mycolumns }" 
+	        keyField="id"
+	        onrowselection="{! c.getSelectedName }"/>
+		</lightning:card>
+</aura:component>

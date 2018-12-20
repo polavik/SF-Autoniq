@@ -1,0 +1,26 @@
+<apex:component controller="KAR_CollapsibleController">
+	<div class="widget-heading green">
+		<h2 align="left"><apex:outputText rendered="{!pageTypeFAQ}" value="{!$Label.KAR_FAQs}"/><apex:outputText rendered="{!pageTypeFAQ=false}" value="{!$Label.EF_Home_Collapsible_Title}" /></h2>
+	</div>
+  <div class="content">
+  	<div class="panel-group" id="quick-info" role="tablist" >
+  		<apex:variable var="i" value="{!0}"/>
+  		<apex:repeat value="{!contentList}" var="content">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="heading{!i}">
+              <a role="button" data-toggle="collapse" data-parent="#quick-info" href="#collapse{!i}" aria-expanded="{!i==0}" aria-controls="collapse{!i}" class="{!IF(i==0,'','collapsed')}">
+                  <h4 class="panel-title">{!content.contentVersionforDisplay.Team_Mission_Statement__c}</h4>
+                  <span class="icon-minus"></span>
+              </a>
+          </div>
+          <div id="collapse{!i}" class="panel-collapse collapse {!IF(i==0,'in','')}" role="tabpanel" aria-labelledby="heading{!i}">
+            <div class="panel-body">
+              <apex:outputText escape="false" value="{!content.contentVersionforDisplay.Description__c}"/>
+            </div>
+          </div>
+        </div>
+        <apex:variable var="i" value="{!i+1}"/>
+    	</apex:repeat>
+    </div>
+  </div><!-- /.content -->
+</apex:component>

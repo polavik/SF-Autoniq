@@ -1,0 +1,9 @@
+<apex:page >
+    <body><TABLE style="BACKGROUND-COLOR: #e6f1f5" border="1" cellSpacing="3" borderColor="#c0c0c0" cellPadding="1" width="1000">
+<TBODY>
+<TR>
+<TD>
+<P align="left"><A href="/_ui/core/chatter/groups/GroupProfilePage?g=0F9a0000000H64C" target="_blank"><FONT style="size: 7"><MEDIUM><EM><FONT color="#ff0000" size="3" face="Franklin Gothic Book"><STRONG>Click here to see what's new in Salesforce</STRONG></FONT></EM></MEDIUM></FONT></A></P></TD></TR></TBODY></TABLE>
+<TABLE>
+<TBODY></TBODY></TABLE></body>
+</apex:page>

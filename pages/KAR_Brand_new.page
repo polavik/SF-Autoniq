@@ -1,0 +1,126 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" title="EdgeForce Home" controller="EdgeForceIntranetTeamController">
+  <title>KAR - {!groupName}</title>
+  <apex:composition template="KAR_TemplateNew">
+    <apex:define name="body">
+      <div class="team-page">
+
+        <div class="secondary-nav">
+          <div class="container-bs">
+            <!-- <c:KAR_BusinessUnitNav /> -->
+            <c:KAR_StockTicker />
+            <!-- <c:KAR_QuickSearch /> -->
+          </div>
+        </div><!--/.secondary-nav -->
+
+        <div class="container-bs hero team" style="background-image:url({!URLFOR($Resource.KARDesign, 'demo/hero-brand.jpg')})">
+          <div class="hero-overlay"></div>
+          <div class="hero-content">
+            <div class="brand-logo">
+              <img src="{!URLFOR($Resource.KARDesign, 'demo/logo-traderev.svg')}" class="img-responsive" />
+            </div><!-- /.brand-logo -->
+            <div class="intro">To leverage KAR Auction Services institutional knowledge, spend, procurement expertise and technology in order to provide solutions to our customers, financial return on investment to our shareholders while achieving “customer of choice’ status with our key supplier partners.</div>
+            <div class="controls">
+              <a href="#explore-brand" class="btn-bs btn-bordered">Explore the brand</a>
+
+              <div class="dropdown">
+                <a id="select-brand" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon">Select a brand</a>
+                <ul class="dropdown-menu" aria-labelledby="select-brand">
+                  <li><a href="#">Brand 01</a></li>
+                  <li><a href="#">Brand 02</a></li>
+                  <li><a href="#">Brand 03</a></li>
+                </ul>
+              </div>
+            </div><!-- /.controls -->
+          </div><!-- /.hero-content -->
+        </div><!-- /.hero -->
+        <div class="container-bs">
+          <a name="explore-brand"></a>
+          <div class="r1-c2 two-thirds">
+            <div class="widget-left">
+              <c:KAR_MeetTheTeam />
+
+              <div class="about-brand">
+                <div class="widget-heading black">
+                  <h2>About the brand</h2>
+                </div><!-- /.widget-heading black -->
+                <div class="content">
+                  <img src="{!URLFOR($Resource.KARDesign, 'demo/logo-traderev.svg')}" class="img-responsive" />
+                  <h3>Est qui doloremque deserunt hic.</h3>
+
+                  <div class="summary">
+                    <div class="heading">Responsible for:</div>
+                    <p>Nostrum non coffee accusantium libero tempora dolore odio quidem possimus ipsam, cumque vitae? Odit doloremque sit cumque eligendi autem sequi, est pariatur debitis beatae unde, laudantium id suscipit rerum. Pariatur!</p>
+                  </div><!-- /.summary -->
+
+                  <div class="contact-info">
+                    <div class="heading">Contact Info:</div>
+                    <div class="flex-row two-col">
+                      <div>
+                        <div>Everystreet Crecent</div>
+                        <div>Somewheresville, CA</div>
+                        <div>12345 USA</div>
+                      </div>
+                      <div>
+                        <div>Phone (301) 123-4567</div>
+                        <div>Email infocompany@kar.com</div>
+                      </div>
+                    </div>
+                  </div><!-- /.contact-info -->
+                </div>
+              </div><!-- /.about-brand -->
+            </div>
+            <div class="widget-right flex-height">
+              <div class="widget-heading">
+                <h2>{!$Label.Chatter}</h2>
+                <a href="/apex/KAR_ChatterPage">{!$Label.EF_View_All}</a>
+              </div>
+              <div class="scroll-container">
+                <div class="content">
+                  <div class="content-scroll-wrap">
+                    <apex:outputPanel styleClass="content-scroll">
+                      <div class="chatterPanel">
+                        <chatter:feed entityId="{!groupId}"></chatter:feed>
+                      </div>
+                    </apex:outputPanel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /.r1-c2 -->
+          <div class="r1-c2 two-thirds">
+            <div class="widget-left">
+              <c:KAR_TeamNews newsfeedpageId="{!groupName}" />
+            </div>
+            <div class="widget-right resource-library">
+              <div class="resource-library">
+                <c:KAR_Resources rendered="{!showCRMContent}"/>
+              </div><!-- /.resource-library -->
+
+              <div class="faq">
+                <c:KAR_Collapsible />
+              </div><!-- /.faq -->
+
+            </div>
+          </div><!-- /.r1-c2 two-thirds -->
+
+        </div><!-- /.container-bs -->
+      </div><!-- /.team-page -->
+    </apex:define>
+  </apex:composition>
+  <script>
+    $(document).ready(function() {
+      function getURLParameter(name) {
+        return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]);
+      }
+      var pageName = getURLParameter("tabName");
+      $("#menuDiv ul:first > li > a").each(function() {
+        if ($(this).text().toLowerCase() == pageName.toLowerCase()) {
+          $(this).parent().addClass("active");
+        } else {
+          $(this).parent().removeClass("active");
+        }
+      });
+      $('.defaultBannerImage').attr('src', '{!$Resource.TeamBanner}');
+    });
+  </script>
+</apex:page>

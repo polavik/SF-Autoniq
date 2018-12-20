@@ -1,0 +1,151 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeForceIntranetContentController">
+    <title>{!cmsPage.contentVersionforDisplay.Name}</title>
+    <style>
+        .content img{
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+              <div class="container-bs">
+                <!-- <c:KAR_BusinessUnitNav /> -->
+                <c:KAR_StockTicker />
+                <!-- <c:KAR_QuickSearch /> -->
+              </div>
+            </div><!--/.secondary-nav -->
+
+            <div class="container-bs content-page">
+                <div class="r1-c1 one-third sm">
+                    <div class="widget-right">
+                        <div class="content-article">
+                            <div class="widget-heading">
+                                <h1>
+                                    <apex:outputText value="{!cmsPage.contentVersionforDisplay.Name}"  rendered="{!renderAttachment}" />
+                                    <apex:outputText value="{!articleDetail.contentVersionforDisplay.Name}" rendered="{!IF(categoryType=='News' || categoryType=='Leadership Corner' || categoryType=='Announcements & Newsletters' || categoryType=='Global Alert' || categoryType=='Training',true,false)}"/>
+                                </h1>
+                            </div><!-- /.widget-heading -->
+
+                            <div class="content">
+                                <div class="attachment">
+                                    <apex:outputpanel rendered="{!If(galleryAttachmentList.size > 0,true,false)}">
+                                        <a href="#" onclick="openPopupInIframe(0);" data-toggle="modal" data-target="#bs-modal"  >
+                                            <img src="/servlet/servlet.FileDownload?file={!galleryAttachmentList[0].Id}&otherId="  class="img-responsive article-image" />
+                                        </a>
+                                    </apex:outputpanel>
+                                    <apex:outputpanel rendered="{!renderAttachment && articleDetail.contentVersionforDisplay.Video_Type__c == 'YouTube'}">
+                                        <a href="#" onclick="openPopupInIframe(1);" data-toggle="modal" data-target="#bs-modal" >
+                                            <img src="https://i1.ytimg.com/vi/{!articleDetail.contentVersionforDisplay.Video_ID__c}/0.jpg"  class="img-responsive article-video" />
+                                        </a>
+                                    </apex:outputPanel>
+                                </div>
+                                <apex:outputPanel rendered="{!renderAttachment && articleDetail.contentVersionforDisplay.Video_Type__c == 'Vimeo'}">
+                                    <a href="#" data-toggle="modal" data-target="#bs-modal" onclick="openPopupInIframe(1);" class="big" id = 'aVdo'>
+                                        <script type="text/javascript">
+                                        $.ajax({
+                                            type:'GET',
+                                            url: 'https://vimeo.com/api/v2/video/'+{!articleDetail.contentVersionforDisplay.Video_ID__c}+'.json',
+                                            jsonp: 'callback',
+                                            dataType: 'jsonp',
+                                            success: function(data){
+                                                var thumbnail_src = data[0].thumbnail_large;
+                                                $('#aVdo').append('<img id="vimeoImg" src="' + thumbnail_src + '" height="186px" width="280px"/>');
+                                            }
+                                        });
+                                        </script>
+                                    </a>
+                                </apex:outputPanel>
+                                <apex:outputText styleClass="contentDescription" value="{!cmsPage.contentVersionforDisplay.Description__c}"  escape="false" rendered="{!renderAttachment}"/>
+                                <apex:outputText styleClass="newsDescription" value="{!articleDetail.contentVersionforDisplay.Description__c}" escape="false" rendered="{!IF(categoryType=='News' || categoryType=='Leadership Corner' || categoryType=='Announcements & Newsletters' || categoryType=='Global Alert' || categoryType=='Training',true,false)}"/>
+                            </div><!-- /.content -->
+                        </div><!-- /.content-article -->
+                        <apex:outputPanel rendered="{!IF((categoryType=='News' || categoryType=='Leadership Corner' || categoryType=='Announcements & Newsletters' || categoryType=='Global Alert' || categoryType=='Training') && articleDetail.content.Show_Chatter_Feed__c,true,false)}">
+                            <div class="widget-heading">
+                                <h2>{!$Label.Chatter}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <div class="chatterPanel"><chatter:feed entityId="{!articleDetail.content.Id}"></chatter:feed></div>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+
+
+                </div><!--/.r1-c2 one-third -->
+            </div><!-- /.container-bs -->
+
+
+            <!-- Modal Start -->
+
+            <div class="modal fade" id="bs-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                       <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <div class="modal-title">
+                                <apex:outputLabel value="{!articleDetail.contentVersionforDisplay.Video_Caption__c}" />
+                            </div>
+                        </div>
+
+                        <div id="divImages" style="padding:1em;text-align:center">
+                            <apex:repeat value="{!galleryAttachmentList}" var="gallery">
+                                <img src="/servlet/servlet.FileDownload?file={!gallery.Id}&otherId=" id="modalImage" class="img-responsive" />
+                            </apex:repeat>
+                        </div><!--/.divImages -->
+
+                        <apex:outputPanel rendered="{!renderAttachment}">
+                            <div id="divIframe" style="padding:1em;">
+                                <apex:outputPanel rendered="{!articleDetail.contentVersionforDisplay.Video_Type__c == 'YouTube'}" styleClass="firstPanel">
+                                    <div id="uVideo"></div>
+                                </apex:outputPanel>
+                                <apex:outputPanel rendered="{!articleDetail.contentVersionforDisplay.Video_Type__c == 'Vimeo'}"  styleClass="secondPanel">
+                                    <div id="vVideo"></div>
+                                </apex:outputPanel>
+                            </div>
+                        </apex:outputPanel>
+
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+
+            <!-- Modal End -->
+
+            <script>
+                function openPopupInIframe(flag) {
+                    //alert($(window).height());
+                    if(flag == 1) {
+                        $('#divImages').hide();
+                        if('{!articleDetail.contentVersionforDisplay.Video_Type__c}' == 'YouTube'){
+                                $('#uVideo').html('<iframe id="yVideoFrame" width="560" height="315" src="https://www.youtube.com/embed/{!articleDetail.contentVersionforDisplay.Video_ID__c}" frameborder="0" allowfullscreen="true"></iframe>');
+                        }
+                        else{
+                                $("#vVideo").html('<iframe id="vVideoFrame" width="560" height="315" src="https://player.vimeo.com/video/{!articleDetail.contentVersionforDisplay.Video_ID__c}" frameborder="0" allowfullscreen="true"></iframe>');
+                        }
+
+                        $('#divIframe').show();
+                    } else {
+                        $('#divImages').show();
+                        $('#divIframe').hide();
+                    }
+                    $('#bgLocked').addClass('background');
+                    $('#modalPopup').addClass('modal');
+                    $('#bgLocked').fadeIn('slow');
+                    $('#modalPopup').fadeIn('slow');
+
+
+                }
+
+                function closeIframe() {
+                    $("#vVideo").html('');
+                    $("#uVideo").html('');
+                    $('#bgLocked').fadeOut('slow');
+                    $('#modalPopup').fadeOut('slow');
+                    $('#bgLocked').removeClass('background');
+                    $('#modalPopup').removeClass('modal');
+                }
+            </script>
+
+        </apex:define>
+    </apex:composition>
+</apex:page>

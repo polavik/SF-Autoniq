@@ -1,0 +1,75 @@
+<apex:page controller="LexisNexisController" tabStyle="Application__c">
+
+    <apex:sectionHeader title="LexisNexis Reports" subtitle="{!score.Application_Name__c}"/>
+    <script>
+        var forsevaDone = false;
+    </script>
+    <apex:outputPanel id="messagePanel">
+        <apex:pageMessages />
+        <script>
+            forsevaDone = {!isDone};
+        </script>        
+    </apex:outputPanel>
+
+    <apex:form >
+
+        <apex:actionFunction name="getMoreReports" action="{!getNextReport}" oncomplete="if(!forsevaDone) getMoreReports();" 
+                             rerender="messagePanel,contactPanel,accountPanel" status="status1"/>
+                
+        <apex:pageBlock title="LexisNexis Report Access">
+
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Get Reports" action="{!getNextReport}" oncomplete="if(!forsevaDone) getMoreReports();" 
+                                    reRender="messagePanel,contactPanel,accountPanel" status="status1"/>                        
+                <apex:commandButton value="Done" action="{!doCancel}" immediate="true"/>
+                <apex:actionStatus id="status1" startText="Please wait, getting reports..." startstyle="color:green;font-weight:bold;margin-left:20px;"/>
+            </apex:pageBlockButtons>
+
+            <apex:actionRegion >
+            <apex:selectList value="{!currentReportType}" size="1">
+                <apex:selectOptions value="{!reportTypeChoices}"/>
+                <apex:actionSupport event="onchange" action="{!reportTypeChosen}" rerender="contactPanel,accountPanel"/>                
+            </apex:selectList>
+            </apex:actionRegion>
+
+            <apex:outputPanel id="contactPanel">            
+            <div style="width:50%">
+            <apex:pageBlockTable value="{!relatedContacts}" var="con" style="{!IF(isContactPanelActive,'','opacity:0.3;')}" 
+                                 captionStyle="margin-top:30px;font-weight:bold;width:100%;background-color:#DDDDDD;">
+                <apex:facet name="caption">
+                    <apex:outputText value="Related Contacts"/>
+                </apex:facet>            
+                <apex:column headerValue="Get Report">
+                    <apex:inputCheckbox value="{!con.selected}"/>
+                    <apex:outputText value="{!con.hitStatus}" style="color:red;font-weight:bold;margin-left:10px;"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.Contact.fields.Name.label}">
+                    <apex:outputLink target="_parent" value="/{!con.contact.Id}">{!con.contact.Name}</apex:outputLink>
+                </apex:column>
+            </apex:pageBlockTable>
+            </div>
+            </apex:outputPanel>
+        
+            <apex:outputPanel id="accountPanel">
+            <div style="width:50%">            
+            <apex:pageBlockTable value="{!relatedAccounts}" var="acct" style="{!IF(isContactPanelActive,'opacity:0.3;','')}"
+                                 captionStyle="margin-top:30px;font-weight:bold;width:100%;background-color:#DDDDDD;">
+                <apex:facet name="caption">
+                    <apex:outputText value="Related Accounts"/>
+                </apex:facet>            
+                <apex:column headerValue="Get Report">
+                    <apex:inputCheckbox value="{!acct.selected}"/>
+                    <apex:outputText value="{!acct.hitStatus}" style="color:red;font-weight:bold;margin-left:10px;"/>
+                </apex:column>
+                <apex:column headerValue="{!$ObjectType.Account.fields.Name.label}">
+                    <apex:outputLink target="_parent" value="/{!acct.account.Id}">{!acct.account.Name}</apex:outputLink>
+                </apex:column>                
+            </apex:pageBlockTable>
+            </div>
+            </apex:outputPanel>
+
+        </apex:pageBlock>
+    
+
+    </apex:form>
+</apex:page>

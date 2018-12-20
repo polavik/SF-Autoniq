@@ -1,0 +1,5 @@
+<apex:page standardController="Account">
+<!--
+<apex:outputLink value="http://cognosprod:80/cognos/cgi-bin/cognosisapi.dll?b_action=cognosViewer&ui.action=run&ui.object=%2fcontent%2ffolder%5b%40name%3d%27Sales%20Data%20Mart%20-%20SalesForce%27%5d%2fpackage%5b%40name%3d%27Sales%20Data%20Mart%20-%20SalesForce%27%5d%2freport%5b%40name%3d%27Dealership%20Profiling%20Report%27%5d&p_AAID=%5BDaily%20SFA%20Whole%20Car%20Cube%5D.%5BBUYER_AA_ID%5D.%5BBUYER_AA_ID%5D.%5BBUYER_AA_ID1%5D-%3E%3A%5BPC%5D.%5BBUYER_AA_ID%2520(Root)%5D.%5B"+{!Account.Auction_Access_Number__c}+"%5D&p_BuyerName=%5B{!Account.Name}%5D&p_HomeAuction={!User.ADESAAUCTION__c}&run.prompt=false&isdtp=v4"/>
+-->
+</apex:page>

@@ -1,0 +1,67 @@
+<apex:page controller="LeadSubmitForConversionController" showHeader="false" sidebar="false">
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <apex:stylesheet value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+  <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"/>
+  <apex:includeScript value="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+</head>
+
+<style>
+    .form-group {
+        margin-top:15px;
+    }
+</style>
+
+<script>
+    function ConfirmationAndRedirect() {
+        $('.email-send-success').removeClass('hide');
+        setTimeout(function()
+        {
+            sforce.one.navigateToURL('/{!leadId}');
+        },2000);
+    }
+    
+</script>
+<body>
+
+<div class="container" style="margin-top:15px;min-height:100%">
+  <h3>Send Email</h3>
+  <apex:form >
+      
+      <div class="alert alert-success email-send-success hide">
+          <strong>Your request for Lead Conversion has been send successfully</strong>
+      </div>
+      
+     <apex:actionFunction name="SendEmail" action="{!SendEmail}" onComplete="ConfirmationAndRedirect();"/>
+      
+    <div style="text-align: center;margin-top:15px">
+        <button type="button" class="btn btn-primary" onClick="SendEmail()">Send Email</button>
+        <button type="button" class="btn btn-primary" onClick="sforce.one.navigateToURL('/{!leadId}')">Cancel</button>
+    </div>
+    <div class="form-group" >
+      <label for="inputdefault">Send To</label>
+      <input class="form-control" id="inputdefault" type="text" value="adesadealeroperations@adesa.com" readonly="true"/>
+    </div>
+    
+    <div class="form-group" >
+      <label for="inputdefault">Subject</label>
+      <apex:inputText styleclass="form-control" value="{!defaultEmailSubject}"/>
+    </div>
+    
+    <div class="form-group" >
+      <label for="inputdefault">Email Body</label>
+      <apex:inputTextArea rows="10"  styleclass="form-control" value="{!defaultEmailBody}"/>
+    </div>
+    <div style="text-align: center;">
+    <button type="button" class="btn btn-primary" onClick="SendEmail()">Send Email</button>
+    <button type="button" class="btn btn-primary" onClick="sforce.one.navigateToURL('/{!leadId}')">Cancel</button>
+    </div>
+  </apex:form>
+</div>
+
+</body>
+</html>
+
+</apex:page>

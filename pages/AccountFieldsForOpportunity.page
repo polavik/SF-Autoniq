@@ -1,0 +1,22 @@
+<!--*
+*Appirio Inc. 2016
+*Name  : AccountFieldsForOpportunity
+*Author: Amit SanWariya (Appirio)
+*Date  : 29 Sept, 2016
+*Description: To show account fields on Opportunity Detail page
+*-->
+<apex:page standardController="Opportunity" extensions="AccountFieldsForOpportunityExtension">
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessages />
+            <apex:pageBlockSection >
+                <apex:repeat value="{!accFieldSet}" var="f">
+                    <apex:pageBlockSectionItem >
+                        <apex:outputLabel value="{!IF(LEFT(f.Label,7) == 'Account','','Account')} {!f.Label}"/>
+                        <apex:outputField value="{!acc[f.fieldPath]}"/>
+                    </apex:pageBlockSectionItem>
+                </apex:repeat>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,72 @@
+<apex:page standardController="AFC_Contracts__c" extensions="ContractCreateReportingContExt">
+    <script type="text/javascript">
+        function changeAllCheckboxes(){
+            var checkboxes = document.getElementsByClassName("selectedAppCheckbox");
+            for(var i=0; i<checkboxes.length;i++){
+                checkboxes[i].checked = document.getElementById("selectAllCheckbox").checked;
+            }
+        }
+
+        function defaultNumberRecords(){
+            var freq = document.getElementsByClassName("freqSchedule")[0].value;
+            if(freq==='Monthly'){
+                document.getElementsByClassName("numbRecords")[0].value = 3;
+            } else {
+                document.getElementsByClassName("numbRecords")[0].value = 1;
+            }
+        } 
+    </script>
+    <apex:form id="pageForm">
+        <apex:pageMessages id="messages"/>
+        <apex:pageBlock >
+            <apex:pageBlockButtons id="pageButtons" location="top">
+                <apex:commandButton value="Preview Records" action="{!generateRecords}" rerender="messages, generatedRecordsSection, createBtn"/>
+                <apex:commandButton value="Create Records and Return" action="{!createRecords}" disabled="{!NOT(generatedRecords.size > 0)}" id="createBtn"/>
+                <apex:commandButton value="Cancel" action="{!view}" immediate="true"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection collapsible="false">
+                <apex:inputField value="{!proxyMonthlyReporting.Frequency_of_Schedule__c}" styleClass="freqSchedule" onchange="defaultNumberRecords()"/>
+                <apex:inputField value="{!proxyMonthlyReporting.Start_Date__c}"/>
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Number Of Records" />
+                    <apex:inputText value="{!numberOfRecords}" styleClass="numbRecords"/>
+                </apex:pageBlockSectionItem>
+                <apex:repeat value="{!$ObjectType.Monthly_Reporting__c.FieldSets.Generate_Monthly_Reporting_Fields}" var="aField">
+                    <apex:inputField value="{!proxyMonthlyReporting[aField]}"/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+            <apex:pageBlockSection id="generatedRecordsSection" title="Monthly Reportings to Generate" collapsible="false" columns="1">
+                <apex:pageBlockTable value="{!generatedRecords}" var="aMonthlyReportingRecord" rendered="{!generatedRecords.size > 0}">
+                    <apex:repeat value="{!$ObjectType.Monthly_Reporting__c.FieldSets.Generate_Monthly_Reporting_Fields_View}" var="aField">
+                        <apex:column value="{!aMonthlyReportingRecord[aField]}"/>
+                    </apex:repeat>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        <apex:pageBlock >
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Delete Selected" action="{!deleteSelected}" reRender="messages,existingRecordsSection" />
+                <apex:commandButton value="Refresh Search" reRender="messages,existingRecordsSection" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Filters" collapsible="false" columns="1">
+                <apex:repeat value="{!$ObjectType.Monthly_Reporting__c.FieldSets.Generate_Monthly_Reporting_Fields_Filter}" var="aField">
+                        <apex:inputField value="{!proxyFilterMonthlyReporting[aField]}" rendered="{!$ObjectType.Monthly_Reporting__c.fields[aField].updateable}"/>
+                </apex:repeat>
+            </apex:pageBlockSection>
+               <apex:pageBlockSection id="existingRecordsSection" title="Existing Monthly Reportings" collapsible="false" columns="1">
+                <apex:pageBlockTable value="{!existingRecords}" var="anExistingReporting">
+                    <apex:column >
+                        <apex:facet name="header">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="changeAllCheckboxes();"/>
+                        </apex:facet>
+                        <apex:inputCheckbox value="{!recordsToDeleteMap[anExistingReporting.Id]}" styleClass="selectedAppCheckbox"/> 
+                    </apex:column>
+                    <apex:repeat value="{!$ObjectType.Monthly_Reporting__c.FieldSets.Generate_Monthly_Reporting_Fields_View}" var="aField">
+                        <apex:column value="{!anExistingReporting[aField]}"/>
+                    </apex:repeat>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

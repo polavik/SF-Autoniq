@@ -1,0 +1,44 @@
+<apex:page controller="PartialVinSearchController"> 
+    <apex:pageMessages />
+    <apex:form > 
+        <apex:pageBlock >
+            <apex:pageBlockSection columns="2">
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Partial VIN Search" for="queryStr"/>
+                    <apex:outputPanel >
+                        <apex:inputText value="{!queryStr}" id="queryStr"/>
+                        <apex:commandButton action="{!submit}" value="Go!" id="goButton"/>
+                    </apex:outputPanel>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:pageBlock title="Purchases">
+        <apex:pageBLockTable value="{!purchases}" var="p">
+            <apex:column >
+                <apex:facet name="header">VIN</apex:facet>
+                <apex:outputLink value="/{!p.Id}">{!p.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!p.YMMS__c}"/>
+            <apex:column value="{!p.Segment_Name__c}"/>
+            <apex:column value="{!p.ATC_Sale_Date__c}"/>
+            <apex:column value="{!p.Sale_Price__c}"/>
+            <apex:column value="{!p.Pick_Up_State__c}"/>
+            <apex:column value="{!p.Transport_Type__c}"/>
+            <apex:column value="{!p.ATC_Seller__c}"/>
+        </apex:pageBLockTable>
+    </apex:pageBlock>
+    <apex:pageBlock title="Vehicles">
+        <apex:pageBlockTable value="{!vehicles}" var="v">
+            <apex:column >
+                <apex:facet name="header">VIN</apex:facet>
+                <apex:outputLink value="/{!v.Id}">{!v.Name}</apex:outputLink>
+            </apex:column>
+            <apex:column value="{!v.YMMS__c}"/>
+            <apex:column value="{!v.Auction_Status__c}"/>
+            <apex:column value="{!v.Location__c}"/>
+            <apex:column value="{!v.Buy_Now_Price__c}"/>
+            <apex:column value="{!v.Reserve_Price__c}"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+</apex:page>

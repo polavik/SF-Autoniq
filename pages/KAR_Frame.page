@@ -1,0 +1,115 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="KAR_Frame_Controller">
+    <title>KAR</title>
+    <style>
+        .form-control-static {
+            margin-top: 0px;
+        }
+        .img-user {
+            margin-bottom: 20px;
+        }
+        .zen-img {
+            display: none !important;
+        }
+        .zen-imgExt:after {
+            content: 'Unfollow';
+        }
+        img.chatter-icon.chatter-unfollowIcon {
+            display: none;
+        }
+        .zen-mediaBody {
+            font-size: 0;
+        }
+        .zen-mediaBody a {
+            display: block !important;
+            margin-bottom: 0;
+            text-align: center;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.428571429;
+            border-radius: 4px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #fff;
+            background-color: #3A6D8E;
+            border: 0;
+            text-transform: uppercase;
+            font-family: "Open Sans", sans-serif;
+            font-weight: 700;
+            width: 100%;
+        }
+        .zen-mediaBody a:hover {
+            color: #fff;
+            background-color: #2b516a;
+            border-color: #213e50;
+            text-decoration: none;
+        }
+        .zen-mediaBody a:active {
+            color: #fff;
+            background-color: #2b516a;
+            border-color: #213e50;
+            outline: 0;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+            background-image: none;
+        }
+        .zen-mediaBody a:active:hover {
+            color: #fff;
+            background-color: #213e50;
+            border-color: #0e1a21;
+        }
+        .zen-mediaBody, .zen-media {
+            width: 100% !important;
+        }
+        .more-info .form-group {
+            display: block !important;
+        }
+        .more-info .form-group label {
+            width: 90%;
+            text-align: left;
+            padding-bottom: 5px;
+        }
+        .profile-info .content {
+            padding-bottom: 30px !important;
+        }
+        .embed-container {
+            position: relative;
+            /*padding-bottom: 56.25%;*/
+            height: {!height}px;
+            overflow: auto;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+        }
+        .embed-container iframe, .embed-container object, .embed-container embed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: {!height}px;
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                   <c:KAR_StockTicker />
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+            
+            <!-- <iframe height="{!height}px" id="theIframe" frameborder="0" name="theIframe" src="{!url}" width="100%"></iframe> -->
+
+            <div class='embed-container'>
+                <iframe id="theIframe" name="theIframe" src='{!url}' style='border:0'></iframe>
+            </div>
+            
+        </apex:define>
+    </apex:composition>
+</apex:page>

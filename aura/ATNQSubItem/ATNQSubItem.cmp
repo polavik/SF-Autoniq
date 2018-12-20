@@ -1,0 +1,15 @@
+<aura:component >
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="item" type="Object" access="public" />
+    <aura:attribute name="isViewMode" type="Boolean" access="public" />
+    <tr>
+	<!--<div aura:id="subItemEdit"> <c:ATNQSubscriptionItemEditMode item="{!v.item}" /></div>
+	<div aura:id="subItemView"> <c:ATNQSubscriptionItemViewMode item="{!v.item}"/></div>-->
+		<aura:if isTrue="{!v.isViewMode == true}">
+    		<c:ATNQSubscriptionItemViewMode item="{!v.item}"/>
+			<aura:set attribute="else">
+	     		 <c:ATNQSubscriptionItemEditMode item="{!v.item}"/>
+   	 		</aura:set>
+  		</aura:if>
+	</tr>
+</aura:component>

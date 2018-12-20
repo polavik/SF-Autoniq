@@ -1,0 +1,34 @@
+<apex:page showHeader="false">
+<!-- This script takes the endpoint URL parameter passed from the deployment page and makes
+it the action for the form -->
+<script type="text/javascript">
+(function() {
+function handlePageLoad() {
+var endpointMatcher = new RegExp("[\\?\\&]endpoint=([^&#]*)");
+document.getElementById('prechatForm').setAttribute('action',
+decodeURIComponent(endpointMatcher.exec(document.location.search)[1]));
+} if (window.addEventListener) {
+window.addEventListener('load', handlePageLoad, false);
+} else { window.attachEvent('onload', handlePageLoad, false);
+}})();
+</script>
+<apex:image id="theImage" value="{!$Resource.AdesaCustomerConnection}" width="484" height="96"/>
+<br />
+<br />
+<h1>Welcome to ADESA Customer Connection Live Support!</h1>
+<br />
+<br />
+<form method='post' id='prechatForm'>
+Please select from the following topics: <select name="liveagent.prechat.buttons">
+<option value="57313000000CwAU">General Customer Support</option>
+<option value="57313000000CwAU">LiveBlock Inquiry</option>
+<option value="57313000000CwAU">DealerBlock Site Assistance </option>
+<option value="57313000000CwAU">Account Management</option>
+<option value="57313000000CwAU">Payment, Title/Ownership, Post Sales Inquiry</option>
+</select><br />
+<input type='submit' value='Request Chat' id='prechat_submit'/>
+<style type="text/css">
+p {font-weight: bolder }
+</style>
+</form>
+</apex:page>

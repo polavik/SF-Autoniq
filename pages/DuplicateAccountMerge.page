@@ -1,0 +1,176 @@
+<apex:page sidebar="false"  Controller="DuplicateAccountMergeController" title="Duplicate Account Merge">
+
+<script>
+  function printalert()
+  {
+      var r = confirm("Are you sure want to proceed?");
+        if (r == true) {            
+            //callController();
+            setTimeout(callController(),10000 );
+        } else {
+            return false;
+        }  
+  }  
+</script> 
+<style>
+.z-modal-mask {
+    width:100%;
+    height:100%;
+    background: grey;
+    opacity: 0.6;
+    position:absolute;
+    background-image: url({!$Resource.ProcessingImage2}); background-repeat: no-repeat;
+    background-size: 300px 63px;
+    background-position: center; 
+}
+
+
+#{!$Component.Section1} tr:nth-child(even) {background: #FFFAFA}
+#{!$Component.Section1} tr:nth-child(odd) {background: #FFFFFF}
+
+.detailtable tr:nth-child(even) {background: #FFFAFA}
+.detailtable tr:nth-child(odd) {background: #FFFFFF}
+
+
+</style>
+<apex:form id="frmWaiting">
+<apex:actionStatus id="AddStatus">
+<apex:facet name="start">
+    <div class="z-modal-mask">    
+    </div>    
+</apex:facet>
+</apex:actionStatus>
+</apex:form>
+ <!--<img src="/img/loading.gif" alt="Loading graphic" />-->
+<apex:form id="mainform" styleClass="detailtable">
+<apex:pageMessages id="msg" escape="false"/>   
+<apex:actionFunction name="callController" action="{!mergeAccount}"  rerender="msg,mainBlock" status="AddStatus"  />  
+<apex:sectionHeader title="Account" subtitle="Duplicate Account Merge"/>
+<apex:pageBlock id="mainBlock" mode="detail"  >
+<apex:outputText id="outText1" value="{!strOut}" escape="false">
+</apex:outputText>
+<apex:pageBlockSection columns="2" showHeader="false"  >
+
+    <apex:pageBlockSection columns="1" title="Winner Account" collapsible="false" >
+        <apex:pageBlockSection columns="3" title="Search Winner Account" showHeader="false">        
+            <apex:outputText value="Enter Master Index ID: "/>       
+            <apex:inputText id="txtSearch" value="{!searchText}" title="Enter Master Index to be search" />
+            <apex:commandButton id="btnSearchMasterAccount" title="Search for Winner Account" value=" Search " action="{!search}" rerender="msg,mainBlock" status="AddStatus"/>            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" title="Account Details" showHeader="true" id="Section1"  >
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Master Index"/>
+                    <apex:outputText value="{!accMaster.Master_Index__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Data Source"/>
+                    <apex:outputText value="{!accMaster.Data_Source__c}" />                    
+            </apex:pageBlockSectionItem>            
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Account Name"/>
+                    <apex:outputLink value="/{!accMaster['Id']}" target="_blank">{!accMaster.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="DBA"/>
+                    <apex:outputText value="{!accMaster.Dba__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Auction Access Number"/>
+                    <apex:outputText value="{!accMaster.Auction_Access_Number__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="TIN"/>
+                    <apex:outputText value="{!accMaster.Tax_Identification_Number__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email"/>
+                    <apex:outputText value="{!accMaster.Company_Email_Address__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Phone"/>
+                    <apex:outputText value="{!accMaster.Phone}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mdm ID"/>
+                    <apex:outputText value="{!accMaster.Mdm_ID__c}" />                    
+            </apex:pageBlockSectionItem>
+            
+        </apex:pageBlockSection>    
+    </apex:pageBlockSection>
+    
+
+    <apex:pageBlockSection columns="1" title="Duplicate Account" collapsible="false">    
+        <apex:pageBlockSection columns="3" title="Search Duplicate Account" showHeader="false">        
+            <apex:outputText value="Enter Master Index ID: "/>       
+            <apex:inputText id="txtSearchDuplicate" value="{!searchTextDuplicate}" title="Enter Master Index to be search" />
+            <apex:commandButton id="btnSearchMasterAccount" title="Search for Duplicate Account" value=" Search " action="{!searchDuplicate}" rerender="msg,mainBlock" status="AddStatus"/>            
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="1" title="Account Details" showHeader="true" >
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Master Index" />
+                    <apex:outputText value="{!accDuplicate.Master_Index__c}" />                    
+            </apex:pageBlockSectionItem>            
+            
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Data Source"/>
+                    <apex:outputText value="{!accDuplicate.Data_Source__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Account Name"/>
+                    <apex:outputLink value="/{!accDuplicate['Id']}" target="_blank">{!accDuplicate.Name}</apex:outputLink>                                      
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="DBA"/>
+                    <apex:outputText value="{!accDuplicate.Dba__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Auction Access Number"/>
+                    <apex:outputText value="{!accDuplicate.Auction_Access_Number__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="TIN"/>
+                    <apex:outputText value="{!accDuplicate.Tax_Identification_Number__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Email"/>
+                    <apex:outputText value="{!accDuplicate.Company_Email_Address__c}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Phone"/>
+                    <apex:outputText value="{!accDuplicate.Phone}" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Mdm ID"/>
+                    <apex:outputText value="{!accDuplicate.Mdm_ID__c}" />                    
+            </apex:pageBlockSectionItem>         
+        </apex:pageBlockSection>  
+        
+        <apex:pageBlockSection columns="1"  showHeader="false" >
+         <apex:pageBlockSectionItem dataStyle="border-top:1px solid;" >
+                    <apex:outputLabel value="Duplicate?" style="color:blue;"/>
+                    <apex:inputCheckbox value="{!accDuplicate.Duplicate__c }" />                    
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem dataStyle="border-bottom:1px solid;">
+                <apex:outputLabel value="Winner Accout Master Index" style="color:blue;"/>
+                <apex:inputText id="txtMasterIndex"  value="{!MasterIndex}"  title="Enter Master Index of Winner Account" />
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+    </apex:pageBlockSection>
+    
+</apex:pageBlockSection>
+
+<apex:pageBlockSection columns="3"  showHeader="false" rendered="{!ShowDetail}"    >
+    <apex:outputLabel />    
+    <apex:pageBlockSection columns="3"  showHeader="false"   >
+         <apex:outputLabel />    
+          <apex:commandButton id="btnMergeAccount" onclick="printalert()" rerender="mainBlock" value=" Merge Account " title="Click to mark right side account of page is duplicate account " />            
+          <!-- action="{!mergeAccount}" -->
+         <apex:outputLabel />
+    </apex:pageBlockSection>
+    <apex:outputLabel />
+</apex:pageBlockSection>
+
+</apex:pageBlock>
+ </apex:form>
+</apex:page>

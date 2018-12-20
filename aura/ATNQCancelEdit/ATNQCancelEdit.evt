@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event template">
+	<!--<aura:attribute name="userSetting" type="Autoniq_User_Applilcation_Setting__c" />-->
+	
+</aura:event>

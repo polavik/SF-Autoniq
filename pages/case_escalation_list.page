@@ -1,0 +1,137 @@
+<apex:page standardController="Case_Escalation__c" extensions="CaseEscalationList" recordSetVar="standardRecordSet" tabstyle="Case_Escalation__c">
+	 
+	<style>
+		.cPageTitle {
+			background-color: #1D5085;
+			color: #FFFFFF;
+			padding-top: 15px;
+			padding-left: 10px;
+			padding-bottom: 20px;
+			border: 1px solid black;
+			margin-bottom: 5px;
+		}
+		.cPageTitleLinks {
+			float: right;
+			padding-right: 5px;
+		}
+		.cPageTitleLinks a {
+			color: white;
+		}
+	</style>
+	
+	<div class="cPageTitle">
+		<h1>Case Escalations</h1>
+		<div class="cPageTitleLinks">
+			<apex:outputLink value="{!xlsBaseUrl}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy={!sortBy}&Sort={!URLENCODE(currentSort)}&pageSize=2000">Export to MS Excel</apex:outputLink>
+		</div>
+		<div class="clearDiv">&nbsp;</div>
+	</div>	
+	
+	<form id="filterForm" action="{!$Page.case_escalation_list}">
+		<apex:panelGrid columns="3">
+			<apex:outputLabel value="View:"/>
+			<apex:outputLabel value="Assigned To:"/>
+			<apex:outputLabel value=" "/>
+			<apex:panelGroup >
+				<select name="status">
+					<apex:repeat value="{!statusOptions}" var="o">
+						<option value="{!o.value}" {!IF(o.value = statusFilter, 'selected', '')}>{!o.label}</option>
+					</apex:repeat>
+				</select>
+			</apex:panelGroup>
+			<apex:panelGroup >
+				<select name="assignedTo">
+					<apex:repeat value="{!assignedToOptions}" var="o">
+						<option value="{!o.value}" {!IF(o.value = assignedToFilter, 'selected', '')}>{!o.label}</option>
+					</apex:repeat>
+				</select>
+			</apex:panelGroup>
+			<input type="submit" value="Go!"/>
+		</apex:panelGrid>
+	</form> 
+	
+	<apex:pageBlock title=" ">
+		<apex:pageBlockTable var="e" value="{!records}" id="list">
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Name&currentSort={!URLENCODE(computedSort)}">Case Escalation #</apex:outputLink>
+				</apex:facet>
+				<apex:outputLink value="/{!e.Id}">{!e.Name}</apex:outputLink>
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Account_Name__c&currentSort={!URLENCODE(computedSort)}">Dealer</apex:outputLink>
+				</apex:facet>
+				{!e.Account_Name__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Location__c&currentSort={!URLENCODE(computedSort)}">Location</apex:outputLink>
+				</apex:facet>
+				{!e.Location__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=VIN__c&currentSort={!URLENCODE(computedSort)}">VIN</apex:outputLink>
+				</apex:facet>
+				{!e.VIN__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Consignee__c&currentSort={!URLENCODE(computedSort)}">Consignee Name</apex:outputLink>
+				</apex:facet>
+				{!e.Consignee__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Case_Reason__c&currentSort={!URLENCODE(computedSort)}">Case Reason</apex:outputLink>
+				</apex:facet>
+				{!e.Case_Reason__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Private_Label__c&currentSort={!URLENCODE(computedSort)}">Purchase Venue</apex:outputLink>
+				</apex:facet>
+				{!e.Private_Label__c}
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Buyer_Dealer_Code__c&currentSort={!URLENCODE(computedSort)}">Buyer Dealer Code</apex:outputLink>
+				</apex:facet>
+				{!e.Buyer_Dealer_Code__c} 
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=CreatedDate&currentSort={!URLENCODE(computedSort)}">Date Escalated</apex:outputLink>
+				</apex:facet>
+				<apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+					<apex:param value="{!e.CreatedDate}"/>
+				</apex:outputText>
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Escalation_Resolution__c&currentSort={!URLENCODE(computedSort)}">Resolution</apex:outputLink>
+				</apex:facet>
+				{!e.Escalation_Resolution__c}&nbsp;
+				<apex:outputText rendered="Escalation_Resolution__c">&nbsp;</apex:outputText>
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">
+					<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy=Assigned_To_Name__c&currentSort={!URLENCODE(computedSort)}">Assigned To</apex:outputLink>
+				</apex:facet>
+				{!e.Assigned_To_Name__c}
+				<apex:outputText rendered="{!ISBLANK(e.Assigned_To_Name__c)}">&nbsp;</apex:outputText>
+			</apex:column>
+		</apex:pageBlockTable>
+		<div style="text-align:center; margin-top:5px">
+			<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy={!sortBy}&Sort={!URLENCODE(currentSort)}&page=first" rendered="{!setCon.hasPrevious}">&lt;&lt;</apex:outputLink>
+			&nbsp;
+			<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy={!sortBy}&currentSort={!URLENCODE(currentSort)}&page={!setCon.pageNumber - 1}" rendered="{!setCon.hasPrevious}">&lt; Previous</apex:outputLink>
+			&nbsp;
+			<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy={!sortBy}&currentSort={!URLENCODE(currentSort)}&page={!setCon.pageNumber + 1}" rendered="{!setCon.hasNext}">Next &gt;</apex:outputLink>
+			&nbsp;
+			<apex:outputLink value="{!$Page.case_escalation_list}?assignedTo={!URLENCODE(assignedToFilter)}&status={!URLENCODE(statusFilter)}&sortBy={!sortBy}&currentSort={!URLENCODE(currentSort)}&page=last" rendered="{!setCon.hasNext}">&gt;&gt;</apex:outputLink>
+		</div>
+	</apex:pageBlock>
+	
+</apex:page>

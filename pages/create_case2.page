@@ -1,0 +1,81 @@
+<apex:page standardController="Case" extensions="CreateCase2Controller" tabStyle="Case">
+	<apex:form >
+		<apex:pageBlock title="New {!myCase.Type}"> 
+			
+
+			
+			<!-- Welcome Message -->
+			<apex:outputPanel style="margin-bottom:15px" layout="block">
+				<apex:outputText escape="false" value="{!welcomeMsg}"/>
+			</apex:outputPanel>
+			
+			<!-- Input Section -->
+			<apex:pageBlockSection title="Case Information" columns="1">
+				<apex:outputField value="{!myCase.Type}" />
+				<apex:outputField value="{!myCase.Vehicle_Identification_Number__c}" rendered="{!renderStaticVIN}" />
+				<apex:inputField value="{!myCase.Vehicle_Identification_Number__c}" rendered="{!renderEditableVIN}"/>
+				<apex:pageBlockSectionItem rendered="{!renderYMMS}">
+					<apex:outputLabel value="YMMS" />
+					<apex:outputText value="{!YMMS}" />
+				</apex:pageBlockSectionItem>
+				<!-- not migrated from OL
+				<apex:inputField value="{!myCase.Load_Order_Number__c}" rendered="{!renderLoadOrderNumber}" />			
+				-->
+				<apex:pageBlockSectionItem rendered="{!renderEditableReason}">  
+					<apex:outputLabel value="Case Reason" />
+					<apex:selectList value="{!myCase.Reason}" size="1">
+						<apex:selectOptions value="{!caseReasons}"/>
+					</apex:selectList>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem rendered="{!renderStaticReason}">
+					<apex:outputLabel value="Case Reason" />
+					<apex:outputField value="{!myCase.Reason}" />
+				</apex:pageBlockSectionItem>
+				<apex:inputField style="width:80%; min-height:100px" value="{!myCase.Description}"/>
+			</apex:pageBlockSection>
+			
+			<!-- Reminder Message -->
+			<apex:outputPanel layout="block" style="margin-top:10px; margin-bottom:10px">
+				<apex:outputText escape="false" value="{!reminderMsg}"/>
+			</apex:outputPanel>
+			
+			<!-- Generic Errors/Submit Button -->
+			<apex:outputPanel rendered="{!renderSubmitButton}">
+				<apex:outputPanel layout="block">
+					<apex:pageMessages />
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" style="text-align:center">
+					<apex:commandButton style="vertical-align:middle; margin-top:10px" action="{!submit}" value="Submit" />
+				</apex:outputPanel>
+			</apex:outputPanel>
+			
+			<!-- Invalid Arb Errors/Submit Buttons-->
+			<apex:outputPanel rendered="{!renderContinueCancelButton}" layout="block">
+				<!-- Custom Error Box -->
+				<apex:outputPanel layout="block" style="background-color:#FFFFCC; border:1px solid #CC0000; padding:6px 8px 6px 6px; margin:10px 0px 10px 0px">
+					<apex:outputPanel layout="block">
+						<apex:image style="vertical-align:middle" url="{!$Resource.error_icon}" />
+						<h4 style="color:#CC0000;margin-left:3px">ARBITRATION INVALID</h4>
+					</apex:outputPanel>
+					<apex:outputPanel layout="block">
+						<apex:dataList value="{!validationMessages}" style="margin-top:5px;margin-bottom:7px" var="message">
+							<apex:outputText value="{!message}" /> 
+						</apex:dataList>
+					</apex:outputPanel>
+				</apex:outputPanel>
+				<apex:outputPanel >
+					<p>If you have any questions regarding the validity of this Arbitration Case please refer to the OPENLANE Terms of Use agreement.  You may choose to CANCEL this request or CONTINUE and an Arbitration Coordinator will contact you within two business hours.</p>
+				</apex:outputPanel>
+				<apex:outputPanel layout="block" style="text-align:center">
+					<apex:commandButton style="vertical-align:middle; margin-top:10px" action="{!cancel}" value="Cancel" />
+					<apex:commandButton style="vertical-align:middle; margin-top:10px" action="{!submit}" value="Continue" />
+				</apex:outputPanel>
+			</apex:outputPanel>
+		</apex:pageBlock> 
+	</apex:form>
+	
+	<!-- Hack to prevent calendar widget from stealing focus -->
+	<script>
+		function setFocusOnLoad() {} 
+	</script>
+</apex:page>

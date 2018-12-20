@@ -1,0 +1,50 @@
+<apex:page Controller="BusinessPlanGeneratorController">
+    <apex:pageMessages />
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+        <apex:form >
+        <apex:pageblock title="Select Business Plan Year">
+            <apex:commandButton action="{!updatePlanYear}" value="View Business Plans" title="Create new plans for all selected AFC Branches"/>
+            <apex:selectList value="{!businessPlanYear}" multiselect="false" size="1">
+                <apex:selectOptions value="{!businessPlanYearOptions}"/>
+            </apex:selectList>
+        </apex:pageblock>
+        <apex:pageblock title="{!businessPlanYear} Existing Business Plans">
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable value="{!plannedBranches}" var="branch">
+                    <apex:column headervalue="Business Plan"><apex:outputlink value="/{!branch.AFC_Business_Plans__r[0].id}">{!branch.AFC_Business_Plans__r[0].Name}</apex:outputlink></apex:column>
+                    <apex:column headervalue="Branch Name" value="{!branch.Name}"/>
+                    <apex:column headervalue="Branch Manager" value="{!branch.Branch_Manager_1__c}"/>
+                     <apex:column headervalue="Status" value="{!branch.AFC_Business_Plans__r[0].Status__c}"/>
+                    <apex:column headervalue="# AFC Goals" value="{!branch.AFC_Business_Plans__r[0].AFC_Goals__c}"/>
+                   <apex:column headervalue="Last Modified Date" value="{!branch.AFC_Business_Plans__r[0].LastModifiedDate}"/>
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+
+        <apex:pageblock title="{!businessPlanYear} To Be Created">
+            <apex:commandButton action="{!generateBusinessPlans}" value="Generate Business Plans" title="Create new plans for all selected AFC Branches" rendered="{!unplannedBranches.size > 0}"/>
+            <apex:pageBlockSection columns="1">
+                <apex:pageBlockTable value="{!unplannedBranches}" var="branchWrapper" id="table" title="All Accounts">
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!branchWrapper.selected}" id="inputId"/>
+                </apex:column>
+                <apex:column headervalue="Branch Name" value="{!branchWrapper.afcBranch.Name}" />
+                <apex:column headervalue="Branch Manager" value="{!branchWrapper.afcBranch.Branch_Manager_1__c}" />    
+            </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+
+    </apex:form>
+</apex:page>

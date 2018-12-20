@@ -1,0 +1,111 @@
+<apex:page standardController="AFC_Contract_Shell__c" extensions="CosmosInvokeContExt" title="{!$Label.SendCosmos}">
+    <head>
+        <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"/>
+        <script type="text/javascript">
+            $j = jQuery.noConflict();
+            $j(document).ready(function() {
+                disableBackButton();
+                if({!invoke}) {
+                	cosmosInvoke();
+                } else {
+                	enableBackButton();
+                }
+            });
+            function enableBackButton()
+            {
+                $j("[id$='cbBack']").removeAttr("disabled");
+                $j("[id$='cbBack']").attr("class", "btn");
+            }
+            function disableBackButton()
+            {
+                $j("[id$='cbBack']").attr("disabled", "disabled");
+                $j("[id$='cbBack']").attr("class", "btnDisabled");
+            }
+        </script>
+    </head>
+    <apex:sectionHeader title="{!AFC_Contract_Shell__c.Name}" subtitle="{!$Label.SendCosmos}"/>
+    <apex:form >
+        <apex:actionFunction name="cosmosInvoke" action="{!cosmosInvoke}" rerender="pgMsgs" status="wsStatus" oncomplete="enableBackButton();"/>
+        <apex:pageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton id="cbBack" value="{!$Label.Back}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+	        <apex:pageMessages id="pgMsgs"/>
+            <apex:panelGrid columns="1" width="100%" style="text-align: center;">
+                <apex:actionStatus id="wsStatus">
+                    <apex:facet name="start">
+		                <apex:image url="{!$Resource.loader}"/>
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:panelGrid>
+        </apex:pageBlock>
+    </apex:form>
+    <!-- Hidden output text to bind to contract and parent account and parent application fields -->
+    <apex:outputText rendered="false" value="{!AFC_Contract_Shell__c.Account__c}
+            {!AFC_Contract_Shell__c.Account__r.Website}
+            {!AFC_Contract_Shell__c.Account__r.Primary_Street1__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_Street2__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_City__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_State__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_Postalcode__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_County__c}
+            {!AFC_Contract_Shell__c.Account__r.Primary_Country__c}
+            {!AFC_Contract_Shell__c.Account__r.Corrected_P_Street__c}
+            {!AFC_Contract_Shell__c.Account__r.Corrected_P_City__c}
+            {!AFC_Contract_Shell__c.Account__r.Corrected_P_State__c}
+            {!AFC_Contract_Shell__c.Account__r.Corrected_P_Postalcode__c}
+            {!AFC_Contract_Shell__c.Account__r.Corrected_Landline_Phone__c}
+            {!AFC_Contract_Shell__c.Account__r.Phone}
+            {!AFC_Contract_Shell__c.Account__r.Tax_Identification_Number__c}
+            {!AFC_Contract_Shell__c.Account__r.Master_Index__c}
+            {!AFC_Contract_Shell__c.Account__r.Name}
+            {!AFC_Contract_Shell__c.Application__c}
+            {!AFC_Contract_Shell__c.Application__r.AFC_Branch_Number__c}
+            {!AFC_Contract_Shell__c.Application__r.RecordType.Name}
+            {!AFC_Contract_Shell__c.Application__r.RecordType.DeveloperName}
+            {!AFC_Contract_Shell__c.AFC_Dealer_ID__c}
+            {!AFC_Contract_Shell__c.Master_Contract_ID__c}
+            {!AFC_Contract_Shell__c.Product_Type__c}
+            {!AFC_Contract_Shell__c.Contract_Type__c}
+            {!AFC_Contract_Shell__c.Affiliation_Type__c}
+            {!AFC_Contract_Shell__c.Credit_Limit__c}
+            {!AFC_Contract_Shell__c.Received_from_Dealer__c}
+            {!AFC_Contract_Shell__c.Contract_Received_At_Contracts_Date__c}
+            {!AFC_Contract_Shell__c.AFC_Branch_Number__c}
+            {!AFC_Contract_Shell__c.Contract_Status__c}
+            {!AFC_Contract_Shell__c.Last_Synced_Date__c}
+            {!AFC_Contract_Shell__c.Salvage_Master_Contract_End_Date__c}
+            {!AFC_Contract_Shell__c.License_Type__c}"/>
+    <!-- Hidden data table to bind to child related object fields -->
+    <apex:dataTable value="{!AFC_Contract_Shell__c.Application_Contacts__r}" var="contact" rendered="false">
+        <apex:column value="{!contact.End_Date__c}"/>
+        <apex:column value="{!contact.Contact__c}"/>
+        <apex:column value="{!contact.Contact__r.FirstName}"/>
+        <apex:column value="{!contact.Contact__r.Party_Id__c}"/>
+        <apex:column value="{!contact.Contact__r.Middle_Name__c}"/>
+        <apex:column value="{!contact.Contact__r.LastName}"/>
+        <apex:column value="{!contact.Contact__r.Salutation}"/>
+        <apex:column value="{!contact.Relationship__c}"/>
+        <apex:column value="{!contact.Relationship_Subtype__c}"/>
+        <apex:column value="{!contact.Contact__r.Birthdate}"/>
+        <apex:column value="{!contact.Contact__r.Phone}"/>
+        <apex:column value="{!contact.Contact__r.HomePhone}"/>
+        <apex:column value="{!contact.Contact__r.MobilePhone}"/>
+        <apex:column value="{!contact.Contact__r.Email}"/>
+        <apex:column value="{!contact.Contact__r.SSN__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_Street__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_Street2__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_City__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_State__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_Postalcode__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_County__c}"/>
+        <apex:column value="{!contact.Contact__r.AFC_Primary_Country__c}"/>
+        <apex:column value="{!contact.Contact__r.End_Date__c}"/>
+        <apex:column value="{!contact.Contact__r.Type_of_Home_Ownership__c}"/>
+        <apex:column value="{!contact.Contact__r.Citizen__c}"/>
+        <apex:column value="{!contact.Contact__r.Driver_s_License__c}"/>
+        <apex:column value="{!contact.Contact__r.Suffix__c}"/>
+        <apex:column value="{!contact.Contact__r.Driver_s_License_Expiration_Date__c}"/>
+        <apex:column value="{!contact.Contact__r.Driver_s_Lic_State_Province__c}"/>
+    </apex:dataTable>
+</apex:page>

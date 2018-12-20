@@ -1,0 +1,502 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false" language="{!$CurrentPage.parameters.lang}" controller="ADESAPreferences" docType="html-5.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"></meta>
+<apex:stylesheet value="{!URLFOR($Resource.multiselect, 'multiselect/sol.css')}" />
+<apex:includeScript value="{!URLFOR($Resource.multiselect, 'multiselect/jquery.min.js')}" />
+<apex:includeScript value="{!URLFOR($Resource.multiselect, 'multiselect/sol.js')}" />
+
+<apex:form id="formid">
+<apex:pageMessages />
+<script type="text/javascript">
+    $(function() {
+        // initialize sol
+        $('#mylocations').searchableOptionList({
+        events: {            
+            onChange: function(sol,changedElements) {
+             console.log(changedElements);
+                }
+            },
+        texts: {
+                selectAll: "{!$Label.AD_Select_All}",
+                selectNone: '{!$Label.AD_Clear_All}',
+                searchplaceholder: '{!$Label.AD_Select_Desired_Locations}'
+            }
+          });
+        //var listarry = $('#mylocations').getSelection();
+        //alert(listarry);
+    });
+    function CGLvalues()
+    {
+        var options = document.getElementById('mylocations').getElementsByTagName('option');
+                
+                var strlocations = '';
+                for (var i=options.length; i--;) {
+                    if (options[i].selected) {
+                        if(strlocations == '')
+                            strlocations = options[i].value;
+                        else
+                            strlocations = strlocations +';'+options[i].value;
+                     }
+                     
+                }
+        
+        
+        $('[id$=idlocations]').val(strlocations);
+        
+    }
+    
+    
+    $(document).ready(function() {
+                    var options = '{!strlocations}'.split(';');
+                    for (var i=0; i < options.length; i++) {
+                        
+                       var locval = options[i];
+                       
+                        $("#mylocations").find('option').each(function( i, opt ) {
+                            if( opt.value === locval) 
+                                $(opt).attr('selected', 'selected');
+                        });
+                    }
+                    
+                    // you need to specify id of combo to set right combo, if more than one combo
+                });
+    
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        // initialize sol
+        $('#myconsignors').searchableOptionList({
+        events: {            
+            onChange: function(sol,changedElements) {
+             console.log(changedElements);
+                }
+            },
+        showSelectAll: true,    
+        texts: {
+                selectAll: "{!$Label.AD_Select_All}",
+                selectNone: '{!$Label.AD_Clear_All}',
+                searchplaceholder: '{!$Label.AD_Select_Desired_Consignors}'
+            }
+          });
+        //var listarry = $('#myconsignors').getSelection();
+        //alert(listarry);
+    });
+    function CGCvalues()
+    {
+        var options = document.getElementById('myconsignors').getElementsByTagName('option');
+                
+                var strconsignors = '';
+                for (var i=options.length; i--;) {
+                    if (options[i].selected) {
+                        if(strconsignors == '')
+                            strconsignors = options[i].value;
+                        else
+                            strconsignors = strconsignors +';'+options[i].value;
+                     }
+                     
+                }
+        
+        
+        $('[id$=idconsignors]').val(strconsignors);
+        
+    }
+    
+    
+    $(document).ready(function() {
+                    var options = '{!strconsignors}'.split(';');
+                    for (var i=0; i < options.length; i++) {
+                        
+                       var locval = options[i];
+                       
+                        $("#myconsignors").find('option').each(function( i, opt ) {
+                            if( opt.value === locval) 
+                                $(opt).attr('selected', 'selected');
+                        });
+                    }
+                    
+                    // you need to specify id of combo to set right combo, if more than one combo
+                });
+    
+</script>
+
+<script type="text/javascript">
+    $(function() {
+        // initialize sol
+        $('#mymakes').searchableOptionList({
+        events: {            
+            onChange: function(sol,changedElements) {
+             console.log(changedElements);
+                }
+            },
+        showSelectAll: true,    
+        texts: {
+                selectAll: "{!$Label.AD_Select_All}",
+                selectNone: '{!$Label.AD_Clear_All}',
+                searchplaceholder: '{!$Label.AD_Select_Desired_Makes}'
+            }
+          });
+        //var listarry = $('#myconsignors').getSelection();
+        //alert(listarry);
+    });
+    function CGMvalues()
+    {
+        var options = document.getElementById('mymakes').getElementsByTagName('option');
+                
+                var strmakes = '';
+                for (var i=options.length; i--;) {
+                    if (options[i].selected) {
+                        if(strmakes == '')
+                            strmakes = options[i].value;
+                        else
+                            strmakes = strmakes +';'+options[i].value;
+                     }
+                     
+                }
+        
+        
+        $('[id$=idmakes]').val(strmakes);
+        
+    }
+    
+    
+    $(document).ready(function() {
+                    var options = '{!strmakes}'.split(';');
+                    for (var i=0; i < options.length; i++) {
+                        
+                       var locval = options[i];
+                       
+                        $("#mymakes").find('option').each(function( i, opt ) {
+                            if( opt.value === locval) 
+                                $(opt).attr('selected', 'selected');
+                        });
+                    }
+                    
+                    // you need to specify id of combo to set right combo, if more than one combo
+                });
+    
+</script>
+
+<style>
+.sol-selection {
+    overflow-y: scroll;
+    position: relative;
+    min-height: 0px;
+    max-height: 100px;
+}
+</style>
+<style type="text/css">
+
+
+/* -------------------- GLOBAL ------------------------ */
+
+div, span, p, li,tr,td,font,strong {
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12px;}
+
+h3 {
+font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;}
+    
+/* -------------------- END GLOBAL -------------------- */
+
+
+</style>
+  <div>
+  <apex:inputHidden value="{!strlocations}" id="idlocations" />
+  <apex:inputHidden value="{!strconsignors}" id="idconsignors" />
+  <apex:inputHidden value="{!strmakes}" id="idmakes" />
+  <div style="width: 940px;border: 1px solid #E0DFDF;margin-bottom: 15px">
+      <div style="background-color: #E0DFDF;width: 940px;margin-left: 20px;height: 40px;display:table-cell;vertical-align: middle;font-size: 12px; color: black; font-family: Arial, Helvetica, sans-serif;">
+          <div style="width: 920px;margin-left: 10px;">
+          <h3>{!$Label.AD_Personal_Information}</h3>
+          </div>
+      </div>
+      <div style="margin-left: 10px;">
+          <div style="width: 920px;margin-left: 0px;margin-top: 10px;margin-bottom: 10px;">
+          <b>{!$Label.AD_Personal_Information_Note}</b>
+          </div>
+          <div style="margin-left: 0px;margin-bottom: 10px;">
+              <div style="margin-bottom: 10px;">{!$Label.AD_First_Name}: {!userContact.firstname}</div>
+              <div style="margin-bottom: 10px;">{!$Label.AD_Last_Name}: {!userContact.lastname}</div>
+              <div style="margin-bottom: 20px;">{!$Label.AD_Email}: {!userContact.email}</div>
+          </div>
+      </div>
+  </div>
+      
+  <div style="width: 940px;border: 1px solid #E0DFDF;margin-bottom: 15px">
+      <div style="background-color: #E0DFDF;width: 940px;margin-left: 10px;height: 40px;display:table-cell;vertical-align: middle;font-size: 12px; color: black; font-family: Arial, Helvetica, sans-serif;">
+          <div style="width: 920px;margin-left: 10px;">
+          <h3>{!$Label.AD_Email_Opt_In}</h3>
+          </div>
+      </div>
+      <div style="margin-left: 10px;margin-top: 10px;">
+          <div style="margin-left: 0px;margin-bottom: 10px;font-size: 12px; color: #4b7e83; font-family: Arial, Helvetica, sans-serif;">
+              <apex:inputCheckbox value="{!issignmeup}"/> <b>{!$Label.AD_Sign_Me_Up}</b>
+          </div>          
+          <div style="width: 780px;margin-left: 0px;margin-bottom: 10px;display: {!IF(ishideemailoptinnote, 'block', 'none')};">
+          <apex:outputText value="{!$Label.AD_Communication_Options_Note_Part_1}" escape="false" /> 
+          <apex:outputText value="{!$Label.AD_Communication_Options_Note_Part_2}" escape="false" />
+          </div>
+  </div>
+
+      </div>          
+      
+      <div>
+  <div style="width: 940px;border: 1px solid #E0DFDF;margin-bottom: 15px">
+      <div style="background-color: #E0DFDF;width: 940px;margin-left: 10px;height: 40px;display:table-cell;vertical-align: middle;font-size: 12px; color: black; font-family: Arial, Helvetica, sans-serif;">
+          <div style="width: 920px;margin-left: 10px;">
+          <h3>{!$Label.AD_LOCATION_UPDATES}</h3>
+          </div>
+      </div>
+          <div style="width: 780px;margin-left: 10px;margin-top: 10px; margin-bottom; 10px;">
+          <b>{!$Label.AD_Location_Updates_Note}</b>
+          </div>
+
+<table style="margin-left: 10px;margin-top: 10px;margin-bottom: 10px;">
+    <tr>
+        <td valign="top">
+          <label for="mylocations" style="margin-left: 10px;"><b>{!$Label.AD_Location_List}</b></label>
+          <div style="margin-left: 10px;margin-top: 10px;margin-bottom: 10px;border: 1px solid #776666;width: 250px;height: auto;">               
+               <select id="mylocations" name="locations" multiple="multiple" onChange="CGLvalues()">
+                    <optgroup label="ADESA US Locations">
+                    <option value='ADESA Atlanta'>Atlanta</option>
+                    <option value='ADESA Austin'>Austin</option>
+                    <option value='ADESA Birmingham'>Birmingham</option>
+                    <option value='ADESA Boston'>Boston</option>
+                    <option value='ADESA Buffalo'>Buffalo</option>
+                    <option value='ADESA Boise'>Boise</option>
+                    <option value='ADESA Brasher'>Brasher's</option> 
+                    
+                    <option value='ADESA Central Kentucky'>Central Kentucky</option>
+                    <option value='ADESA Charlotte'>Charlotte</option>
+                    <option value='ADESA Cincinnati / Dayton'>Cincinnati / Dayton</option>
+                    <option value='ADESA Chicago'>Chicago</option>
+                    <option value='ADESA Cleveland'>Cleveland</option>
+                    <option value='ADESA Colorado Springs'>Colorado Springs</option>
+                    <option value='ADESA Concord'>Concord</option>
+                    <option value='ADESA Dallas'>Dallas</option>
+                    <option value='ADESA Dayton'>Dayton</option>
+                    <option value='ADESA Des Moines'>Des Moines</option>
+                    <option value='ADESA East Tennessee'>East Tennessee</option>
+                    <option value='ADESA Fargo'>Fargo</option>
+                    <option value='ADESA Flint'>Flint</option>
+                    <option value='ADESA Fresno'>Fresno</option> 
+                    <option value='ADESA Golden Gate'>Golden Gate</option>
+                    <option value='ADESA Great Lakes'>Great Lakes</option>
+                    <option value='ADESA Houston'>Houston</option>
+                    <option value='ADESA Indianapolis'>Indianapolis</option>
+                    <option value='ADESA Jacksonville'>Jacksonville</option>
+                    <option value='ADESA Kansas City'>Kansas City</option>
+                    <option value='ADESA Knoxville'>Knoxville</option>
+                    <option value='ADESA Lansing'>Lansing</option>
+                    <option value='ADESA Las Vegas'>Las Vegas</option>
+                    <option value='ADESA Lexington'>Lexington</option>
+                    <option value='ADESA Little Rock'>Little Rock</option>
+                    <option value='ADESA Long Island'>Long Island</option>
+                    <option value='ADESA Los Angeles'>Los Angeles</option>
+                    <option value='ADESA Memphis'>Memphis</option>
+                    <option value='ADESA Mercer'>Mercer</option>  
+                    <option value='ADESA Minneapolis'>Minneapolis</option>
+                    <option value='ADESA Nashville'>Nashville</option>
+                    <option value='ADESA New Jersey'>New Jersey</option>
+                    <option value='ADESA Northwest'>Northwest</option> 
+                    <option value='ADESA Northern Ohio'>Northern Ohio</option>
+                    <option value='ADESA Ocala'>Ocala</option>
+                    <option value='ADESA Orlando'>Orlando</option>
+                    <option value='ADESA PA'>PA</option>
+                    <option value='ADESA Phoenix'>Phoenix</option>
+                    <option value='ADESA Pittsburgh'>Pittsburgh</option>
+                    <option value='ADESA Portland'>Portland</option>
+                    <option value='ADESA Queen City'>Queen City</option>
+                    <option value='ADESA Raleigh'>Raleigh</option>
+                    <option value='ADESA Reno'>Reno</option> 
+                    <option value='ADESA Sacramento'>Sacramento</option>
+                    <option value='ADESA San Antonio'>San Antonio</option>
+                    <option value='ADESA San Diego'>San Diego</option>
+                    <option value='ADESA San Jose'>San Jose</option> 
+                    <option value='ADESA Salt Lake'>Salt Lake</option> 
+                    <option value='ADESA Sarasota'>Sarasota</option>
+                    <option value='ADESA Seattle'>Seattle</option>
+                    <option value='ADESA Shreveport'>Shreveport</option>
+                    <option value='ADESA Sioux Falls'>Sioux Falls</option>
+                    <option value='ADESA Southern Indiana'>Southern Indiana</option>
+                    <option value='ADESA Springdale'>Springdale</option>
+                    <option value='ADESA St. Louis'>St. Louis</option>
+                    <option value='ADESA Syracuse'>Syracuse</option>
+                    <option value='ADESA Tampa'>Tampa</option>
+                    <option value='ADESA Tulsa'>Tulsa</option>
+                    <option value='ADESA Washington DC'>Washington DC</option>
+                    <option value='ADESA Wisconsin'>Wisconsin</option>
+                    </optgroup>
+                    <optgroup label="ADESA Canada Locations">
+                    <option value='ADESA Calgary'>Calgary</option>
+                    <option value='ADESA Edmonton'>Edmonton</option>
+                    <option value='ADESA Halifax'>Halifax</option>
+                    <option value='ADESA Kitchener'>Kitchener</option>
+                    <option value='ADESA Moncton'>Moncton</option>
+                    <option value='ADESA Montreal'>Montreal</option>
+                    <option value='ADESA Ottawa'>Ottawa</option>
+                    <option value='ADESA Quebec City'>Quebec City</option>
+                    <option value='ADESA Saskatoon'>Saskatoon</option>
+                    <option value='ADESA St. Johns'>St. John's</option>
+                    <option value='ADESA Toronto'>Toronto</option>
+                    <option value='ADESA Vancouver'>Vancouver</option>                    
+                    <option value='ADESA Windsor'>Windsor</option>                    
+                    <option value='ADESA Winnipeg'>Winnipeg</option>
+                    </optgroup>                                        
+            </select>
+          </div>
+        </td>
+        <td valign="top">
+          <label for="myconsignors" style="margin-left: 10px;display: {!IF(ishideconsignorupdate, 'none', 'block')};"><b>Consignor</b></label>
+          <div style="margin-left: 10px;margin-top: 10px;margin-bottom: 10px;border: 1px solid #776666;width: 250px;height: auto;display: {!IF(ishideconsignorupdate, 'none', 'block')};">               
+               <select id="myconsignors" name="consignors" multiple="multiple" onChange="CGCvalues()">
+                  <option value='Toyota'>Toyota</option>
+                  <option value='Ally Auto Remarketing ( GMAC)'>Ally Auto Remarketing ( GMAC)</option>
+                  <option value='ARI'>ARI</option>
+                  <option value='Audi Financial Services'>Audi Financial Services</option>
+                  <option value='Avis Budget Group'>Avis Budget Group</option>
+                  <option value='Bank of America'>Bank of America</option>
+                  <option value='BMW'>BMW</option>
+                  <option value='Capital One'>Capital One</option>
+                  <option value='Chase'>Chase</option>
+                  <option value='Chrysler Remarketing'>Chrysler Remarketing</option>
+                  <option value='Credit Acceptance'>Credit Acceptance</option>
+                  <option value='Dealer Avenue'>Dealer Avenue</option>
+                  <option value='Dollar Thrifty Automotive Group'>Dollar Thrifty Automotive Group</option>
+                  <option value='Donlen'>Donlen</option>
+                  <option value='DriveTime'>DriveTime</option>
+                  <option value='EMKAY'>EMKAY</option>
+                  <option value='Enterprise'>Enterprise</option>
+                  <option value='Fifth Third Bank'>Fifth Third Bank</option>
+                  <option value='Ford'>Ford</option>
+                  <option value='Ford Credit'>Ford Credit</option>
+                  <option value='GE'>GE</option>
+                  <option value='GM'>GM</option>
+                  <option value='GM Financial'>GM Financial</option>
+                  <option value='Harley-Davidson Financial Services'>Harley-Davidson Financial Services</option>
+                  <option value='Hertz'>Hertz</option>
+                  <option value='Honda Powersports'>Honda Powersports</option>
+                  <option value='Honda/Acura Remarketing'>Honda/Acura Remarketing</option>
+                  <option value='Huntington'>Huntington</option>
+                  <option value='Hyundai Finance'>Hyundai Finance</option>
+                  <option value='Hyundai Motors'>Hyundai Motors</option>
+                  <option value='Jaguar/Land-Rover Financial Group'>Jaguar/Land-Rover Financial Group</option>
+                  <option value='Kia'>Kia</option>
+                  <option value='Lexus Financial Services'>Lexus Financial Services</option>
+                  <option value='Mazda Capital Services'>Mazda Capital Services</option>
+                  <option value='Mercedes-Benz Financial Services'>Mercedes-Benz Financial Services</option>
+                  <option value='Mercedes-Benz USA'>Mercedes-Benz USA</option>
+                  <option value='Mitsubishi'>Mitsubishi</option>
+                  <option value='Nissan'>Nissan</option>
+                  <option value='Nissan and Infiniti Remarketing'>Nissan and Infiniti Remarketing</option>
+                  <option value='PAR'>PAR</option>
+                  <option value='Porsche'>Porsche</option>
+                  <option value='RSA'>RSA</option>
+                  <option value='Santander'>Santander</option>
+                  <option value='Subaru Motors Finance'>Subaru Motors Finance</option>
+                  <option value='Suzuki'>Suzuki</option>
+                  <option value='TD Auto Finance'>TD Auto Finance</option>
+                  <option value='Toyota Financial Services'>Toyota Financial Services</option>
+                  <option value='USBank'>USBank</option>
+                  <option value='Volkswagen Credit'>Volkswagen Credit</option>
+                  <option value='Wells Fargo'>Wells Fargo</option>
+                  <option value='Westlake'>Westlake</option>
+                  <option value='Wheels'>Wheels</option>
+                  <option value='World Omni'>World Omni</option>                                   
+            </select>
+          </div>
+        </td>
+        <td valign="top">
+          <label for="mymakes" style="margin-left: 10px;display: {!IF(ishidemakeupdate, 'none', 'block')};"><b>Vehicle Make</b></label>        
+          <div style="margin-left: 10px;margin-top: 10px;margin-bottom: 10px;border: 1px solid #776666;width: 250px;height: auto;display: {!IF(ishidemakeupdate, 'none', 'block')};">               
+               <select id="mymakes" name="makes" multiple="multiple" onChange="CGMvalues()">
+                           <option value='Acura'>Acura</option>
+                    <option value='Audi'>Audi</option>
+                    <option value='Bentley'>Bentley</option>
+                    <option value='BMW'>BMW</option>
+                    <option value='Bugatti'>Bugatti</option>
+                    <option value='Buick'>Buick</option>
+                    <option value='Cadillac'>Cadillac</option>
+                    <option value='Chevrolet'>Chevrolet</option>
+                    <option value='Daewoo'>Daewoo</option>
+                    <option value='Denali'>Denali</option>
+                    <option value='Dodge'>Dodge</option>
+                    <option value='Ferrari'>Ferrari</option>
+                    <option value='Fiat'>Fiat</option>
+                    <option value='Ford'>Ford</option>
+                    <option value='Geo'>Geo</option>
+                    <option value='GMC'>GMC</option>
+                    <option value='Harley Davidson'>Harley Davidson</option>
+                    <option value='Honda'>Honda</option>
+                    <option value='Hummer'>Hummer</option>
+                    <option value='Hyundai'>Hyundai</option>
+                    <option value='Infiniti'>Infiniti</option>
+                    <option value='Isuzu'>Isuzu</option>
+                    <option value='Jaguar'>Jaguar</option>
+                    <option value='Kia'>Kia</option>
+                    <option value='Lexus'>Lexus</option>
+                    <option value='Lincoln'>Lincoln</option>
+                    <option value='Maserati'>Maserati</option>
+                    <option value='Mazda'>Mazda</option>
+                    <option value='Mercedes-Benz'>Mercedes-Benz</option>
+                    <option value='Mini'>Mini</option>
+                    <option value='Nissan'>Nissan</option>
+                    <option value='Oldsmobile'>Oldsmobile</option>
+                    <option value='Pontiac'>Pontiac</option>
+                    <option value='Porsche'>Porsche</option>
+                    <option value='Rolls Royce'>Rolls Royce</option>
+                    <option value='Saab'>Saab</option>
+                    <option value='Saturn'>Saturn</option>
+                    <option value='Subaru'>Subaru</option>
+                    <option value='Suzuki'>Suzuki</option>
+                    <option value='Toyota'>Toyota</option>
+                    <option value='Volkswagen'>Volkswagen</option>
+                    <option value='Volvo'>Volvo</option>                                 
+            </select>
+          </div>
+        </td>                    
+    </tr>
+</table>
+  </div>
+  <div style="width: 940px;border: 1px solid #E0DFDF;margin-bottom: 15px">
+      <div style="background-color: #E0DFDF;width: 940px;margin-left: 10px;height: 40px;display:table-cell;vertical-align: middle;font-size: 12px; color: black; font-family: Arial, Helvetica, sans-serif;">
+          <div style="width: 920px;margin-left: 10px;">
+          <h3>{!$Label.AD_SPECIALTY_AUCTION_PREFERENCES}</h3>
+          </div>
+      </div>
+      <div style="margin-left: 10px;margin-top: 10px;">
+      <b>{!$Label.AD_Specialty_Auction_Preferences_Note}</b>
+      </div>
+
+<table style="margin-left: 10px;margin-top: 10px;margin-bottom: 10px;">
+    <tr>
+        <td>
+        <apex:inputCheckbox value="{!isheavydutytrucks}"/> {!$Label.AD_Heavy_Duty_Trucks_and_Equipment}
+        </td>
+        <td>
+        <apex:inputCheckbox value="{!ispowersports}"/> {!$Label.AD_Powersports}
+        </td>
+        <td>
+        <apex:inputCheckbox value="{!isrv}"/> {!$Label.AD_RV}
+        </td>
+        <td>
+        <apex:inputCheckbox value="{!ismarine}"/> {!$Label.AD_Marine}
+        </td>
+        <td>
+        <apex:inputCheckbox value="{!ispublic}"/> {!$Label.AD_Public}
+        </td>
+    </tr>
+</table>
+</div>
+      <div style="background-color: #F5F5F5;width: 940px;margin-left: 10px;margin-top: 20px;height: 50px;display:table-cell;vertical-align: middle;">
+      <div style="margin-left:10px;">
+          <apex:commandButton action="{!Savemethod}" value="{!$Label.AD_Submit}" reRender="formid" style="background-color:#4b7e83;background-image:none;font-size: 14px; color: #ffffff; font-family: Arial, Helvetica, sans-serif;padding: 10px;" />
+      </div>
+
+      </div>
+  </div>
+  </div>
+ </apex:form>
+</apex:page>

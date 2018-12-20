@@ -1,0 +1,5 @@
+<apex:component controller="KARMobileMenuController" layout="none">
+    <script type="text/javascript">
+    	var menuJSON = "{!JSENCODE(ulString)}";
+    </script>
+</apex:component>

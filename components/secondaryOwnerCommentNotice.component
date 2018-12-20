@@ -1,0 +1,12 @@
+<apex:component access="global" controller="CaseCommentNotificationController">
+    <apex:attribute name="caseId" description="Case Id" 
+                        type="String" required="required" assignTo="{!caseId}"/>
+    
+    <apex:outputPanel >
+        <p>{!createdBy} has added a comment to case {!caseNumber}. Please read the comment below and then click on the link to respond appropriately.</p>
+        <p> Comment: </p>
+        <p>{!commentBody}</p>
+        <p>https://na4.salesforce.com/{!caseId}</p>
+    
+    </apex:outputPanel> 
+</apex:component>

@@ -1,0 +1,143 @@
+<!-- 
+// (c) 2014 Appirio, Inc.
+//  Modified:Sidhant Agarwal 04/11/2014  T-330482: Added to show the multiselect picklist Page_Access__c
+//  Modified:Vandana Kumari  11/11/2014  T-333321: finalize Intranet Content object record-level access - Intranet User
+//  Modified:Sidhant Agarwal 11/12/2014  T-340059: Commented the fields
+//  Modified:Sidhant Agarwal 22/12/2014  T-336115: Sequence field made required, was throwing errors
+//  Modified:Lovish Goyal    06/04/2016  T-490771: Added Language field for RT Intranet Banner, Intranet Article, Intranet CMS Pages & Intranet Collapsible Content. 
+-->
+<apex:page standardController="Intranet_Content__c" extensions="EdgeForceIntranetContentNewController" tabStyle="Intranet_Content__c">
+  <style>
+    optgroup{
+        font-size: 100% !important;
+    }
+  </style>
+
+  <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'ckeditor/ckeditor.js')}" />
+  <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/jquery/dist/jquery.min.js')}" />
+
+  <apex:form id="frm">
+   <apex:outputpanel >
+     <apex:actionstatus id="status">
+       <apex:facet name="start">
+         <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                height: 100%;opacity:0.65;width:100%;"> 
+            <div class="waitingHolder" style="top: 100px; width: 100px;">
+                <img class="waitingImage" src="/img/loading.gif" title="{!$Label.Please_Wait}..." />
+                <span class="waitingDescription">{!$Label.Please_Wait}...</span>
+            </div>
+         </div>
+       </apex:facet>
+     </apex:actionstatus> 
+   </apex:outputpanel>
+   <apex:sectionHeader title="{!$Label.New_Intranet_Content}" subtitle="{!$Label.New} {!recordTypeName}" />
+   
+   <apex:pageBlock >
+        <apex:pageMessages /> 
+        <apex:pageBlockSection title="{!$Label.Content_Info}" columns="2">
+          <apex:inputField value="{!intranetContent.Name}" Required="true" />
+          <apex:inputField value="{!intranetContent.Status__c}" rendered="{!OR(isArticleField, isCMSField, isLinkField,isBannerField,isCollapsibleField,isWhatsNew)}" />
+          <apex:inputField value="{!intranetContentVersion.URL__c}" rendered="{!OR(isLinkField, isLinkField,isBannerField,showDocManagementLayout)}"/>
+          <apex:inputField value="{!intranetContent.Show_Chatter_Feed__c}" rendered="{!OR(isArticleField)}"/>
+          <apex:inputField value="{!intranetContent.Show_Attachment__c}" rendered="{!OR(isArticleField)}"/>
+          <apex:inputField value="{!intranetContent.Type__c}" rendered="{!!OR(isCMSField, isBannerField,isDynamicComponent,isSearchConfig,showDocManagementLayout,isHomePageSocialFeed,isCollapsibleField,isWhatsNew)}" />
+          <apex:inputField value="{!intranetContent.Parent__c}" rendered="{!OR(isCMSField,isLinkField,isCollapsibleField)}"/>
+          <apex:inputField value="{!intranetContent.Template__c}" rendered="{!isCMSField}"/>
+          <apex:pageBlockSectionItem HelpText="{!IF(isArticleField,$Label.EF_Article_Sequence_Help,IF(isBannerField,$Label.EF_Banner_Sequence_Help,$ObjectType.Intranet_Content__c.Fields.Sequence__c.InlineHelpText))}">
+          {!$ObjectType.Intranet_Content__c.Fields.Sequence__c.Label}
+          <apex:inputField value="{!intranetContent.Sequence__c}" rendered="{!OR(!OR(isLearningCenter,isDynamicComponent,isSearchConfig),showDocManagementLayout,isCollapsibleField,isWhatsNew)}" Required="{!OR(isBannerField,isCollapsibleField)}"/>
+          </apex:pageBlockSectionItem>
+          <apex:inputField value="{!intranetContent.Start_Date__c}" rendered="{!AND(OR(isLinkField, isArticleField),!isLearningCenter)}" />
+          <apex:inputField value="{!intranetContent.Presentation_Date__c}" rendered="{!isLearningCenter}" />
+          <apex:inputField value="{!intranetContent.End_Date__c}" rendered="{!AND(OR(isLinkField, isArticleField),!isLearningCenter)}"/>
+          <apex:inputField value="{!intranetContent.Target__c}" rendered="{!OR(isLinkField, isBannerField,isArticleField,isLearningCenter)}" />
+          <apex:inputField value="{!intranetContent.Start_Date__c}" rendered="{!OR(isBannerField,isLearningCenter,showDocManagementLayout,isCollapsibleField,isWhatsNew)}"/>
+          <apex:inputField value="{!intranetContentVersion.URL__c}" rendered="{!isCMSField}"/>
+          <apex:inputField value="{!intranetContent.End_Date__c}" rendered="{!OR(isBannerField,isLearningCenter,showDocManagementLayout,isCollapsibleField,isWhatsNew)}"/>          
+          <apex:inputField value="{!intranetContentVersion.Source__c}" rendered="{!isLearningCenter}" />        
+          <apex:inputField value="{!intranetContent.Object_Name__c}" rendered="{!(isSearchConfig)}"/>
+          <apex:inputField value="{!intranetContent.Display_In_Search__c}" rendered="{!isSearchConfig}"/>
+          <apex:inputField value="{!intranetContent.Resources_Categories__c}" rendered="{!showDocManagementLayout}"/>
+          <apex:inputField value="{!intranetContent.Document_Location__c}" rendered="{!showDocManagementLayout}"/>
+          <apex:inputField value="{!intranetContent.Value__c}" rendered="{!isHomePageSocialFeed}"/>
+          <apex:inputField value="{!intranetContent.Content_Bucket__c}" required="true" />
+          <apex:inputField value="{!intranetContent.Frame_Height__c}" rendered="{!OR(isLinkField,isBannerField)}"/>
+          <apex:inputField value="{!intranetContentVersion.Language__c}" />
+          
+<!--           <apex:selectList value="{!selectedObject}" rendered="{!isDynamicComponent}" size="1" multiselect="false" label="Object Name" style="width:50%" onchange="fetchFieldsFun();">
+              <apex:selectOptions value="{!listOfObjectsName}"></apex:selectOptions>
+          </apex:selectList> -->
+          
+<!--           <apex:inputField value="{!intranetContent.Records_Per_Page__c}" rendered="{!isDynamicComponent}"/> -->
+          
+<!--           <apex:selectList value="{!sortColumn}" label="Sort Column" rendered="{!isDynamicComponent}" multiselect="false" size="1" id="sortColumnPanel" >
+              <apex:selectOptions value="{!listOfObjectsFields}"></apex:selectOptions>
+          </apex:selectList>
+          
+          <apex:selectList value="{!selectedFields}" label="Fields to display" rendered="{!isDynamicComponent}" multiselect="true" size="1" id="fieldsPanel" style="width:200px;">
+              <apex:selectOptions value="{!listOfObjectsFields}"></apex:selectOptions>
+          </apex:selectList> -->
+          
+<!--           <apex:actionFunction name="fetchFields" action="{!fetchObjectFields}" reRender="fieldsPanel,sortColumnPanel"/> -->
+        </apex:pageBlockSection>
+         
+         <apex:pageBlockSection title="{!$Label.Team_Template_Info}" columns="2" rendered="{!isCMSField}">
+             <apex:inputField value="{!intranetContent.Create_Chatter_Group__c}" />
+         </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="{!$Label.Categorization}" columns="1" rendered="{!isLearningCenter}">
+           <apex:inputField value="{!intranetContent.Category__c}" />
+           <apex:inputField value="{!intranetContent.Topic__c}" />
+           <apex:inputField value="{!intranetContent.Document_Type__c}" />
+           <apex:inputField value="{!intranetContent.Country__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockSection title="{!$Label.Banner_Text}" columns="2" rendered="{!isBannerField}">
+           <apex:inputField value="{!intranetContentVersion.Header__c}" />
+           <apex:inputTextarea cols="70" rows="7" value="{!intranetContentVersion.Summary__c}" />
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="Team Banner Formatting" columns="2" rendered="{!isBannerField}">
+           <apex:inputField value="{!intranetContent.Header_Color__c}" />
+           <apex:inputField value="{!intranetContent.Summary_Color__c}" />
+           <apex:inputField value="{!intranetContent.Position__c}" />
+           <apex:inputField value="{!intranetContentVersion.Button_Label__c}" />
+           <apex:inputField value="{!intranetContent.Button_Location__c}" />
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="{!$Label.Details}" columns="2" rendered="{!isWhatsNew}">
+           <apex:inputField value="{!intranetContentVersion.Header__c}" />
+           <apex:inputTextarea cols="70" rows="7" value="{!intranetContentVersion.Summary__c}" />
+           <apex:inputField value="{!intranetContentVersion.Button_Label__c}" />
+        </apex:pageBlockSection>
+         
+        <apex:pageBlockSection title="{!$Label.Details}" columns="1" rendered="{!OR(isArticleField,isCMSField)}">
+          <apex:inputTextArea cols="70" rows="7" value="{!intranetContentVersion.Summary__c}" rendered="{!showSummary}"/>
+          <apex:inputTextArea value="{!intranetContentVersion.Description__c}" id="desc" styleClass="ckeditor-rich" richtext="false" />
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="{!$Label.Details}" columns="1" rendered="{!OR(isCollapsibleField)}">
+          <apex:inputTextArea value="{!intranetContentVersion.Description__c}" styleClass="ckeditor" richtext="false" />
+        </apex:pageBlockSection>
+
+        <apex:pageBlockSection title="{!$Label.Page_Attributes}" columns="2" rendered="{!isCMSField}">
+          <apex:inputField value="{!intranetContent.Show_in_Header_Menu__c}" />
+          <apex:inputField value="{!intranetContent.Target__c}" />
+          <apex:inputField value="{!intranetContent.Skip_Menu_Link__c}" />
+        </apex:pageBlockSection>
+        
+        <apex:pageBlockButtons >
+            <apex:commandButton value="{!$Label.Save}" action="{!save}" Status="status" />
+            <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}" immediate="true"/>  
+        </apex:pageBlockButtons>
+   </apex:pageBlock>
+  </apex:form>
+  
+  <script>
+      function fetchFieldsFun(){
+          fetchFields();
+      }
+      var textId = $('.ckeditor-rich').attr("id");
+      CKEDITOR.replace(textId);
+  </script>
+</apex:page>

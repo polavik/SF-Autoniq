@@ -1,0 +1,17 @@
+<apex:page >
+    <body><STYLE type="text/css">.copy { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif; font-size: 14px;}.copy p { font-size: 12px; font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;}.copy .MsoNormal .copy { font-size: 12px;}</STYLE>
+                         
+<TABLE border="0" cellSpacing="5" cellPadding="5" width="968">
+<TBODY>
+<TR>
+<TD width="464"><IMG src="/servlet/servlet.FileDownload?file=015a0000002ZE2A" width="341" height="84" /></TD></TR>
+<TR>
+<TD class="copy">
+<P>AppForce- Streamlined application processing is now here!-  June 2, 2014</P>
+<P>New Competition Record Type- "Competitor Miscellaneous- AFC" - April 2014</P>
+<P>New Competition Section - one place to capture information learned about AFC's competitors. - February 2014</P>
+<P>Enhancement: Opportunity Console Work Queue- January 2014</P>
+<P><SPAN style="FONT-SIZE: 14px">     </SPAN></P>
+<P><A href="/_ui/core/chatter/groups/GroupProfilePage?g=0F9a0000000H64C"><IMG align="left" src="/servlet/servlet.FileDownload?file=015a0000002ZE2Z" width="94" height="26" /></A></P></TD></TR></TBODY></TABLE></body>
+
+</apex:page>

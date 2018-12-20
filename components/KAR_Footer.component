@@ -1,0 +1,29 @@
+<apex:component layout="none" controller="KAR_FooterController">
+    <footer>
+        <div class="container-bs">
+            <div class="links">
+              <apex:repeat value="{!parentIdtoChildFooterMap}" var="parentId">
+                <div>
+                  <div class="heading">{!idToWrapperFooterMap[parentId].contentVersionforDisplay.Name}</div><!-- /.heading -->
+                    <apex:repeat value="{!parentIdtoChildFooterMap[parentId]}" var="childContent">
+                      <a href="{!IF(contains(childContent.content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ childContent.contentVersionforDisplay.URL__c  + '&height=' + TEXT(childContent.content.Frame_Height__c), IF(contains(childContent.contentVersionforDisplay.URL__c, 'http') || contains(childContent.contentVersionforDisplay.URL__c, 'https'), childContent.contentVersionforDisplay.URL__c, 'https://' + childContent.contentVersionforDisplay.URL__c))}" target="{!IF(contains(childContent.content.Target__c, 'Frame'), "_parent", childContent.content.Target__c)}">{!childContent.contentVersionforDisplay.Name}</a>
+                    </apex:repeat>
+                </div>
+              </apex:repeat>
+            </div><!-- /.links -->
+            <div class="brand">
+                <img src="{!URLFOR($Resource.KARLogo)}" alt="KAR Auction Services" />
+            </div><!-- /.brand -->
+        </div><!-- /.container-bs -->
+        <div class="copyright">
+            <div class="container-bs">
+                <ul>
+                    <li>&copy; {!$Label.EF_Footer_CopyrightTitle} <span class="copyright-year"></span> KAR. {!$Label.EF_Footer_AllRightsReserved}</li>
+                    <li><a href="{!$Label.EF_Privacy_Statement_Link}">{!$Label.EF_Footer_PrivacyStatementTitle}</a></li>
+                    <li><a href="{!$Label.EF_Security_Statement_Link}">{!$Label.EF_Footer_SecurityStatementTitle}</a></li>
+                    <li><a href="{!$Label.EF_Terms_of_Use_Link}">{!$Label.EF_Footer_TermsTitle}</a></li>
+                </ul>
+            </div><!-- /.container-bs -->
+        </div><!-- /.copyright -->
+    </footer>
+</apex:component>

@@ -1,0 +1,17 @@
+<apex:component controller="KAR_BusinessUnitComponentController" layout="none">
+
+    <apex:attribute name="mobileVisible" description="Visible if mobile." type="Boolean" required="false" default="false"/>
+    <apex:outputPanel rendered="{!AND(intranetList!=null,intranetList.size>0)}">
+        <div class="dropdown primary {!IF(mobileVisible,'','hidden-xs')}">
+            <a class="btn-bs btn-reset bu-nav" data-toggle="dropdown">
+                {!$Label.EF_BusinessUnit}
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+                <apex:repeat value="{!intranetList}" var="buPage">
+                    <li><a href="{!buPage.content.URL__c}">{!buPage.contentVersionforDisplay.Name}</a></li>
+                </apex:repeat>
+            </ul>
+        </div><!-- /.dropdown -->
+    </apex:outputPanel>
+</apex:component>

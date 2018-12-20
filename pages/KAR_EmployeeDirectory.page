@@ -1,0 +1,85 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" >
+    <title>KAR - Employee Directory</title>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <div class="container-bs employee-directory desktop-pad-t">
+
+                <div class="r1-c2 one-third sm">
+                    <div class="widget-left search-box">
+
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_SearchTitle}</h2>
+                            <ul class="nav nav-tabs gray-lt" role="tablist">
+                                <li role="presentation" class="active"><a href="#people-search" aria-controls="people-search" role="tab" data-toggle="tab" data-second-tab=".people-search">{!$Label.EF_EmployeeDirectory_People}</a></li>
+                                <li role="presentation"><a href="#file-search" aria-controls="file-search" role="tab" data-toggle="tab" data-second-tab=".file-search" onclick="fileTabClick();">{!$Label.EF_EmployeeDirectory_Files}</a></li>
+                            </ul>
+                        </div><!-- /.widget-heading -->
+                        <div class="content">
+                            <div class="tab-content">
+                              <div role="tabpanel" class="tab-pane active" id="people-search">
+                                    <label for="people-search-input">{!$Label.EF_EmployeeDirectory_SearchForPeople}</label>
+                                    <input id="people-search-input" class="searchBox form-control" name="search"  onkeyup="performinitialSearch(this.value);"/>
+                                    <span class="help">{!$Label.EF_EmployeeDirectorySearchByName}</span>
+                              </div>
+                              <div role="tabpanel" class="tab-pane" id="file-search">
+                                    <label for="search-chatter-files">{!$Label.EF_EmployeeDirectory_SearchFiles}</label>
+                                    <input id="search-chatter-files" class="searchBox form-control" onkeyup="performinitialSearch_chatter(this.value);" />
+                                    <span class="help">{!$Label.EF_EmployeeDirectory_SearchByNameFiles}</span>
+                              </div>
+                            </div>
+                        </div><!-- /.content -->
+
+                    </div><!-- /.widget-left -->
+                    <div class="widget-right">
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active people-search">
+                                <div class="widget-heading">
+                                    <h2>{!$Label.EF_EmployeeDirectory_People}</h2>
+                                </div><!-- /.widget-heading -->
+                                <div class="content employee-list">
+                                    <c:KAR_PeopleSearch />
+                                </div><!-- /.content -->
+                            </div>
+                            <div class="tab-pane fade file-search">
+                                <div class="widget-heading">
+                                    <h2>{!$Label.EF_EmployeeDirectory_Files}</h2>
+                                </div><!-- /.widget-heading -->
+                                <div class="content file-list">
+                                    <c:KAR_ChatterFileSearch />
+                                </div><!-- /.content -->
+                            </div>
+                        </div>
+                    </div><!-- /.widget-right -->
+
+                </div><!-- /.r1-c2 one-third sm -->
+            </div>
+
+        </apex:define>
+    </apex:composition>
+
+    <script>
+        function getURLParameter(name) {
+            return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]);
+        }
+        $('.nav-tabs a').click(function () {
+            $(this).tab('show');
+            $("<a>").data("target", $(this).data("second-tab")).tab("show")
+        })
+        $(document).ready(function(){
+            var searchString = getURLParameter("searchInput");
+            if(searchString != 'null'){
+                $('#people-search-input').attr('value',searchString);
+            }
+        });
+    </script>
+
+</apex:page>

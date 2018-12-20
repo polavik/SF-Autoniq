@@ -1,0 +1,40 @@
+<apex:page sidebar="false">
+    <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/jquery/dist/jquery.min.js')}" />
+<script>
+	document.getElementById('AppBodyHeader').style.display = 'none';
+	document.getElementById('globalHeaderBar').style.display = 'none';
+</script>
+
+<style>
+	.homeTab .brdPalette {
+		border-top-color: white;
+	}
+	.bodyDiv {
+		border: 0;
+		background: none;
+		box-shadow: none;
+	}
+	body.sfdcBody {
+		background : none;
+	}
+	#contentWrapper {
+		min-width: 0px !important;
+		text-align: center !important;
+	}
+</style>
+
+<c:ProfilePhotoUpload subject="{!$User.Id}" />
+
+<!--<apex:form style="padding-top: 15px;">
+	<chatter:userPhotoUpload showOriginalPhoto="true"/>	
+</apex:form>-->
+
+<script>
+	/*document.getElementById('contentWrapper').style.minWidth = '0px';
+	$( '.chatter-photo' ).click(function() {
+		window.parent.document.getElementById('someId').style.height = '450px';
+  		// alert('Handler for .click() called.');
+	});*/	
+</script>
+
+</apex:page>

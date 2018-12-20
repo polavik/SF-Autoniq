@@ -1,0 +1,38 @@
+<apex:component controller="KAR_ChatterFeedsController">
+  <style>
+    .scroll-container {
+      max-height: 100%;
+      height: auto;
+    }
+  </style>
+  <div class="widget-heading">
+    <h2>{!$Label.EF_ChatterTitle}</h2>
+    <a href="/apex/KAR_ChatterPage">{!$Label.EF_Post_to_Chatter}</a>
+    <apex:form id="chtr-select" >
+      <ul class="nav nav-tabs gray-lt">
+        <apex:variable var="x" value="x" rendered="{!!ISBLANK(feedName)}">
+          <apex:repeat value="{!feedMap}" var="feed">
+            <li class="{!IF(feedMap[feedName].feedId == feedMap[feed].feedId,'active','')}">
+              <a href="#" onclick='setFeeds("{!feedMap[feed].feedName}");return false;' >{!feedMap[feed].feedTitle}</a>
+            </li>
+          </apex:repeat>
+        </apex:variable>
+      </ul>
+      <apex:actionFunction action="{!setFeeds}" reRender="chtr-panel,chtr-select" name="setFeeds">
+          <apex:param name="Feed" assignTo="{!feedName}"  value="" />
+      </apex:actionFunction>
+    </apex:form>
+  </div><!-- /.widget-heading -->
+  <div class="scroll-container">
+    <div class="content">
+      <div class="content-scroll-wrap">
+        <apex:outputPanel styleClass="content-scroll chatterPanel" id="chtr-panel" style="-webkit-overflow-scrolling: touch;">
+          <apex:variable var="x" value="x" rendered="{!!ISBLANK(feedName)}">
+            <chatter:feed entityId="{!feedMap[feedName].feedId}" showPublisher="false" onComplete="performAllActions();" > </chatter:feed>
+            <c:EF_CustomChatter />
+          </apex:variable>
+        </apex:outputPanel>
+      </div><!-- /.overflow -->
+    </div><!-- /.content -->
+  </div><!-- /.chatter-container -->
+</apex:component>

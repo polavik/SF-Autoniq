@@ -1,0 +1,20 @@
+<apex:component access="global">
+	<apex:attribute name="labelName1" description="Label1 Text" 
+					type="String" required="required" /> 
+	<apex:attribute name="value1" description="Value1 Text" 
+					type="String" required="required" /> 
+	<apex:attribute name="labelName2" description="Label2 Text" 
+					type="String" required="required" /> 
+	<apex:attribute name="value2" description="Value2 Text" 
+					type="String" required="required" />
+	<apex:attribute name="lastRow" description="Is this the last row on the page?"
+					type="Boolean" required="false" default="false" />
+					
+	<div class="cPageBlockRow twoColumn" style="{!IF(lastRow, 'border-bottom:none', '')}">
+		<div class="cFieldLabel"><apex:outputText value="{!labelName1}" escape="false"/></div>
+		<div class="cFieldValue"><apex:outputText value="{!value1}" escape="false"/></div>
+		<div class="cFieldLabel"><apex:outputText value="{!labelname2}" escape="false"/></div>
+		<div class="cFieldValue"><apex:outputText value="{!value2}" escape="false"/></div>
+		<div class="clearDiv"> </div>
+	</div>
+</apex:component>

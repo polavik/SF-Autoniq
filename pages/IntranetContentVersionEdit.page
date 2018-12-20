@@ -1,0 +1,44 @@
+<apex:page standardController="Intranet_Content_Version__c" >
+ <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'ckeditor/ckeditor.js')}" />
+ <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/jquery/dist/jquery.min.js')}" />
+ <apex:form >
+   <apex:sectionHeader title="Intranet Content Version Edit" subtitle="{!Intranet_Content_Version__c.Name}"/>
+   <apex:pageBlock > 
+    <apex:pageMessages />
+    <apex:pageBlockSection title="Information">
+        <apex:inputField value="{!Intranet_Content_Version__c.Name}" required="true"/>
+        <apex:inputField value="{!Intranet_Content_Version__c.isPublished__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Primary_Record__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Intranet_Content__c}" />
+<!--         <apex:inputField value="{!Intranet_Content_Version__c.Primary_Record__c}" /> -->
+<!--         Commented by Sidhant Agarwal T-331988 -->
+        <apex:inputField value="{!Intranet_Content_Version__c.Header__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Value__c}" />
+<!--         <apex:inputField value="{!Intranet_Content_Version__c.Language__c}" /> -->
+    </apex:pageBlockSection> 
+    
+    <apex:pageBlockSection title="Video">
+        <apex:inputField value="{!Intranet_Content_Version__c.Video_ID__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Video_Type__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Video_Caption__c}" />
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockSection title="Details" columns="1">
+        <apex:inputTextArea cols="70" rows="7" value="{!Intranet_Content_Version__c.Summary__c}" />    
+        <apex:inputTextArea value="{!Intranet_Content_Version__c.Description__c}" id="desc" styleClass="ckeditor-rich" richtext="false" />
+        <!-- <apex:inputField value="{!Intranet_Content_Version__c.Description_Rich_del__c}" /> -->
+        <apex:inputField value="{!Intranet_Content_Version__c.Button_Label__c}" />
+        <apex:inputField value="{!Intranet_Content_Version__c.Image_Description__c}" />
+    </apex:pageBlockSection>
+    
+    <apex:pageBlockButtons >
+        <apex:commandButton value="Save" action="{!save}" />
+        <apex:commandButton value="Cancel" action="{!cancel}" />
+    </apex:pageBlockButtons>
+   </apex:pageBlock>
+ </apex:form>
+    <script>
+        var textId = $('.ckeditor-rich').attr("id");
+        CKEDITOR.replace(textId);
+    </script>
+</apex:page>

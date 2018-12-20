@@ -1,0 +1,76 @@
+<apex:component selfClosing="true"
+                controller="ProfilePhotoUploadController"
+                allowDML="true">
+    <apex:attribute name="subject" type="Id"
+                    assignTo="{!userId}"
+                    required="true"
+                    description="The User ID for the community user"/>
+
+    <style>
+        .div-center{
+            float: none;
+            margin: 0 auto;
+        }
+
+        .image{
+            width: auto !important;
+            max-width: 500px !important;
+            margin: 0 auto 1em auto; 
+        }
+    </style>
+    
+    
+    <apex:form id="imageForm">
+        <div class="div-center">
+            <div>
+                <apex:image id="image"
+                            styleClass="image" 
+                            value="{!largePhotoUrl}"/>
+            </div>
+            <div>
+                <apex:inputFile id="imgInput"
+                                value="{!blobValue}"
+                                contentType="{!contentType}"
+                                fileName="{!filename}"
+                                onchange="readURL(this)" />
+
+                <apex:commandButton value="Upload"
+                                    action="{!upload}" />
+            </div>
+        </div>
+    </apex:form>
+
+    <script>
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                var imagePreview = document.getElementById("{!$Component.imageForm.image}");
+
+                reader.addEventListener("load", function(){
+                    imagePreview.src = reader.result;
+                }, false);
+
+                /*reader.addEventListener("loadend", function(){
+                    sendHeight();
+                }, false);*/
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        var j$ = jQuery.noConflict();
+        sendHeight = function(){
+            var formHeight = j$("#contentWrapper").height();
+            
+            window.parent.postMessage({"height": formHeight}, "*");            
+        }
+
+        j$(document).ready(function(){
+            j$(document.getElementById("{!$Component.imageForm.image}")).load(function (){
+                sendHeight();
+            });
+            //document.getElementById('chatterAvatarComponentUploadDialog').style.width = '500px';
+        });
+    </script>
+</apex:component>

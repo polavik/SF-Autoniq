@@ -1,0 +1,11 @@
+<apex:component controller="EdgeForceIntranetRecentArticleController">
+    <apex:outputPanel id="descriptionSection" title="Resources">
+        <ul class="side-nav">
+            <apex:repeat value="{!newsList}" var="news">
+                <li>
+                    <a href="{!IF(news.content.URL__c != '',IF(contains(news.content.URL__c, 'http') || contains(news.content.URL__c, 'https'), news.content.URL__c, 'https://' + news.content.URL__c),'/apex/KAR_Content?id='+news.content.Id+'&category='+URLEncode(categoryType)+'&name='+URLEncode(pageId))}" target="{!IF(news.content.URL__c != '', '_blank', '_self')}"> {!news.contentversionfordisplay.Name}</a>
+                </li>
+            </apex:repeat>
+        </ul>
+    </apex:outputPanel>
+</apex:component>

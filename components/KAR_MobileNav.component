@@ -1,0 +1,47 @@
+<apex:component controller="EdgeForceIntranetHeaderCompController" layout="none">
+
+    <div class="{!IF(isMobile==false,'mobile-nav', 'hide')}">
+        <ul class="nav navbar-nav">
+            <li class="dropdown user">
+                <a id="user-nav2" data-toggle="dropdown" aria-haspopup="true" role="button">
+                    <apex:image value="{!currentUser.SmallPhotoUrl}" alt="{!$User.FirstName}'s' Photo" />
+                    <div class="name">{!$Label.Welcome}, {!$User.FirstName}</div>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="user-nav">
+                    <li><a href="/apex/KAR_UserProfile">{!$Label.EF_Header_MyProfileTitle}</a></li>
+                    <li><a href="/apex/EF_Logout">{!$Label.Logout}</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <nav class="mainMenu"></nav>
+
+        <ul class="nav navbar-nav">
+            <li>
+                <div class="search">
+                    <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term-mobile" />
+                    <button class="btn-bs btn-default" type="submit" style="top:-1px" nclick="searchResultMobile();"><span class="icon-search"></span></button>
+                </div><!-- /.search -->
+            </li>
+            <!-- <li><c:KAR_BusinessUnitNav mobileVisible="true" /></li> -->
+        </ul>
+    </div><!-- /.mobile-nav -->
+    <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+    <label for="nav-trigger" class="{!IF(isMobile==false,'', 'hide')}"><span class="icon-menu"></span></label>
+
+    <script>
+        function searchResultMobile(){
+            var searchURL= '/apex/KAR_Search?searchString='+$('#srch-term-mobile').val();
+            window.location.href=searchURL;
+        }
+
+        $( document ).ready(function() {
+            $('#srch-term-mobile').on('keyup', function(e) {
+                if (e.which == 13) {
+                   searchResultMobile();
+                }
+            });
+        });
+    </script>
+</apex:component>

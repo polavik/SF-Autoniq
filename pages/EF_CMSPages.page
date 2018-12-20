@@ -1,0 +1,234 @@
+<!--  
+  @author: Ashish Goyal
+  @purpose: TreeView Page For CMS [T-295755]
+-->
+<apex:page standardStylesheets="false"    controller="EdgeForceIntranetCMSController" readonly="true" sidebar="false">
+   <head> 
+        <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/jquery/dist/jquery.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/twbs-bootstrap-sass/assets/javascripts/bootstrap.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.KARDesign, 'bower_components/datatables.net-bs/js/dataTabes.bootstrap.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/jquery.treetable.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/ConnectionJS.js')}"/>
+
+        <apex:stylesheet value="{!URLFOR($Resource.KARDesign, 'bower_components/datatables.net-bs/css/dataTabes.bootstrap.min.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/jquery.treetable.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/jquery.treetable.theme.default.css')}"/>
+        <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/bootstrap.min.css')}"/> 
+     </head>     
+    <style>
+        .nav>li>a {
+          padding: 0 0 0 0;
+          margin-bottom: 5px; 
+        }
+        body a:hover {
+          text-decoration: none;!important;
+        }
+        .nav>li>a:hover{
+          background-color: white;
+        }
+        .modal-dialog{
+            width:1000px ;!important;
+        }
+        #_treeTable>thead>tr>td{
+          color:white;
+          padding-left: 20px ;
+          font-size: 14px;
+        }
+        #_treeTable{
+          font-size: .9em;
+          font-family: Arial,Helvetica,sans-serif;!important;
+         
+        }
+        #_sequence{
+          text-align:center;
+        }  
+        html {
+          font-size: 100%;
+        }
+        body {
+          font-size: 75% !important;
+        }
+    </style>
+    
+    <div class="container-bs" style="margin-top:10px ;font-family: Arial,Helvetica,sans-serif;!important;font-size:14px;">
+       <apex:form >
+        <div class="row" >
+            <div class="col-sm-3"><a  href="#" onclick="window.open('/apex/EdgeForceIntranetContentNew?recordtypeid={!recordTypeId}&RecordTypeName=Intranet+CMS+Pages')"><span style="color:#1797C0;" class="glyphicon glyphicon-plus-sign"/> <span style="background:#1797C0;"  Class="badge">Add New Page</span></a></div>
+        </div>
+      
+        
+            <apex:actionfunction name="showICVFun" action="{!showICV}" reRender="ICVModalPanel" onComplete="applydataTable();"/>
+<!--            <apex:actionfunction name="deleteICVFun" action="{!deleteICV}" reRender="dataPanel,ICVModalPanel" onComplete="applydataTable();"/> -->
+            <apex:actionfunction name="publishICVFun" action="{!publishICV}" reRender="dataPanel,ICVModalPanel" onComplete="applydataTable();"/> 
+            <apex:actionfunction name="showCloneFun" action="{!showClone}" reRender="dataPanel,ICVModalPanel" onComplete="displayCloneModal();">
+              <apex:param name="cloneID" value=""  />
+            </apex:ActionFunction>
+            
+            
+            <apex:inputHidden id="ICIDHidden" value="{!ICID}" />
+            <apex:inputHidden id="ICVIDHidden" value="{!SelectedICVID}" />
+            <apex:inputHidden id="CloneHidden" value="{!SelectedICVID}" />
+              <apex:outputpanel id="_treeViewPanel">
+                <table id="_treeTable" class="table-bordered table-condensed">
+                   <thead style="background:#1797C0;">     
+                    <tr >    
+                      <td>Page Name</td>     
+                      <td>Sequence</td>                    
+                      <td>Status</td>
+                      <td>Template</td> 
+                      <td>Preview</td> 
+                      <td>Version</td>
+                      <td>Actions</td>    
+                      <td>Last Modified By</td>                 
+                    </tr>         
+                  </thead>
+                  <tbody>
+                  
+                      <apex:outputText value="{!UIElement}" escape="false"/>
+                     
+                  </tbody>
+                </table> 
+                </apex:outputpanel>          
+                    
+        
+        <apex:outputPanel id="ICVModalPanel">
+            <!--  ********************************************* ICV modal *************************************** -->
+            <div class="modal fade" id="CloneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button> 
+                    <h4 class="modal-title" id="myModalLabel">Edgeforce Clone</h4>
+                  </div>
+                  <div class="modal-body">
+                      <apex:iframe src="/apex/EF_CloneWizard?id={!cloneId}" />
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            
+            <div class="modal fade" id="ICVModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">EdgeForce CMSVersions - {!versionPageName}</h4>
+                  </div>
+                  <div class="modal-body">
+                    <table id="ICVTable" class="table">
+                        <thead>
+                            <tr>
+                                <th>Page Name</th>
+                                <th>Is Published?</th>
+<!--                                 <th>Language</th> -->
+                                <th>Last Modified Date/Time</th>
+                                <th>Last Modified By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <apex:repeat value="{!listOfICVWrappers}" var="ICV">
+                               <tr>
+                                   <td>{!ICV.pageName}</td>
+                                   <td><center><apex:inputCheckbox value="{!ICV.isPublished}" disabled="true" /></center></td>
+<!--                                    <td>{!ICV.language}</td> -->
+                                   <td>{!ICV.LastModifiedDate}</td>
+                                   <td>{!ICV.lastModifiedBy}</td>
+                                   <td><a href="/{!ICV.id}" target="_blank">View</a> &nbsp; <a href="/{!ICV.id}/e?retURL=%2F{!ICV.id}" target="_blank">Edit</a> &nbsp; <a href="#" class="confirmUser" target="_blank" onclick="deleteICVFun('{!ICV.id}');">Delete</a> &nbsp; <apex:outputPanel rendered="{!!ICV.isPublished}"><a href="#" onclick="publishICV('{!ICV.id}');">Publish</a></apex:outputPanel></td>
+                               </tr>
+                           </apex:repeat>
+                        </tbody>
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div><!-- /.modal-content -->
+              </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+        
+        <!--  *****************************************/ICV MODAL  ****************************************** -->
+    
+        </apex:outputPanel>
+     </apex:form>
+    </div>
+     <script src="js/jquery.confirm.js"></script>
+       <script> 
+      
+       $("#_treeTable").treetable({ expandable: true });
+       
+       // Highlight selected row
+        $("#_treeTable tbody").on("mousedown", "tr", function() {
+         // $(".selected").not(this).removeClass("selected");
+         // $(this).toggleClass("selected");
+        });
+        
+        
+   
+        function deleteContent(contentId){  
+        var r = confirm("Clicking OK will delete the page");
+        if (r == true) {
+            sforce.connection.sessionId = '{!$Api.Session_ID}';
+            //  alert(contentId);  
+             var delResult = sforce.connection.deleteIds([contentId]);
+              if (delResult[0].getBoolean("success")) {
+                window.location.reload();
+                // processAfterDelete();
+              } else {
+                log("failed to delete account " + result[0]);
+              }
+        }
+      }
+        
+     
+   
+       
+       function openCloneModal(nodeId){
+          
+           showCloneFun(nodeId);
+           
+       }
+       
+       function showVersionsModal(contentId){
+           $('input[id$=ICIDHidden]').val(contentId);
+           showICVFun();
+       }
+       
+       function deleteICV(ICVId){
+           alert(ICVId);
+           var r = confirm("By clicking on OK button, you confirm that you would like to delete the page");
+           if (r == true) {
+               $('#ICVModal').modal('hide');
+               $('input[id$=ICVIDHidden]').val(ICVId);
+               deleteICVFun();
+           }
+           
+       }
+       
+       function publishICV(ICVId){
+           $('#ICVModal').modal('hide');
+           $('input[id$=ICVIDHidden]').val(ICVId);
+           publishICVFun();
+       }
+      </script>
+      
+      <script>
+          
+          function displayCloneModal(){
+              $('#CloneModal').modal('show');
+          }
+          
+          function applydataTable(){
+             $('#ICVTable').dataTable({
+                /* Disable initial sort */
+                "aaSorting": []
+            });  
+            $('#ICVModal').modal('show');
+          };
+          
+        
+      </script>
+</apex:page>

@@ -1,0 +1,32 @@
+<apex:page controller="KAR_HomeController" docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" >
+    <title>KAR - {!$Label.EF_HomePageTitle}</title>
+
+    <apex:composition template="KAR_TemplateNewMobile">
+        <apex:define name="body">
+            <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/user-autocomplete.js')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/user-autocomplete.css')}"/>
+
+                <div class="r1-c2 two-thirds">
+                    <div class="widget-left">
+                        <div class="quick-info">
+                            <c:KAR_Collapsible />
+                        </div><!-- /.quick-links -->
+                    </div><!-- /.widget-left -->
+                </div><!-- /.r1-c2 -->
+
+
+
+            <script type="text/javascript">
+                $( document ).ready(function() {
+                    createAutocomplete('emp-search-text','Name','{!$RemoteAction.KAR_HomeController.searchFilters}');
+                    $("#emp-search-text").click(function() {
+                        if( $('label[for="nav-trigger"]').css('display')!='none') {
+                            $('html, body').scrollTop($("#emp-search-text").offset().top);
+                        }
+                    });
+                });
+            </script>
+        </apex:define>
+
+   </apex:composition>
+</apex:page>

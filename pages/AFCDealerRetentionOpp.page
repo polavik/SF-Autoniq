@@ -1,0 +1,227 @@
+<apex:page standardController="Opportunity"  extensions="AFCDealerRetentionOppExtension" showHeader="false" applyHtmlTag="false" standardstylesheets="false" id="pg" doctype="html-5.0">
+    <apex:includeScript value="{!URLFOR($Resource.jquerycustom, 'jquery-1.11.3.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/foundation-5.5.2/js/foundation.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/foundation-5.5.2/js/foundation/foundation.equalizer.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.js')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquerycustom, '/foundation-5.5.2/css/foundation.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquerycustom, '/jquery.mobile-1.4.5/jquery.mobile-1.4.5.min.css')}"/>
+
+    <script type="text/javascript">
+        var j$ = jQuery.noConflict();
+        Foundation.global.namespace = '';
+        j$(document).foundation();
+        
+        j$( document ).ready(function() {
+            j$('.details').hide();
+            j$('.detailsplaceholder').hide();
+            j$('.retention').on( "click", function() {j$(this).addClass('retentionselected');j$(this).siblings().removeClass('retentionselected')});
+            j$('.action').on( "click", function() {
+                j$('.results,.nextsteps').show();
+                j$('.results.detailsplaceholder,.nextsteps.detailsplaceholder').hide();
+                j$('.results.retentionselected').click();
+            });
+            j$('.noaction').on( "click", function() {
+                j$('.results,.details,.nextsteps').hide();
+                j$('.results.detailsplaceholder,.details.detailsplaceholder,.nextsteps.detailsplaceholder').show();
+                j$('.results.retentionselected,.details.retentionselected,.nextsteps.retentionselected').removeClass('retentionselected');
+            });
+
+            j$('#bmc').on( "click", function() {j$('.details').hide();j$('.bmc').show();});
+            j$('#comp').on( "click", function() {j$('.details').hide();j$('.comp').show();});
+            j$('#pricing').on( "click", function() {j$('.details').hide();j$('.pricing').show();});
+            j$('#seasonal,#prefersowncash,#oob').on( "click", function() {j$('.details').removeClass('retentionselected');j$('.details').hide();j$('.details.detailsplaceholder').show();});
+            j$('.detailsplaceholder').off('click');
+            loadLogACallValues();
+
+            if({! opp.stageName != 'Working'}){
+                j$('#taskcontact,#notes').prop('disabled',true);
+                j$('#taskcontact').css({"background-Color": "#ddd"});
+                j$('#updatebtn,#closebtn').hide();
+                j$('.retention').off('click');
+            }
+            if({!rtLogACall.WhoId == null}){
+                j$('#defaultoption').prop('selected',true);
+            }           
+        });
+
+        function refreshPage(val){
+            window.top.location.href='/'+val;           
+            loadLogACallValues();
+        }
+
+        function validateAndUpdate(){
+            if(j$('.retentionselected.method').text() != ''){
+                updateOpportunity(getUpdateSelections());
+                alert('The Opportunity has been updated.');
+            } else {
+                alert('A Contact Method is required to update this record');
+            }
+        }
+
+        function validateAndClose(){
+            var itemsselected = j$('.retentionselected').length;
+            var result;
+            if(j$('.method.noaction.retentionselected').length > 0){
+                result = true;
+            } else {
+                result = (j$('.detailsplaceholder').is(":visible") ) ? itemsselected == 3 : itemsselected == 4;
+            }
+            if(result){
+                closeOpportunity(getUpdateSelections());
+            } else {
+                alert((j$('.detailsplaceholder').is(":visible") ) ? 'Contact Method, Results, and Next Steps are required' : 'Contact Method, Results, Details, and Next Steps are required');
+            }
+        }
+
+        function loadLogACallValues(){
+            if({!rtLogACall != null}){
+                if({!rtLogACall.Subject != null}){
+                    j$('li.method a:contains("{!rtLogACall.subject}")').click();
+                }
+                if({!rtLogACall.Details_of_Call__c != null}){
+                    var detailsofcall = '{!rtLogACall.Details_of_Call__c}'.split(' - ');
+                    j$('li.results a:contains('+detailsofcall[0]+')').click();
+                    j$('li.details a:contains('+detailsofcall[1]+')').click();
+                } else {
+                    j$('.details.detailsplaceholder').show();
+                }
+                if({!rtLogACall.Next_Step__c != null}){
+                    j$('li.nextsteps a:contains("{!rtLogACall.Next_Step__c}")').parent().addClass('retentionselected');
+                }
+                j$('#contactsearch').val("{!rtLogACall.Who_I_spoke_with__c}");
+                j$('#notes').val("{!rtLogACall.Results_of_Call__c}");
+            }
+        }
+
+        function getUpdateSelections(){
+            return JSON.stringify({
+                method:j$('.retentionselected.method').text(),
+                results:j$('.retentionselected.results').text(),
+                details:j$('.retentionselected.details').text(),
+                nextsteps:j$('.retentionselected.nextsteps').text(),
+                who:j$('#taskcontact').val(),
+                notes:j$('#notes').val()});
+        }
+
+        function testLinkClick(){
+            console.log(j$('.method.noaction.retentionselected').length > 0);
+
+        }
+    </script>
+    
+    <style>
+        body{background:#000;}
+        #assetlink{color:rgb(22, 50, 92);font-weight:300;transition:color 0.4s;}
+        #assetlink:hover{color:rgb(37, 56, 118);text-decoration:underline;}
+        .item-block{background:#f5f5f5;border:none}
+        .item-block:nth-child(even){background:#e5e5e5;}
+        .item-block li a{font-weight:300;}
+        .item-block .ui-listview li a{background:rgb(22, 50, 92);text-shadow:none;color:#fff;transition:all 0.4s;}
+        .item-block .ui-listview li a:hover{background:rgb(6, 28, 63);text-shadow:none;color:#fff;}
+
+        .retentionselected { margin:8;padding:8px;border:2px solid #38c;box-shadow: 3px 3px 3px #CFD7E6;}
+        .retention {margin:5px;padding:5px;background-color: #fff;}
+        .retentionselected a {font-weight:bold !important;}
+        .retention a {font-weight:normal !important;}
+    </style>
+<apex:form >
+    <apex:actionStatus id="reloadit" rendered="retentionpanel" startText="Updating..."/>
+    <apex:actionFunction name="beginOpportunity" action="{!beginOpportunity}" reRender="retentionpanel" oncomplete="refreshPage('{!opp.Id}');"/>
+    <apex:actionFunction name="closeOpportunity" action="{!closeOpportunity}" reRender="retentionpanel" oncomplete="refreshPage('{!opp.Id}');">
+        <apex:param name="updateData" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="updateOpportunity" action="{!updateOpportunity}" reRender="retentionpanel">
+        <apex:param name="updateData" value=""/>
+    </apex:actionFunction>
+</apex:form>
+
+<div data-role="page" style="background-color: #fff;">
+    <a href="#" onclick="testLinkClick();">Test Link</a>
+    <div class="full-width">
+        <form id="branchform" data-abide="ajax" class="ui-filterable">
+            <div id="retentionpanel" class="small-12 medium-12 large-12 columns">
+                <apex:outputPanel id="newpanel" rendered="{!opp.stageName == 'New' || opp.stageName == 'NEW'}">
+                    <div class="small-12 medium-12 large-12 columns text-center panel">
+                        <p/>
+                        <a href="#" onclick="beginOpportunity();" class="button" style="margin:5px;color:#fff;text-shadow:none;text-align:center;">Click Here to Begin this Opportunity</a>
+                    </div>
+                </apex:outputPanel>
+                <apex:outputPanel id="working" rendered="{!opp.stageName == 'Working' || opp.stageName == 'Completed'}">
+                    <div class="small-12 medium-3 large-3 columns">
+                        <label>Contact Method:</label>
+                        <ul class="stack button-group">
+                            <li class="retention method action"><a href="#" style="font-weight:bold;">Phone Call</a></li>
+                            <li class="retention method action"><a href="#">Email</a></li>
+                            <li class="retention method action"><a href="#">Dealership Visit</a></li>
+                            <li class="retention method action"><a href="#">Branch Visit</a></li>
+                            <li class="retention method action"><a href="#">Auction Visit</a></li>
+                            <li class="retention method noaction"><a href="#">No Action-PLN</a></li>
+                            <li class="retention method noaction"><a href="#">No Action-Performance History</a></li>
+                        </ul>
+                    </div>          
+                    <div id="results" class="small-12 medium-3 large-2 columns">
+                        <label>Results:</label>                     
+                        <ul class="stack button-group">
+                            <li class="retention results detailsplaceholder"><a href="#">(Not Applicable)</a></li>
+                            <li class="retention results" id="bmc"><a href="#">Business Model Change</a></li>
+                            <li class="retention results" id="seasonal"><a href="#">Seasonal Buyer</a></li>
+                            <li class="retention results" id="comp"><a href="#">Prefers Competition</a></li>
+                            <li class="retention results" id="pricing"><a href="#">Pricing</a></li>
+                            <li class="retention results" id="prefersowncash"><a href="#" class="results">Prefers Own Cash</a></li>
+                            <li class="retention results" id="oob"><a href="#">Going Out of Business</a></li>
+                        </ul>
+                    </div>
+                    <div id="details" class="small-12 medium-3 large-2 columns">
+                        <label>Details:</label>                     
+                        <ul class="stack button-group">
+                            <li class="retention details detailsplaceholder"><a href="#">(Not Applicable)</a></li>
+                            <li class="retention details bmc"><a href="#">Wholesale to Retail</a></li>
+                            <li class="retention details bmc"><a href="#">Retail to Wholesale</a></li>
+                            <li class="retention details bmc"><a href="#">Inventory Mix</a></li>
+                            <li class="retention details comp"><a href="#">NGC</a></li>
+                            <li class="retention details comp"><a href="#">Floorplan Xpress</a></li>
+                            <li class="retention details comp"><a href="#">Westlake</a></li>
+                            <li class="retention details comp"><a href="#">Bank</a></li>
+                            <li class="retention details comp"><a href="#">Other</a></li>
+                            <li class="retention details comp"><a href="#">FP Fee</a></li>
+                            <li class="retention details pricing"><a href="#">Term</a></li>
+                        </ul>
+                    </div>
+                    <div id="nextsteps" class="small-12 medium-3 large-2 columns">
+                        <label>Next Steps:</label>                      
+                        <ul class="stack button-group">
+                            <li class="retention nextsteps detailsplaceholder"><a href="#">(Not Applicable)</a></li>
+                            <li class="retention nextsteps"><a href="#">Regional Manager Involvement</a></li>
+                            <li class="retention nextsteps"><a href="#">Line Modification</a></li>
+                            <li class="retention nextsteps"><a href="#">Terminate</a></li>
+                            <li class="retention nextsteps"><a href="#">FP Fee Waiver</a></li>
+                            <li class="retention nextsteps"><a href="#">Create New Opportunity</a></li>
+                            <li class="retention nextsteps"><a href="#">30-Day Retention Repeat</a></li>
+                            <li class="retention nextsteps"><a href="#">No Action</a></li>
+                        </ul>
+                    </div>
+                    <div id="who" class="small-4 medium-4 large-3 columns">
+                        <div class="small-12 medium-12 large-12 columns" style="padding:0px;margin:0px;">
+                            <label>Who I Spoke With:
+                                <select id="taskcontact" data-role="none" style="background-color: #fff;border:1px solid #38c;">
+                                    <option id="defaultoption" value="" disabled="disabled">Select your option</option>
+                                    <apex:repeat value="{!accountContactList}" var="con">
+                                        <option value="{!con.id}" style="background-color: #fff;">{!con.firstName+' '+con.lastName}</option>
+                                    </apex:repeat>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="small-12 medium-12 large-12 columns" style="padding:0px;margin:0px;">
+                            <label>Additional Notes:</label>                        
+                            <textarea id="notes" rows="3" data-role="none" style="border:1px solid #38c;"></textarea><p/>
+                            <a id="updatebtn" href="#"  onclick="validateAndUpdate();" class="button left" style="margin:5px;color:#fff;text-shadow:none;">Update</a>
+                            <a id="closebtn" href="#" onclick="validateAndClose();" class="button left" style="margin:5px;color:#fff;text-shadow:none;">Close Opportunity</a>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+            </div>
+        </form>
+    </div>
+</div>
+</apex:page>

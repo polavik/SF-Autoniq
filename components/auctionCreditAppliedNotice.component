@@ -1,0 +1,78 @@
+<apex:component access="global" controller="AuctionCreditAppliedNoticeController">
+    <apex:attribute name="auctionCreditId" description="Auction Credit Id" 
+                        type="String" required="required" assignTo="{!auctionCreditId}"/>
+    
+    <apex:outputPanel >
+        <p>Dear Valued Customer,</p>
+        <apex:outputPanel rendered="{!isBuyer}">
+            <p>
+                OPENLANE has granted a voucher in the amount of 
+                <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>
+                on <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!createDate}"/></apex:outputText>. 
+                This credit has been applied to VIN {!vin}, purchased by "{!buyerOrgName}" on
+                <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!saleDate}"/></apex:outputText>.
+            </p>
+         <p/>
+         <apex:outputPanel rendered="{!isFastLaneACH}">
+            <p>
+            The payment method selected at time of purchase was Fastlane ACH.  OPENLANE will issue an ACH back to your account in the amount of
+            <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>.
+            </p>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!isDirectDebit}">
+            <p>
+            The payment method selected at time of purchase was Direct Debit.  OPENLANE will issue an EFT back to your account in the amount of 
+            <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>.
+            </p>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!AND(NOT(isFastLaneACH), NOT(isDirectDebit))}">
+            <p>
+            If payment method selected at time of purchase was arranged through a floorplan company OPENLANE will refund the floorplan company directly in the amount of 
+            <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>.<br/>
+            If payment method selected at time of purchase was Direct Debit, OPENLANE will issue a FAST refund into your bank account within 24 hours. 
+            </p>
+                 
+            <p>
+            For all other payment methods please remit payment to OPENLANE less the auction credit amount of 
+            <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>.
+            Once the funds have been confirmed by OPENLANE the credit will automatically be offset against the short payment amount of 
+            <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>. 
+            If payment is received in full a refund will be issued to your dealership via cheque.
+            </p>
+            </apex:outputPanel>
+        </apex:outputPanel>
+        
+       <apex:outputPanel rendered="{!NOT(isBuyer)}">
+            <p>
+                OPENLANE has granted a voucher in the amount of 
+                <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>
+                on <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!createDate}"/></apex:outputText>. 
+                This credit has been applied to VIN {!vin}, sold by "{!sellerOrgName}" on
+                <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!saleDate}"/></apex:outputText>.
+            </p>
+            <p/>
+            <p>
+                You should see this when you receive the funding of the vehicle sale.
+            </p>
+        </apex:outputPanel>
+        <p/>
+        <p>
+            Thank you,<br/>
+            OPENLANE Support
+        </p>
+        
+        <br/>       
+        <p>If you have any questions about this email, please contact OPENLANE Customer Service.</p>  
+        
+        <apex:outputPanel rendered="{!NOT(isCanada)}">
+        Phone: 1-866-969-0321<br/>
+        Email: customerserviceoperations@openlane.com
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!isCanada}">
+        Phone: 1-866-966-5263<br/>
+        Email: customerservicecdnoperations@openlane.com<br/>
+        </apex:outputPanel>
+    
+    </apex:outputPanel> 
+</apex:component>

@@ -1,0 +1,95 @@
+<apex:component controller="EdgeForceIntranetBannerController">
+  <style>
+    @media screen and (min-width: 768px){
+      .carousel-indicators {
+          bottom: 5px;
+      }
+    }
+    @media (min-width: 768px){
+      #team_banner .content {
+          bottom: 20px;
+          max-width: 100%;
+      }
+    }
+    @media (max-width: 992px){
+      .team-page #team-banner .content {
+          bottom: 20px;
+          width: 100%;
+      }
+    }
+  </style>
+
+  <apex:outputPanel rendered="true"><!-- IF(banners.size > 0,false,true)" -->
+    <div class="widget-heading green-lt">
+        <h2>News Banner</h2>
+    </div>
+<!--  
+    <div id="team_banner_none" class="carousel slide" data-ride="carousel">
+      <div class="carousel-inner">
+        <div class="item active">
+          <apex:image value="{!$Resource.TeamBanner}" styleclass="img-responsive" alt="Default Image" />
+        </div>
+      </div>
+    </div>
+-->    
+  </apex:outputPanel>
+<b>Number of Banners={!banners.size}</b>
+  <apex:outputpanel rendered = "{!banners!=Null && banners.size>0}" >
+    <div id="team_banner" class="carousel slide" data-ride="carousel" data-interval="{!banner_Roating_Speed}">
+
+      <ol class="carousel-indicators">
+        <apex:variable value="{!0}" var="slideC"/>
+        <li data-target="#team_banner" data-slide-to="{!slideC}" class="active"></li>
+
+        <apex:repeat value="{!banners}" var="banner" rows="{!banners.size - 1}">
+          <apex:variable value="{!slideC+1}" var="slideC"/>
+          <li data-target="#team_banner" data-slide-to="{!slideC}"></li>
+        </apex:repeat>
+      </ol>
+
+      <div class="carousel-inner">
+        <apex:variable value="{!0}" var="slideCount"/>
+
+        <apex:repeat value="{!banners}" var="banner" id="bannerId">
+        {!banner.content.Name}<br />
+<!-- 
+        <script>
+            alert('{!banner.content.Id}');
+          </script>
+-->
+          <apex:variable value="{!slideCount+1}" var="slideCount"/>
+          <apex:variable value="{!IF(banner.content.Attachments.size > 0, '/servlet/servlet.FileDownload?file='+banner.content.Attachments[0].Id+'&otherId=', $Resource.HomeBanner)}" var="image" />
+          <div class="item{!IF(slideCount == 1, ' active','')}" style="background: linear-gradient(to bottom,rgba(0, 0, 0, 0),rgba(0, 0, 0, 1)),url('{!image}');background-size: cover;background-repeat: no-repeat;background-position: 50% 50%;" title="{!banner.contentVersionforDisplay.Image_Description__c}">
+
+            <apex:outputPanel rendered="{!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}" layout="none">
+              <apex:outputLink value="{!IF(contains(banner.content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ banner.contentVersionforDisplay.URL__c  + '&height=' + TEXT(banner.content.Frame_Height__c), IF(contains(banner.contentVersionforDisplay.URL__c, 'http') || contains(banner.contentVersionforDisplay.URL__c, 'https'), banner.contentVersionforDisplay.URL__c, 'https://' + banner.contentVersionforDisplay.URL__c))}" target="{!IF(contains(banner.content.Target__c, 'Frame'), '_parent', banner.content.Target__c)}">
+<!--                 <apex:image value="{!image}" alt="{!banner.contentVersionforDisplay.Header__c}" /> -->
+                <div class="content" value="{!IF(contains(banner.contentVersionforDisplay.URL__c, 'http') || contains(banner.contentVersionforDisplay.URL__c, 'https'), banner.contentVersionforDisplay.URL__c, 'https://' + banner.contentVersionforDisplay.URL__c)}" target="{!banner.content.Target__c}" rendered="{!IF(AND(banner.contentVersionforDisplay.Language__c != Null,banner.contentVersionforDisplay.Button_Label__c = NULL , banner.content.Attachments.size > 0),true,false)}" style="text-align:{!banner.content.Position__c}">
+                  <div class="title" id="{!IF(banner.content.Position__c == 'Left','bannerHeaderLeft',IF(banner.content.Position__c == 'Right','bannerHeaderRight',IF(banner.content.Position__c == 'Center','bannerHeaderCenter','bannerHeader')))}" style="{!IF(NOT(ISNULL(banner.content.Header_Color__c)),'color:'+banner.content.Header_Color__c,'')}">{!banner.contentVersionforDisplay.Header__c}</div><!-- /.title -->
+                  <div class="copy" id="{!IF(banner.content.Position__c == 'Left','bannerSummaryLeft',IF(banner.content.Position__c == 'Right','bannerSummaryRight',IF(banner.content.Position__c == 'Center','bannerSummaryCenter','bannerSummary')))}" style="{!IF(NOT(ISNULL(banner.content.Summary_Color__c)),'color:'+banner.content.Summary_Color__c,'')}">{!banner.contentVersionforDisplay.Summary__c}</div><!-- /.copy -->
+<!--                 <div class="read-more">Read More</div> -->
+                </div><!-- /.content -->
+                <div style="width:100%;height:100%"></div>
+              </apex:outputLink>
+            </apex:outputPanel>
+
+            <apex:outputPanel rendered="{!!ISBLANK(banner.contentVersionforDisplay.Button_Label__c)}" layout="none">
+              <!-- <img src="{!image}" alt="{!banner.contentVersionforDisplay.Header__c}"/> -->
+              <div class="content" style="text-align:{!banner.content.Position__c}">
+                <div class="title" style="{!IF(NOT(ISNULL(banner.content.Header_Color__c)),'color:'+banner.content.Header_Color__c,'')}">{!banner.contentVersionforDisplay.Header__c}</div>
+                <div class="copy" style="{!IF(NOT(ISNULL(banner.content.Summary_Color__c)),'color:'+banner.content.Summary_Color__c,'')}">{!banner.contentVersionforDisplay.Summary__c}</div>
+                <apex:variable var="x" value="x" rendered="{!!ISBLANK(banner.contentVersionforDisplay.URL__c)}">
+                  <p align="{!IF(banner.content.Button_Location__c == 'Left','Left',IF(banner.content.Button_Location__c == 'Right','Right','Center'))}">
+                    <a class="btn-bs btn-primary" href="{!IF(contains(banner.content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ banner.contentVersionforDisplay.URL__c  + '&height=' + TEXT(banner.content.Frame_Height__c), IF(contains(banner.contentVersionforDisplay.URL__c, 'http') || contains(banner.contentVersionforDisplay.URL__c, 'https'), banner.contentVersionforDisplay.URL__c, 'https://' + banner.contentVersionforDisplay.URL__c))}" target="{!IF(contains(banner.content.Target__c, 'Frame'), "_parent", banner.content.Target__c)}">{!banner.contentVersionforDisplay.Button_Label__c}</a>
+                  </p>
+                </apex:variable>
+              </div>
+            </apex:outputPanel>
+
+          </div><!--/.item -->
+        </apex:repeat>
+      </div><!-- /.carousel-inner -->
+
+    </div><!--/.carousel -->
+  </apex:outputpanel>
+</apex:component>

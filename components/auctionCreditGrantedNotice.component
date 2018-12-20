@@ -1,0 +1,79 @@
+<apex:component access="global" controller="AuctionCreditGrantedNoticeController">
+    <apex:attribute name="actionPackageId" description="Action Package Id" 
+                        type="String" required="required" assignTo="{!actionPackageId}"/>
+    
+    <apex:outputPanel >
+        <p>Dear Valued Customer,</p>
+        <apex:outputPanel rendered="{!IF(numCredits == 1, true, false)}">
+            <p>
+                <apex:outputText value="{!IF(isCanada, 'ADESA.ca','ADESA.com')}"/> has granted an auction credit voucher in the amount of 
+                <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>
+                to {!accountName} (ID {!orgId}). This voucher will be automatically applied to your next 
+                vehicle {!creditType} on  <apex:outputText value="{!IF(isCanada, ' ADESA.ca',' ADESA.com')}"/> and will be valid for a period of 30 calendar days expiring at midnight on
+                <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!expirationDate}"/></apex:outputText>. 
+                Once the voucher has been utilized an email will be generated confirming the credit has been applied to your 
+                account.
+            </p>
+            <p/>
+        </apex:outputPanel>
+		<apex:outputPanel rendered="{!IF(creditType=='purchase', true, false)}">
+				Please take note of the following voucher restrictions.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Only one voucher can be applied per vehicle {!creditType}.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on any ADESA inlane vehicle {!IF(creditType=='sale', "sales","purchases")} including Liveblock<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on DealerBlock vehicle {!IF(creditType=='sale', "sales","purchases")} where “Pay Processing Auction”,<br/> 
+				  &nbsp;&nbsp;&nbsp;&nbsp;“Pay Using Other Floorplan”, “ADESA’s Centralized Payment”<br/> 
+				  &nbsp;&nbsp;&nbsp;&nbsp;or “Pay ADESA Worldwide” was the chosen payment method
+		</apex:outputPanel>        
+		<apex:outputPanel rendered="{!IF(creditType=='sale', true, false)}">
+				Please take note of the following voucher restrictions.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Only one voucher can be applied per vehicle {!creditType}.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on any ADESA inlane vehicle {!IF(creditType=='sale', "sales","purchases")} including Liveblock<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on DealerBlock vehicle {!creditType} consigned by an ADESA<br/>
+				 &nbsp;&nbsp;&nbsp;&nbsp;processing auction location
+		</apex:outputPanel>        
+
+        <apex:outputPanel rendered="{!IF(numCredits > 1, true, false)}">
+            <p>
+                <apex:outputText value="{!IF(isCanada, 'ADESA.ca','ADESA.com')}"/> has granted {!numCredits} voucher in the amount of 
+                <apex:outputText value=" {0, number, currency}"><apex:param value="{!creditAmount}"/></apex:outputText>
+                to {!accountName} (ID {!orgId}). This voucher will be automatically applied to your next 
+                vehicle {!creditType} on  <apex:outputText value="{!IF(isCanada, ' ADESA.ca',' ADESA.com')}"/> and will be valid for a period of 30 calendar days expiring at midnight on
+                <apex:outputText value="{0, date, MMMMM d, yyyy}"><apex:param value="{!expirationDate}"/></apex:outputText>. 
+                Once the voucher has been utilized an email will be generated confirming the credit has been applied to your 
+                account.                
+            </p>
+            <p/>
+            <p>
+				Please take note of the following voucher restrictions.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Only one voucher can be applied per vehicle {!creditType}.<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on any ADESA inlane vehicle {!IF(creditType=='sale', "sales","purchases")} including Liveblock<br/>
+				-&nbsp;&nbsp;&nbsp;&nbsp;Vouchers are not eligible on DealerBlock vehicle {!IF(creditType=='sale', "sales","purchases")} where “Pay Processing Auction”,<br/> 
+				 &nbsp;&nbsp;&nbsp;&nbsp;“Pay Using Other Floorplan”, “ADESA’s Centralized Payment” <br/>
+				 &nbsp;&nbsp;&nbsp;&nbsp;or “Pay ADESA Worldwide” was the chosen payment method<br/>
+            </p>
+        </apex:outputPanel>
+        <p/>
+        <br/>       
+        <p>If you have any questions or concerns please contact the ADESA Customer Connection team @ <apex:outputText value="{!IF(isCanada, ' 1-866-966-5263 or email Customersupportcanada@ADESA.com',' 1-888-526-7326 or email CustomerConnection@ADESA.com')}"/> </p>  
+        <apex:outputPanel rendered="{!NOT(isCanada)}">
+		<!-- @ 1-888-526-7326 or email CustomerConnection@ADESA.com  -->
+		<br/>
+		Thank you!<br/>
+		<apex:outputText value="{!IF(isCanada, 'ADESA.ca','ADESA.com')}"/> <br/>
+		Customer Connection Team<br/>
+        Phone: 1-888-526-7326<br/>
+        Email: CustomerConnection@ADESA.com<br/>
+        </apex:outputPanel>
+        
+        <apex:outputPanel rendered="{!isCanada}">
+		<!-- @ 1-866-966-5263 or email Customersupportcanada@ADESA.com  -->
+		<br/>
+		Thank you!<br/>
+		<apex:outputText value="{!IF(isCanada, 'ADESA.ca','ADESA.com')}"/> <br/> 
+		Customer Connection Team<br/>
+        Phone: 1-866-966-5263<br/>
+        Email: Customersupportcanada@ADESA.com<br/>
+        </apex:outputPanel>
+    
+    </apex:outputPanel> 
+</apex:component>

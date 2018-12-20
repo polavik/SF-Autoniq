@@ -1,0 +1,21 @@
+<apex:component controller="ChatterCompController" layout="none">
+	<div class="flex-height">
+		<div class="widget-heading gray-dk">
+			<h2>{!$Label.Chatter}</h2>
+			<a href="{!IF(isMobile==true,'/apex/KAR_ChatterPage_Mobile','/apex/KAR_ChatterPage')}">{!$Label.EF_Post_to_Chatter}</a>
+		</div><!-- /.widget-heading -->
+		<div class="scroll-container">
+			<div class="content">
+				<div class="content-scroll-wrap">
+					<apex:outputPanel styleClass="content-scroll">
+						<div class="chatterPanel">
+							<!--<chatter:feed entityId="{!groupId}"></chatter:feed>-->
+							<chatter:feed entityId="{!groupId}"/>
+							<c:EF_CustomChatter />
+						</div>
+					</apex:outputPanel>
+				</div>
+			</div>
+		</div>
+	</div>
+</apex:component>

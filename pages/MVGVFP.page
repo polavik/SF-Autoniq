@@ -1,0 +1,98 @@
+<apex:page standardController="MVG_Price__c" extensions="MVGController">
+
+
+    <style>
+        .cPageTitle {
+            background-color: #1D5085;
+            color: #FFFFFF;
+            padding-top: 15px;
+            padding-left: 10px;
+            padding-bottom: 20px;
+            border: 1px solid black;
+            margin-bottom: 5px;
+        }
+        .cPageTitleLinks {
+            float: right;
+            padding-right: 5px;
+        }
+        .cPageTitleLinks a {
+            color: white;
+        }
+        .cQuickLinks {
+            width:100%; 
+            text-align:center; 
+            margin-bottom: 3px;
+        }
+            .fontb { font-style: stronger; }
+            .fonti { font-style:italic; }
+            .DisplayText { font-weight: bold; }
+        
+        .fontName1 {font-family: Courier; size: 10pt; font-weight:bolder;
+            color:blue;
+        }
+        .fontName {size: 10pt; font-weight:bolder;
+            color:blue;
+        }       
+        .fontLabel {size: 8pt; font-weight:bolder;
+            color:black;
+        }
+        
+    </style>
+    
+<apex:form rendered="{!bolRendered}" >
+    <apex:pageBlock >
+      <apex:pageBlockSection columns="2" >
+        
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel styleClass="fontLabel" value="{!"Black Book Regional "+strClassification}"/>
+            <apex:panelgroup >
+                <apex:outputtext styleClass="fontName" value="{!MVG_Price__c.CurrencyISOCode}" />
+                <apex:outputText styleClass="fontName" value="{0, number,  ##,###.00}">
+                
+                    <apex:param value="{!BlackBookRegional}" />
+                </apex:outputText>
+            </apex:panelgroup>          
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel styleClass="fontLabel" value="{!"Black Book Adj. Regional "+strClassification}"/>
+        <apex:panelgroup >
+            <apex:outputtext styleClass="fontName" value="{!MVG_Price__c.CurrencyISOCode}" />
+            <apex:outputText styleClass="fontName" value="{0, number,  ##,###.00}">
+            
+            <apex:param value="{!BlackBookRegionalAdj}" />                  
+                
+            </apex:outputText>
+        </apex:panelgroup>          
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+
+        <apex:outputLabel styleClass="fontLabel" value="{!"Black Book Retail "+strClassification}"/>
+        <apex:panelgroup >
+            <apex:outputtext styleClass="fontName" value="{!MVG_Price__c.CurrencyISOCode}" />
+            <apex:outputText styleClass="fontName" value="{0, number,  ##,###.00}">
+            
+                <apex:param value="{!BlackBookRetail}" />   
+                                    
+            </apex:outputText>
+        </apex:panelgroup>          
+        </apex:pageBlockSectionItem>
+
+        <apex:pageBlockSectionItem >
+            <apex:outputLabel styleClass="fontLabel" value="{!"Black Book Adj. Retail "+strClassification}"/>
+            <apex:panelgroup >
+                <apex:outputtext styleClass="fontName" value="{!MVG_Price__c.CurrencyISOCode}" />
+                <apex:outputText styleClass="fontName" value="{0, number,  ##,###.00}">
+    
+                <apex:param value="{!BlackBookRetailAdj}" />                    
+                    
+            </apex:outputText>
+            </apex:panelgroup>          
+        </apex:pageBlockSectionItem>
+        
+        
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

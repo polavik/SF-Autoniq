@@ -1,0 +1,68 @@
+<apex:page standardController="Case_Escalation__c" extensions="CaseEscalationEditController">
+	<apex:form id="theForm">
+		<apex:pageBlock title="Manage Case" mode="Edit" id="thePageBlock">
+			<apex:pageBlockButtons location="top">
+                <apex:commandButton action="{!submit}" value="Save"/>
+                <apex:commandButton action="{!cancel}" value="Cancel"/>
+            </apex:pageBlockButtons>
+            <apex:pageMessages />
+			<apex:pageBlockSection columns="2" id="topSection">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Assign To"/>
+					<apex:outputPanel >
+						<apex:selectList value="{!selectedAssignee}" size="1" onChange="setCheckbox(this, '{!$Component.notifyAssignee}');">
+							<apex:selectOptions value="{!relatedUsers}"/>
+						</apex:selectList>
+						<apex:inputField value="{!escalation.Notify_Assignee__c}" id="notifyAssignee"/>
+						<apex:outputText value="Notify"/>
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Case Status"/>
+					<apex:outputPanel >
+						<apex:selectList value="{!selectedCaseStatus}" size="1" rendered="{!editableCaseStatus}">
+		            		<apex:selectOptions value="{!caseStatusOptions}"/>
+		        		</apex:selectList>
+		        		<apex:outputText value="{!selectedCaseStatus}" rendered="{!NOT(editableCaseStatus)}"/>
+	        		</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+				<apex:inputField value="{!escalation.Escalation_Resolution__c}"/>
+				<apex:inputField value="{!escalation.Goodwill__c}" />
+				<apex:inputField value="{!escalation.Reference_Number__c}"/>
+				<apex:inputField value="{!escalation.Concession_Amount__c}"/>
+				<apex:inputField value="{!escalation.Payment_sent_to_OPENLANE__c}"/>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1" id="middleSection">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Resolution Details"/>
+					<apex:inputTextArea style="width:100%; min-height:8em" value="{!escalation.Resolution_Details__c}"/>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="2" id="bottomMiddleSection">
+				<apex:pageBlockSectionItem >
+					<apex:outputLabel value="Approver"/>
+					<apex:outputPanel >
+						<apex:selectList value="{!selectedApprover}" size="1" onChange="setCheckbox(this, '{!$Component.notifyApprover}');">
+							<apex:selectOptions value="{!relatedUsers}" />
+						</apex:selectList>
+						<apex:inputField value="{!escalation.Notify_Approver__c}" id="notifyApprover"/>
+						<apex:outputText value="Notify" />
+					</apex:outputPanel>
+				</apex:pageBlockSectionItem>
+			</apex:pageBlockSection>
+			<apex:pageBlockSection columns="1">
+				<apex:inputField value="{!escalation.Approved__c}"/>
+			</apex:pageBlockSection>
+			
+		</apex:pageBlock>
+	</apex:form>
+	
+	<script>
+		function setCheckbox(selectList, checkBoxId)
+		{
+			checkBox = document.getElementById(checkBoxId);
+			checkBox.checked = (!selectList.options[selectList.selectedIndex].value == '');
+		}
+	</script>
+	
+</apex:page>

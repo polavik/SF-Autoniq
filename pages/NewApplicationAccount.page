@@ -1,0 +1,16 @@
+<apex:page standardController="Application_Account_Role__c" extensions="NewApplicationAccountContExt" title="{!$Label.New} {!$ObjectType.Application_Account_Role__c.label}">
+    <apex:sectionHeader title="{!$ObjectType.Application_Account_Role__c.label} {!$Label.Edit}" subtitle="{!$Label.New} {!$ObjectType.Application_Account_Role__c.label}"/>
+    <apex:pageMessages id="pgMsgs"/>
+    <apex:form >
+        <apex:pageBlock title="{!$ObjectType.Application_Account_Role__c.label} {!$Label.Edit}" mode="edit">
+            <apex:pageBlockButtons >
+                <apex:commandButton value="{!$Label.Save}" action="{!saveAccount}" rerender="pgMsgs"/>
+                <apex:commandButton value="{!$Label.Cancel}" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="{!$Label.Information}" columns="1">
+                <apex:outputField value="{!Application_Account_Role__c.Application__c}"/>
+                <apex:inputField value="{!Application_Account_Role__c.Account__c}"/>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

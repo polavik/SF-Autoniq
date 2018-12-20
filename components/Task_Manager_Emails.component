@@ -1,0 +1,62 @@
+<apex:component controller="Task_Email_Notifications" access="global">
+
+<apex:attribute name="Userid" description="Attribute for UId" type="String" required="required" assignTo="{!UId}" />
+<apex:attribute name="Noofdays" description="Attribute for UId" type="Integer" required="required" assignTo="{!Nodays}" />
+
+  <apex:dataTable value="{!Task_Manager_data}" var="s_task" bgcolor="FFFFFF" border="1" cellspacing="5%" columnsWidth="30%"  width="80%">
+  
+  
+      <apex:column >
+            <apex:facet name="header">View</apex:facet>
+           <a href="{!baseUrl}/{!s_task.Id}">View</a>
+        </apex:column>
+        
+  <apex:column >
+            <apex:facet name="header">Employee</apex:facet>
+            {!s_task.owner.Name}
+        </apex:column>
+        
+       <apex:column >
+            <apex:facet name="header">Name</apex:facet>
+            {!s_task.Who.Name}
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Related to</apex:facet>
+            {!s_task.What.Name}
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Created Date</apex:facet>
+            
+           <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+            <apex:param value="{!s_task.createddate}" /> 
+           </apex:outputText>
+           
+           
+            
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Due Date</apex:facet>
+            
+          <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+            <apex:param value="{!s_task.ActivityDate}" /> 
+           </apex:outputText>
+           
+        </apex:column>
+        
+        <apex:column >
+            <apex:facet name="header">Status</apex:facet>
+            {!s_task.Status}
+        </apex:column>
+        
+         <apex:column >
+            <apex:facet name="header">Subject</apex:facet>
+            {!s_task.Subject}
+        </apex:column>
+        
+        
+    </apex:dataTable>
+    
+</apex:component>

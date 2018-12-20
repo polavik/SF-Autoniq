@@ -1,0 +1,14 @@
+<apex:page standardController="Case" extensions="CaseDetailController">
+	<apex:outputPanel rendered="{!renderValidationError}" layout="block" style="background-color:#FFFFCC; border:1px solid #CC0000; padding:6px 8px 6px 6px; margin:10px 0px 10px 0px">
+		<apex:outputPanel layout="block">
+			<apex:image style="vertical-align:middle" url="{!$Resource.error_icon}" />
+			<h4 style="color:#CC0000;margin-left:3px">ARBITRATION INVALID</h4>
+		</apex:outputPanel>
+		<apex:outputPanel layout="block">
+			<apex:dataList value="{!validationMessages}" style="margin-top:5px;margin-bottom:7px" var="message">
+				<apex:outputText value="{!message}" /> 
+			</apex:dataList>
+		</apex:outputPanel>
+	</apex:outputPanel>
+	<apex:detail />
+</apex:page>

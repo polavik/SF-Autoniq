@@ -1,0 +1,21 @@
+<apex:page >
+<body>
+    <DIV style="TEXT-ALIGN: center"><BR/></DIV>
+    <DIV style="TEXT-ALIGN: center" align="left"><BR/> </DIV>
+    <DIV style="TEXT-ALIGN: center"><BR/><FONT style="FONT-STYLE: italic; FONT-FAMILY: Verdana, Helvetica, Sans-Serif" color="#336666" size="6"><STRONG><STRONG>
+        <P class="MsoNormal">
+            <SPAN style="FONT-FAMILY: 'Calibri', 'sans-serif'; FONT-SIZE: 11pt">
+                <A href="http://images.adesa.com/publicweb/contentimages/AD-MKTG-0113-SFDC-WELCOME-HDR.jpg">http://images.adesa.com/publicweb/contentimages/AD-MKTG-0113-SFDC-WELCOME-HDR.jpg</A>
+            </SPAN>
+        </P>
+        <P class="MsoNormal"><SPAN style="FONT-FAMILY: 'Calibri', 'sans-serif'; FONT-SIZE: 11pt"></SPAN></P>
+            WELCOME<FONT size="6"> ADESA INSIDE SALES</FONT> TEAM!</STRONG></STRONG></FONT>
+        <P class="MsoNormal"><SPAN style="FONT-FAMILY: 'Calibri', 'sans-serif'; FONT-SIZE: 11pt"></SPAN></P>
+        <BR/>
+    </DIV>
+    <DIV style="TEXT-ALIGN: center"><STRONG><EM><FONT color="#336666" size="6" face=""></FONT></EM></STRONG> </DIV>
+    <DIV style="TEXT-ALIGN: center"><STRONG><EM><FONT color="#336666" size="4">
+        <A href="/_ui/core/chatter/groups/GroupProfilePage?g=0F96000000006wH">Ask your SalesForce Question Here!</A></FONT></EM></STRONG>
+    </DIV>
+</body>
+</apex:page>

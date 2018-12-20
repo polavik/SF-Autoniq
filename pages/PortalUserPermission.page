@@ -1,0 +1,102 @@
+<apex:page sidebar="false"  Controller="PortalUserPermissionController" title="Seller Portal User Permission">
+<style>
+.z-modal-mask {
+    width:100%;
+    height:100%;
+    background: grey;
+    opacity: 0.6;
+    position:absolute;
+    background-image: url({!$Resource.ProcessingImage2}); background-repeat: no-repeat;
+    background-size: 300px 63px;
+    background-position: center; 
+}
+
+
+#{!$Component.Section1} tr:nth-child(even) {background: #FFFAFA}
+#{!$Component.Section1} tr:nth-child(odd) {background: #FFFFFF}
+
+.detailtable tr:nth-child(even) {background: #FFFAFA}
+.detailtable tr:nth-child(odd) {background: #FFFFFF}
+
+
+
+.myTable { border:1px solid black;width: 100%; }
+.myTable th { background-color:lightgrey;color:black; }
+
+
+</style>
+
+<apex:form id="frmWaiting">
+<apex:actionStatus id="AddStatus">
+<apex:facet name="start">
+    <div class="z-modal-mask">    
+    </div>    
+</apex:facet>
+</apex:actionStatus>
+</apex:form>
+
+<apex:form id="mainform" styleClass="detailtable">
+<apex:pageMessages id="msg" escape="false"/>   
+<apex:actionFunction name="callController"    status="AddStatus"  />  
+<apex:sectionHeader title="" subtitle="Seller Portal User Permission"/>
+<apex:pageBlock id="mainBlock" mode="detail"   >
+                <table class="myTable" >
+
+        <tr >
+            <td width="20px"></td>
+            <td width="200px" ></td>
+            <td width="200px" ></td>
+            <td></td>           
+            
+
+        </tr>
+        
+        <tr >
+            <td></td>
+            <td><apex:outputText value="Enter Login Name: " style="color:blue"/></td>
+            <td><apex:inputText id="txtSearch1" title="Enter Master Index to be search" value="{!strSearch1}" /></td>
+            <td></td>           
+            
+
+        </tr>
+<tr >
+<td ></td>
+            <td><apex:outputText value="Enter Login Id: " style="color:blue"/></td>
+            <td><apex:inputText id="txtSearch2" title="Enter Master Index to be search" value="{!strSearch2}" /></td>
+            
+<td ></td>
+        </tr>   
+<tr >
+<td ></td>
+            <td><apex:outputText value="ATC Org. Id: " style="color:blue"/></td>
+            <td><apex:inputText id="txtSearch3" title="Enter Master Index to be search" value="{!strSearch3}" /></td>
+            
+<td ></td>
+        </tr>       
+<tr >
+
+<td ></td>
+            <td > </td>
+<td colspan="2" align="left" style="text-align:left"> <br/>         
+            <apex:commandButton id="btnEnableSellerPortal" action="{!EnableSellerPortal}" title="Enable Seller Portal" value="Enable Seller Portal" rerender="msg,mainBlock" status="AddStatus" /> &nbsp;
+            <apex:commandButton id="btnGrantSellerPermission" action="{!GrantSellerPermission}" title="Grant Seller Permission" value="Grant Seller Permission" rerender="msg,mainBlock" status="AddStatus" /> 
+            </td>
+          
+            
+
+        </tr>   
+  
+      
+</table>        
+           
+                      
+  
+<br/><br/>
+        
+        
+
+   
+        
+</apex:pageBlock>
+ </apex:form>
+</apex:page>

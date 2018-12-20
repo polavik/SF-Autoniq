@@ -1,0 +1,167 @@
+<apex:page controller="CRFFormController" renderAs="pdf" showHeader="false">
+	<head>
+		<link rel='stylesheet' type='text/css' href="{!URLFOR($Resource.void_form2_css, 'void_form.css')}" />
+    </head> 
+    
+
+	
+	<div style="text-align:center; font-size:20px">CRF Form</div>  
+	
+	
+	<c:pageBlock header="CRF Information">
+		<c:singleColumnRow labelName="Type of CRF" value="{!myDisplayData.typeOfCRF}"/> 
+		<c:singleColumnRow labelName="Case Type" value="{!myDisplayData.caseType}"/>
+		<c:singleColumnRow labelName="Case No/Action Package No." value="{!myDisplayData.CaseAuctionPackageNumber}" />
+		<c:singleColumnRow labelName="Case Owner" value="{!myDisplayData.caseOwner}" />
+		<div id="sap_transactions">
+			<c:singleColumnRow labelName="SAP Send Results" value="{!myDisplayData.sapSendResults}" />
+		</div>
+		<c:singleColumnRow labelName="Directions for Accounting" value="{!NULLVALUE(myDisplayData.directionsForAccounting, 'None')}" lastRow="true"/>
+	</c:pageBlock>
+	
+	<c:pageBlock header="Vehicle & Buyer Details"> 
+		<c:twoColumnRow labelName1="VIN" value1="{!myDisplayData.vin}"
+						labelName2="Stock# " value2="{!myDisplayData.stockNumber}"
+						 />
+						
+						
+		<c:twoColumnRow labelName1="YMMS" value1="{!myDisplayData.ymms}"
+						labelName2="Account Name" value2="{!myDisplayData.accountName}"
+						 />
+		
+		<c:twoColumnRow labelName1="Mileage" value1="{!myDisplayData.mileage}"
+						labelName2="Contact Name" value2="{!myDisplayData.contactName}"
+						/>
+						
+		<c:twoColumnRow labelName1="Vehicle ID " value1="{!myDisplayData.vehicleId}"
+						labelName2="Phone" value2="{!myDisplayData.phone}"/>
+						 
+	</c:pageBlock>
+						
+	<c:pageBlock header="Vehicle & Transport Sale Information">
+	
+		<c:twoColumnRow labelName1="Seller" value1="{!NULLVALUE(myDisplayData.seller, 'NA')}"
+						labelName2="Transport Type" value2="{!myDisplayData.transportType}" />
+		
+		<c:twoColumnRow labelName1="Consignee Name" value1="{!NULLVALUE(myDisplayData.consigneeName, 'NA')}"  
+						labelName2=" " value2=" " />
+				<!-- labelName2="Stock # " value2="{!stockNumber}" -->
+
+		<c:twoColumnRow labelName1="Private Label" value1="{!NULLVALUE(myDisplayData.privateLabel, 'NA')}"
+						labelName2="Transport Incentive" value2="{!myDisplayData.transportIncentive}"/>
+						
+		<c:twoColumnRow labelName1="Sale Price for Vehicle" value1="{!myDisplayData.salePriceForVehicle}"
+						labelName2="Transport Fee" value2="{!myDisplayData.transportFee}" />	
+						
+		<c:twoColumnRow labelName1="Vehicle Tax" value1="{!myDisplayData.vehicleTax}"
+						labelName2="Transport Tax" value2="{!myDisplayData.transportTax}" />
+		
+		<c:twoColumnRow labelName1="Veh. Payment Method" value1="{!myDisplayData.vehPaymentMethod}"
+						labelName2="TP Payment Method" value2="{!NULLVALUE(myDisplayData.tpPaymentMethod, 'NA')}" />
+		
+		<c:twoColumnRow labelName1="Sale Date" value1="{!IF(myDisplayData.saleDate == '', '-', myDisplayData.saleDate)}"
+						labelName2="Actual Pickup Date" value2="{!IF(myDisplayData.actualPickupDate == '', '-', myDisplayData.actualPickupDate)}" />
+						
+		<c:twoColumnRow labelName1="Payment Rec'd Date" value1="{!IF(myDisplayData.paymentRecdDate == '', '-', myDisplayData.paymentRecdDate)}"
+						labelName2="Actual Dropoff Date" value2="{!IF(myDisplayData.actualDropoffDate == '', '-', myDisplayData.actualDropoffDate)}"/>
+						
+		<c:twoColumnRow labelName1="" value1=""
+						labelName2="Transporter" value2="{!NULLVALUE(myDisplayData.transporter, 'NA')}" lastRow="true"/>
+
+	</c:pageBlock>
+	
+	<c:pageBlock header="Case Resolution">
+		<c:singleColumnRow labelName="Resolution" value="{!myDisplayData.resolution}" />
+		<c:singleColumnRow labelName="Resolution Subtype" value="{!myDisplayData.resolutionSubtype}" />
+		<c:singleColumnRow labelName="Resolution Comments" value="{!NULLVALUE(myDisplayData.resolutionComments, 'None')}"/>
+		<c:singleColumnRow labelName="Date of Final Approval" value="{!myDisplayData.dateOfFinalApproval}"/>
+		<c:singleColumnRow labelName="Approvers" value="{!myDisplayData.approvers}" lastRow="true"/> 
+	</c:pageBlock>
+	
+	<c:pageBlock header="Concession Information" rendered="{!myDisplayData.displayConcessionSection}">
+		<c:twoColumnRow labelName1="Concession Amount" value1="{!myDisplayData.creditAmount}"
+						labelName2="House Amount" value2="{!myDisplayData.houseAmount}"/>
+		<c:twoColumnRow labelName1="Tax" value1="{!myDisplayData.tax}"
+						labelName2="Seller Amount" value2="{!myDisplayData.sellerAmount}"/>
+		<c:twoColumnRow labelName1="Issuing Department" value1="{!myDisplayData.issuingDepartment}"
+						labelName2="Transporter Amount" value2="{!myDisplayData.transporterAmount}"/>
+		<c:twoColumnRow labelName1="Concession Reason" value1="{!myDisplayData.creditReason}"
+						labelName2="Inspector Amount" value2="{!myDisplayData.inspectorAmount}"/>
+		<c:twoColumnRow labelName1="" value1=""
+						labelName2="Other Party Amount" value2="{!myDisplayData.otherPartyAmount}"/>
+		<c:twoColumnRow labelName1="" value1=""
+						labelName2="Discretionary Fund Amount" value2="{!myDisplayData.discretionaryFundAmount}" lastRow="true"/>
+	</c:pageBlock>
+	
+	<c:pageBlock header="Adjustment Information" rendered="{!myDisplayData.displayAdjustmentSection}" >
+		<c:twoColumnRow labelName1="Credit To" value1="{!myDisplayData.creditTo}"
+						labelName2="House Amount" value2="{!myDisplayData.houseAmount}"/>
+		<c:twoColumnRow labelName1="Adjustment Amount" value1="{!myDisplayData.creditAmount}"
+						labelName2="Seller Amount" value2="{!myDisplayData.sellerAmount}"/>
+		<c:twoColumnRow labelName1="Tax" value1="{!myDisplayData.tax}"
+						labelName2="Transporter Amount" value2="{!myDisplayData.transporterAmount}"/>
+		<c:twoColumnRow labelName1="Issuing Department" value1="{!myDisplayData.issuingDepartment}"
+						labelName2="Inspector Amount" value2="{!myDisplayData.inspectorAmount}"/>
+		<c:twoColumnRow labelName1="Adjustment Reason" value1="{!myDisplayData.creditReason}"
+						labelName2="Other Party Amount" value2="{!myDisplayData.otherPartyAmount}"lastRow="true"/>
+	</c:pageBlock>
+	
+	
+	<c:pageBlock header="Transport Adjustment Information" rendered="{!myDisplayData.displayTransportAdjustmentSection}">
+		<c:singleColumnRow labelName="Adjustment Amount" value="{!myDisplayData.creditAmount}"/>
+		<c:singleColumnRow labelName="Tax" value="{!myDisplayData.tax}"/>
+		<c:singleColumnRow labelName="Issuing Department" value="{!myDisplayData.issuingDepartment}"/>
+		<c:singleColumnRow labelName="Adjustment Reason" value="{!myDisplayData.creditReason}" lastRow="true"/>
+	</c:pageBlock>
+	
+	<c:pageBlock header="Auction Credit Information" rendered="{!myDisplayData.displayAuctionCreditSection}">
+		<c:singleColumnRow labelName="Auction Credit ID" value="{!myDisplayData.auctionCreditId}"/>
+		<c:singleColumnRow labelName="Auction Credit Amount" value="{!myDisplayData.creditAmount}"/>
+		<c:singleColumnRow labelName="Issuing Department" value="{!myDisplayData.issuingDepartment}"/>
+		<c:singleColumnRow labelName="Auction Credit Reason" value="{!myDisplayData.creditReason}" lastRow="true"/>
+	</c:pageBlock>
+	
+	
+	<c:pageBlock header="Cross-System Integration Results">
+		<c:singleColumnRow labelName="SAP Error Messages" value="{!NULLVALUE(myDisplayData.sapErrorMessages, 'None')}" lastRow="true"/>
+		<div class="cPageBlockHeader" style="margin-top:6px"><h2>FI Documents</h2></div>
+		<apex:dataTable value="{!myDisplayData.fiDocuments}" var="doc" styleClass="pageBlockTable">
+			<apex:column >
+				<apex:facet name="header">Doc. Number</apex:facet>
+				<apex:outputText value="{!doc.documentNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Company Code</apex:facet>
+				<apex:outputText value="{!doc.companyCode}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Fiscal Year</apex:facet>
+				<apex:outputText value="{!doc.fiscalYear}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Reverse Step</apex:facet>
+				<apex:outputText value="{!doc.reverseStep}" />
+			</apex:column>
+		</apex:dataTable>
+		<div class="cPageBlockHeader" style="margin-top:6px" ><h2>SD Documents</h2></div>
+		<apex:dataTable value="{!myDisplayData.sdDocuments}" var="doc" styleClass="pageBlockTable">
+			<apex:column >
+				<apex:facet name="header">Order Number</apex:facet>
+				<apex:outputText value="{!doc.documentNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Line Number</apex:facet>
+				<apex:outputText value="{!doc.lineNumber}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Extra Cost Id</apex:facet>
+				<apex:outputText value="{!doc.extraCostId}" />
+			</apex:column>
+			<apex:column >
+				<apex:facet name="header">Reverse Step</apex:facet>
+				<apex:outputText value="{!doc.reverseStep}" />
+			</apex:column>
+		</apex:dataTable>
+		
+	</c:pageBlock>
+</apex:page>

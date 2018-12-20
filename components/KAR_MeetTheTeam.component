@@ -1,0 +1,36 @@
+<apex:component layout="none" controller="EFIMeetTheTeamCompController">
+    <div class="meet-the-team">
+        <div class="widget-heading blue">
+            <h2> <apex:outputText value="{!$Label.KAR_Meet_The_Team}"/> </h2>
+            <a href="#">{!$Label.EF_View_All}</a>
+        </div>
+        <!-- /.widget-heading -->
+        <div class="content">
+            <div class="grid">
+                <apex:repeat value="{!teamList}" var="tml">
+                    <div class="card" style="background-image: url('/servlet/servlet.FileDownload?file={!tml.content.Attachments[0].Id}&amp;otherId=')">
+                        <img src="/servlet/servlet.FileDownload?file={!tml.content.Attachments[0].Id}&amp;otherId=" alt="{!tml.contentVersionforDisplay.Name}" />
+                        <div class="detail">
+                            <div class="name"><a href="{!tml.content.Target_URL__c}">{!tml.contentVersionforDisplay.Name}</a></div>
+                            <div class="position highlight">{!tml.contentVersionforDisplay.Title__c}</div>
+                            <a class="email" href="mailto:{!tml.content.Email__c}">{!tml.content.Email__c}</a>
+                            <div class="summary">
+                                <div class="highlight"><apex:outputText value="{!$Label.KAR_Responsible_for}"/></div>
+                                <p>
+                                    <apex:outputLabel value="{!tml.contentVersionforDisplay.Description__c}" />
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </apex:repeat>
+                <!-- BEGIN - Sample view all tile -->
+                <div class="card view-all-card">
+                    <div class="card-holder">
+                        <div class="title" style="vertical-align:middle;text-align:center;">Meet the Team</div>
+                    </div><!-- /.card-holder -->
+                </div>
+                <!-- END - Sample view all tile -->
+            </div>
+        </div>
+    </div>
+</apex:component>

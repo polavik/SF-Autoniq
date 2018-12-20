@@ -1,0 +1,39 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeForceChatterTopicController">
+<title>{!$Label.EF_ChatterTitle}</title>
+<style>
+	.r1-c1 .widget-heading h2 {
+	    color: white;
+	}
+</style>
+<apex:composition template="KAR_Template">
+<apex:define name="body">
+
+	<div class="secondary-nav">
+		<div class="container-bs">
+			<!-- <c:KAR_BusinessUnitNav /> -->
+			<c:KAR_StockTicker />
+			<!-- <c:KAR_QuickSearch /> -->
+		</div>
+	</div>
+
+	<div class="container-bs chatter-page content-page">
+		<div class="r1-c1 one-third md">
+			<div class="widget-right">
+				<apex:outputPanel id="rightpagepanel" layout="block" styleClass="chatter-panel">
+					<div class="widget-heading">
+						<h2>#{!topicName}</h2>
+					</div>
+				    <div class="content">
+				    	<div class="chatterPanel">
+					        <chatter:feed entityId="{!topicId}" showPublisher="false"/>
+					        <c:EF_CustomChatter />
+					    </div>
+				    </div>
+			    </apex:outputPanel>
+			</div>
+		</div>
+	</div>
+
+ </apex:define>
+</apex:composition>
+</apex:page>

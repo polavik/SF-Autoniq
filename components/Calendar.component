@@ -1,0 +1,7 @@
+<apex:component >
+	<div class="widget-heading brown-lt">
+		<h2>Calendar</h2>
+	</div>
+	<!-- /.widget-heading -->
+
+</apex:component>

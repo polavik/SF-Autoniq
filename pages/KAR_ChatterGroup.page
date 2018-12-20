@@ -1,0 +1,205 @@
+<apex:page docType="html-5.0" 
+           showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" 
+           controller="EdgeForceChatterGroupController">
+<title>Chatter - {!userGroup.Name}</title>
+    <style>
+        .group-owner {
+            border-width: 3px;
+            border-color: green;
+            border-style: solid;
+        }
+        .group-sidebar .all-members {
+            padding: 8px 5px !important;
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div>
+            </div>
+
+            <div class="container-bs chatter-page content-page">
+                <div class="r1-c2 one-third sm">
+                    <div class="widget-left group-sidebar">
+                        <div class="widget-heading">
+                            <h2>{!userGroup.Name}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="content group-info">
+                            <apex:outputLink value="#photo-upload" html-data-toggle="modal" disabled="{!!isAdmin}" >
+                                <img src="{!userGroup.fullPhotoUrl}" class="user-photo" alt="{!userGroup.Name} Photo" style="width:100%" />
+                            </apex:outputLink>
+                            <p class="description">{!userGroup.Description}</p>
+                            <apex:form >
+                                <apex:commandLink styleClass="btn-bs btn-primary btn-block" action="{!joinGroup}" value="{!$Label.EF_ChatterJoinLabel}" rendered="{!!isMember}" oncomplete="location.reload();"/>
+                                <apex:commandLink styleClass="btn-bs btn-default btn-block {!IF(isOwner,'disabled','')}" action="{!leaveGroup}" value="{!$Label.EF_ChatterLeaveLabel}"  rendered="{!isMember}" />
+                            </apex:form>
+                        </div><!-- /.content -->
+
+                        <apex:form id="memberPanel">
+                            <div class="widget-heading">
+                                <h2>{!$Label.EF_ChatterGroup_MembersLabel}</h2>
+                                <span>{!userGroup.MemberCount}</span>
+                            </div><!-- /.widget-heading -->
+                            <div class="content members">
+                                <apex:repeat value="{!userMap}" var="gUser">
+                                    <a href="/apex/KAR_ViewUserProfile?Id={!userMap[gUser].Id}" target="_blank" title="{!userMap[gUser].FirstName + ' ' + userMap[gUser].LastName}">
+                                        <apex:image height="45" width="45" value="{!userMap[gUser].smallPhotoUrl}" styleClass="{!IF(userRoleMap[gUser] == 'Owner','group-owner','')}" />
+                                    </a>
+                                </apex:repeat>
+                                <a data-toggle="modal" href="#member-list" class="all-members">{!$Label.EF_ShowAllLabel}</a>
+                            </div><!-- /.content -->
+                        </apex:form>
+
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_ChatterGroupFilesLabel}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="sidebar-nav">
+                            <apex:outputPanel rendered="{!noFiles}"><p class="empty">{!$Label.EF_ChatterGroup_NoFiles}</p></apex:outputPanel>
+                            <apex:repeat value="{!groupFiles}" var="gFile">
+                                <a href="/{!gFile.ContentDocumentId}" target="_blank">{!gFile.ContentDocument.LatestPublishedVersion.Title}</a>
+                            </apex:repeat>
+                            <apex:form >
+                                <apex:actionFunction name="showAll" action="{!showAllUsers}" reRender="usersPanel" oncomplete="setScroll();"/>
+                            </apex:form>
+                        </div><!-- /.content -->
+                    </div><!-- /.widget-left -->
+                    <div class="widget-right chatter-content">
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_ChatterFeedLabel}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="content">
+                            <div class="chatterPanel">
+                                <chatter:feed entityId="{!$CurrentPage.parameters.g}" showPublisher="{!(userGroup.IsBroadcast&&isAdmin)||!userGroup.IsBroadcast}"/>
+                                <c:EF_CustomChatter />
+                            </div><!-- /.chatter-panel -->
+                        </div><!-- /.content -->
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                $('.form-control').keypress(function(event) {
+                    if (event.keyCode == 13) {
+                        event.preventDefault();
+                    }
+                });
+                function setScroll() {
+                    $(".modalPanel").scroll(function(){
+                        if(isScrollBottom() && $("#user-list-all li").length < {!userGroup.MemberCount} ){
+                            showAll();
+                        }
+                    });
+                }
+                function isScrollBottom() {
+                    var documentHeight = $(".modalPanel")[0].scrollHeight;
+                    var scrollPosition = $(".modalPanel").height()+ $(".modalPanel").scrollTop();
+                    return (documentHeight == scrollPosition);
+                }
+                setScroll();
+            </script>
+
+        </apex:define>
+    </apex:composition>
+    <div class="modal fade" id="member-list">
+        <apex:form >
+            <div class="modal-dialog modal-lg" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{!$Label.EF_ChatterMembersLabel} <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+                    </div>
+                    <apex:actionFunction name="searcUser" action="{!searchUser}" reRender="usersPanel" oncomplete="setScroll();"/>
+                    <div class="modal-body">
+                        <apex:inputText value="{!searchText}" styleClass="form-control" html-placeholder="Search by name" onkeyup="searcUser();"/>
+                        <apex:outputpanel id="usersPanel" styleClass="tile-grid" style="overflow:auto;height:500px;">
+                            <apex:repeat value="{!userMapForModal}" var="gUser">
+                                <div>
+                                    <div class="tile">
+                                        <a href="/apex/KAR_ViewUserProfile?id={!userMapForModal[gUser].Id} " >
+                                            <img src="{!userMapForModal[gUser].SmallPhotoUrl}" ></img>
+                                            <span class="details">
+                                                <span class="name">{!userMapForModal[gUser].firstName} {!userMapForModal[gUser].lastName}</span>
+                                                <span class="role">{!IF(userRoleMap[gUser]=='Admin','Manager',IF(userRoleMap[gUser]=='Owner','Owner',''))}</span>
+                                            </span>
+                                        </a>
+                                        <div class="gift">
+                                            <apex:outputPanel rendered="{!userMapForModal[gUser].UserType=='Standard'}">
+                                                <chatter:follow entityId="{!userMapFOrModal[gUser].id}" />
+                                            </apex:outputPanel>
+                                        </div>
+                                    </div><!-- /.tile -->
+                                </div>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                    </div><!--/.modal-body -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn-bs btn-primary" data-dismiss="modal">{!$Label.EF_ChatterDoneLabel}</button>
+                    </div><!--/.modal-footer -->
+                </div><!--/.modal-content -->
+            </div>
+        </apex:form>
+    </div> <!-- /modal -->
+
+    <div class="modal fade" id="photo-upload">
+        <apex:form >
+            <div class="modal-dialog modal-sm" role="dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{!$Label.EF_ChatterGroupPhotoLabel}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button></h4>
+                    </div>
+                    <div class="modal-body" style="text-align:center;">
+                        <div style="height:200px;width:200px;">
+                                <apex:image styleClass="chatterPhoto" value="{!userGroup.FullPhotoUrl}"/>
+                        </div>
+                        <input class="" type="file" name="groupImage" accept="image/*" onchange="readURL(this);" />
+                        <div>
+                            <apex:inputHidden value="{!fileData}" html-class="hiddenInput" />
+                            <apex:actionFunction action="{!uploadPhoto}" name="uploadImage" oncomplete="location.reload();" />
+                        </div>
+                    </div><!--/.modal-body -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn-bs btn-primary" onclick="cropImage();return false;">{!$Label.EF_ChatterUploadLabel}</button>
+                        <button type="button" class="btn-bs btn-default" data-dismiss="modal">{!$Label.EF_ChatterCancelLabel}</button>
+                    </div><!--/.modal-footer -->
+                </div><!--/.modal-content -->
+            </div>
+            <apex:includeScript value="{!URLFOR($Resource.EdgeForce, 'js/cropper.min.js')}" />
+            <apex:stylesheet value="{!URLFOR($Resource.EdgeForce, 'css/cropper.min.css')}" />
+            <script>
+                function cropImage(){
+                    var croppedCanvas = $('.chatterPhoto').cropper('getCroppedCanvas');
+                    var image = new Image();
+                    image.onload = function(){
+                        $('.hiddenInput').val(image.src.split(",")[1]);
+                        uploadImage();
+                    }
+                    image.src = croppedCanvas.toDataURL("image/jpg");
+                }
+
+                function readURL(input) {
+                    if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                    $('.chatterPhoto').attr('src', e.target.result);
+                        $('.chatterPhoto').cropper({
+                          aspectRatio: 1 / 1,
+                          zoomable: false,
+                          autoCropArea: 1,
+                          guides: false,
+                          background: false,
+                          responsive: true,
+                          crop: function(e) {
+                          }
+                        });
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                    }
+                }
+            </script>
+        </apex:form>
+    </div> <!-- /modal -->
+
+</apex:page>

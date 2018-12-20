@@ -1,0 +1,106 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeForceVideoGalleryController">
+    <title>KAR - Video Gallery</title>
+    <style>
+	    .videoWrapper {
+				position: relative;
+				padding-bottom: 56.25%; /* 16:9 */
+				padding-top: 25px;
+				height: 0;
+			}
+			.videoWrapper iframe {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			.video-list {
+				min-width: 300px;
+			}
+    </style>
+    <apex:composition template="KAR_Template">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <c:KAR_BusinessUnitNav />
+                    <div class="stock-ticker"></div>
+                    <c:KAR_QuickSearch />
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <div class="container-bs content-page">
+                <div class="r1-c2 one-third sm">
+                    <div class="widget-left recent-news video-list">
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_VideoGallery_RecentVideos}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="content video-list">
+                        	<apex:outputpanel id="usersPanel" styleClass="tile-grid">
+                            <apex:repeat value="{!listOfVideoContent}" var="contList">
+	                            <apex:repeat value="{!contList}" var="cont">
+		                            <div>
+	                                <div class="tile">
+	                                  <a href="/apex/KAR_VideoGallery?id={!cont.id}" target="_self" >
+	                                      <img src="https://i1.ytimg.com/vi/{!cont.Video__c}/0.jpg" class="img-responsive" />
+	                                      <span class="details">
+	                                      	<span class="name">{!cont.Name}</span>
+	                                      	<span class="role">
+                                                {!$Label.EF_VideoGallery_Uploaded}:&nbsp;
+												<apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+												    <apex:param value="{!cont.CreatedDate}" /> 
+												</apex:outputText></span>
+	                                      	<span class="title">{!cont.Video_Caption__c}</span>
+	                                      </span>
+	                                  </a>
+	                                </div>
+		                            </div>
+                              </apex:repeat>
+                            </apex:repeat>
+                          </apex:outputPanel>
+                        </div>
+                    </div>
+                    <div class="widget-right">
+                        <div class="content-article">
+                            <div class="widget-heading">
+                                <h1>{!currentRecord.Name}</h1>
+                            </div><!-- /.widget-heading -->
+
+                            <div class="content">
+                            	<div class="videoWrapper">
+	                              <iframe width="560" height="349" src="https://www.youtube.com/embed/{!currentRecord.Video__c}" frameborder="0" allowfullscreen="true"></iframe>
+                              </div>
+                              <div id="recordDetailContainer" class="content">
+				                    <div id="videoDetailContainer">
+			                            <p class="timestamp">{!$Label.EF_VideoGallery_Uploaded}:&nbsp;<apex:outputField value="{!currentRecord.CreatedDate}"/></p>
+			                            <p>{!currentRecord.Video_Caption__c}</p>
+				                    </div>
+					           </div>
+                            </div><!-- /.content -->
+                        </div><!-- /.content-article -->
+                        <apex:outputPanel >
+                            <div class="widget-heading">
+                                <h2>{!$Label.Chatter}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <div class="r1-c2 one-third sm">
+                                    <div class="widget-left">
+                                        <div style="padding: 10px;">
+                                            <chatter:follow entityId="{!currentRecord.Id}"></chatter:follow>
+                                            <chatter:followers entityId="{!currentRecord.Id}"></chatter:followers>
+                                        </div>
+                                    </div>
+                                    <div class="widget-right">
+                                        <div class="chatterPanel"><chatter:feed entityId="{!currentRecord.Id}"></chatter:feed></div>
+                                        <c:EF_CustomChatter />
+                                    </div>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </div> 
+                </div><!--/.r1-c2 one-third -->
+            </div><!-- /.container-bs -->
+
+        </apex:define>
+    </apex:composition>
+</apex:page>

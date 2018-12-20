@@ -1,0 +1,105 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+	controller="ATNQSubscriptionPanelController" access="global" >
+
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	
+	<aura:attribute name="Mode" type="String" />
+	<aura:attribute name="userSetting" type="Autoniq_User_Applilcation_Setting__c" default="{ 'sobjectType': 'Autoniq_User_Applilcation_Setting__c' }"/>
+	
+	
+
+	<lightning:card title="User Settings" iconName="standard:contact" footer="" >
+		<aura:set attribute="actions">
+             <lightning:buttonMenu menuAlignment="right" alternativeText="Edit"  onselect="{!c.handleSelect }">
+                <lightning:menuItem aura:id="settingsEdit" label="Edit" value="Edit" iconName="utility:preview" />
+                <lightning:menuItem aura:id="settingsSave" class="hide" label="Save" value="Save" iconName="utility:preview" />
+                <lightning:menuItem aura:id="settingsCancel" class="hide" label="Cancel" value="Cancel" iconName="utility:preview" />
+            </lightning:buttonMenu>
+        </aura:set>	
+		<div  aura:id="userSettingsView" >
+            <p class="slds-p-horizontal_small">            
+				<div class="slds-grid slds-gutters">
+					<div class="slds-col">
+						<div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+					      	<div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+					         	<div class="slds-panel__section">
+					            	<h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+					            	<ul>				              
+										<li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Demo Account</span>
+						                  <div class="slds-form-element__control">
+						                  	<span class="slds-form-element__static"> 
+						                     	<!--<ui:outputCheckbox aura:id="output" value="{!v.userSetting.demoAccount__c == 'true'}"/>-->
+						                     	<force:outputField value="{!v.userSetting.demoAccount__c}"/>
+						                     </span>
+						                  </div>
+					               		</li>
+						               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Valuation Region</span>
+						                  <div class="slds-form-element__control">
+											<span class="slds-form-element__static">
+												<force:outputField value="{!v.userSetting.Valuation_region__c}"/>
+						                 	</span>
+						                  </div>
+						               </li>
+						               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Menu Style</span>
+						                  <div class="slds-form-element__control">
+						                     <span class="slds-form-element__static"> 
+						                     	<force:outputField value="{!v.userSetting.menuStyle__c}"/>
+						                 	</span>
+						                  </div>
+						               </li>					         				               
+					               </ul>
+				               </div>
+			               </div>
+		               </div>
+					</div>
+
+					<div class="slds-col">
+						<div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+					      	<div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+					         	<div class="slds-panel__section">
+					            	<h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+					            	<ul>			              
+										
+						               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Mobile Device Type</span>
+						                  <div class="slds-form-element__control">
+						                     <span class="slds-form-element__static"> 
+						                     	<force:outputField value="{!v.userSetting.Mobile_Device_Type__c}"/>
+						                     </span>
+						                  </div>
+						               </li>
+						               <li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Home Region Zip Code</span>
+						                  <div class="slds-form-element__control">
+						                     <span class="slds-form-element__static"> 
+						                     	<force:outputField value="{!v.userSetting.Home_region_zip_code__c}"/>
+						                     </span>
+						                  </div>
+						               </li>				              
+						                <!--<li class="slds-form-element slds-hint-parent slds-border_bottom">
+						                  <span class="slds-form-element__label">Price Evaluator Defaults</span>
+						                  <div class="slds-form-element__control">
+						                     <span class="slds-form-element__static"> 
+						                     	<force:outputField value="{!v.userSetting.Valuation_region__c}"/>
+						                     </span>
+						                  </div>
+						               </li> -->		               
+					               </ul>
+				               </div>
+			               </div>
+		               </div>
+					</div>
+		       </div>
+	   		</p>	
+	    </div>
+	  	
+	  	<div aura:id="userSettingsEdit" class="hide">
+	   		<c:ATNQSettingsEdit userSetting="{!v.userSetting}" />
+		</div>
+	  	
+
+	</lightning:card>
+</aura:component>

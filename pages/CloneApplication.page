@@ -1,0 +1,15 @@
+<apex:page standardcontroller="AFC_Contracts__c" extensions="CloneApplicationContExt" action="{!runQuery}">
+
+	<apex:pageMessages ></apex:pageMessages>
+	
+    <!--<apex:sectionHeader subtitle="Application Cloning" title="Deep Clone of Application and Child Records"/>
+    <apex:form >
+    <apex:pageBlock >
+         <apex:pageBlockButtons >
+            <apex:commandButton value="{!$Label.Back}" action="{!cancel}"/>
+            <apex:commandButton value="Clone" action="{!runQuery}"/>
+        </apex:pageBlockButtons>
+    </apex:pageBlock>
+    </apex:form>-->
+    
+</apex:page>

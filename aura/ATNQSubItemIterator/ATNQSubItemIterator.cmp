@@ -1,0 +1,6 @@
+<aura:component >
+	<aura:attribute name="subscriptionItems" type="Object[]" access="public" />
+    <aura:iteration items="{!v.subscriptionItems}" var="subscriptionItem">
+        <c:ATNQSubItem item="{!subscriptionItem}" isViewMode="{!subscriptionItem.isViewMode}" />
+    </aura:iteration>
+</aura:component>

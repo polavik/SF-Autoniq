@@ -1,0 +1,42 @@
+<apex:page >
+  <h1>Congratulations</h1>
+  This is your new Page
+
+<script type='text/javascript' src='https://c.la3-c1cs-chi.salesforceliveagent.com/content/g/js/33.0/deployment.js'></script>
+<script type='text/javascript'>
+
+//liveagent.addCustomDetail('Contact E-mail', 'ehulen@openlane.com').map('Contact', 'Email', false,
+//false);
+// A fast-fill to populate a contact’s name with "Eric Hulen"
+//liveagent.addCustomDetail('Contact Name', 'Eric Hulen').map('Contact', 'Name', false, true);
+// Saves the custom detail to a custom field on LiveChatTranscript at the end of a chat
+//liveagent.addCustomDetail('Company', 'Eric Industries').saveToTranscript('Company__c');
+liveagent.addCustomDetail('Login Name', 'ehulen').saveToTranscript('Login_Name__c');
+liveagent.addCustomDetail('Login Name', 'ehulen').map('Contact', 'Login_Name__c', true, true, true);
+// Overrides the display name of the visitor in the agent console when engaged in a chat
+//liveagent.setName('Mr Eric Hulen');
+liveagent.init('https://d.la3-c1cs-chi.salesforceliveagent.com/chat', '57218000000000p', '00D180000000PHS'); //Deployment/Company SF ID
+</script>
+  
+<img id="liveagent_button_online_57318000000001J" style="display: none; border: 0px none; cursor: pointer" onclick="liveagent.startChat('57318000000001O')" src="http://test-kar.cs23.force.com/resources/resource/1428557704000/Chat" /><img id="liveagent_button_offline_57318000000001J" style="display: none; border: 0px none; " src="http://test-kar.cs23.force.com/resources/resource/1428557773000/NoChat" />
+<script type="text/javascript">
+if (!window._laq) { window._laq = []; }
+window._laq.push(function(){liveagent.showWhenOnline('57318000000001O', document.getElementById('liveagent_button_online_57318000000001J'));
+liveagent.showWhenOffline('57318000000001O', document.getElementById('liveagent_button_offline_57318000000001J'));
+});</script>
+<br />
+  <h1>Resources Used</h1>
+
+
+<apex:image url="{!$Resource.Chat}" width="50" height="50"/>
+<apex:image url="{!$Resource.NoChat}" width="50" height="50"/>
+<apex:image url="{!$Resource.AdesaCustomerConnection}" width="50" height="50"/>
+<apex:image url="{!$Resource.ADESABrandingLogo}"/>
+<br />
+<h1>Pre-Login Pre-Chat form: </h1>
+<apex:outputLink value="{! $Page.PreChatPreLogin}">Pre Chat Pre Login</apex:outputLink>
+<br />
+<h1>Post Login Pre-Chat form: </h1>
+<apex:outputLink value="{! $Page.PreChatPostLogin}">Pre Chat Post Login</apex:outputLink>
+
+</apex:page>

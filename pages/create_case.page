@@ -1,0 +1,24 @@
+<apex:page standardController="Case" extensions="CreateCaseController" tabStyle="Case">
+	<apex:form >
+		<apex:pageBlock title="Select a Case Type">
+			<div style="margin-left:41px"> 
+				<apex:selectList style="vertical-align:middle" value="{!caseType}" size="1">
+					<apex:selectOption itemValue="null" itemLabel="- Please choose a Case Type -" />
+					<apex:selectOption itemValue="Arbitration" itemLabel="Arbitration Inquiry" />
+					<apex:selectOption itemValue="Title Inquiry" itemLabel="Title Inquiry (USA)" />
+					<apex:selectOption itemValue="Ownership Inquiry" itemLabel="Ownership Inquiry (Canada)" />
+					<apex:selectOption itemValue="Payment Inquiry" itemLabel="Payment Inquiry" />
+					<apex:selectOption itemValue="Transportation Inquiry" itemLabel="Transportation Inquiry" />
+					<apex:selectOption itemValue="Customer Service Inquiry" itemLabel="Customer Service Inquiry" />
+					<apex:selectOption itemValue="Seller Inquiry" itemLabel="iDEAL or DealerSelect Seller Inquiry" />
+				</apex:selectList>  
+				<apex:commandButton style="margin-left:5px; vertical-align:middle" 
+					value="Continue" action="{!submit}" />
+			</div>
+			<apex:pageMessages />
+			<div style="margin-bottom:20px; margin-left:18px; margin-top:40px; vertical-align: middle">
+			If you need assistance, please call 888-526-7326.
+			</div>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

@@ -1,0 +1,92 @@
+<apex:component layout="none" controller="EFIAboutUsCompController">
+    <div class="about-brand">
+        <div class="widget-heading black">
+            <h2>
+                <apex:outputLabel rendered="{!aboutUsList[0].content.Page_Type__c == 'Team'}">{!$Label.KAR_About_The_Team}</apex:outputLabel>
+                <apex:outputLabel rendered="{!aboutUsList[0].content.Page_Type__c == 'Brand'}">{!$Label.KAR_About_The_Brand}</apex:outputLabel>
+            </h2>
+        </div>
+        <!--  TEAM Section -->
+        <apex:outputPanel rendered="{!aboutUsList[0].content.Page_Type__c == 'Team'}" layout="none">
+            <div class="content">
+                <div class="grid">
+                    <apex:repeat value="{!aboutUsList}" var="tml">
+                        <div class="summary">
+                            <div class="email"><apex:outputText escape="false" value="{!tml.contentVersionforDisplay.Description__c}" /></div>
+                        </div>
+                    </apex:repeat>
+                </div>
+            </div>
+        </apex:outputPanel>
+        
+        <!-- BRAND Section -->
+        <apex:outputPanel rendered="{!aboutUsList[0].content.Page_Type__c == 'Brand'}" layout="none">
+            <div class="content" rendered="{!aboutUsList[0].content.Page_Type__c == 'Brand'}">
+                <apex:image url="/servlet/servlet.FileDownload?file={!fileId}"/>     
+                <h3>{!aboutUsList[0].contentVersionforDisplay.Team_Mission_Statement__c}</h3>
+                <div class="summary">
+                    <div class="heading"></div>
+                   <p><apex:outputText escape="false" value="{!aboutUsList[0].contentVersionForDisplay.Description__c}" /></p>
+                </div>
+                <div class="contact-info" rendered="{!aboutUsList[0].content.Page_Type__c == 'Brand'}">
+                    <div class="heading">
+                       <apex:outputText value="{!$Label.KAR_Contact_Info}" 
+                          style="{!IF(aboutUsList[0].content.Address_Street__c == '' && 
+                                      aboutUsList[0].content.Address_City__c == '' &&
+                                      aboutUsList[0].content.Address_State__c == '' &&
+                                      aboutUsList[0].content.Address_ZIP__c == '' && 
+                                      aboutUsList[0].content.Address_Country__c == '' &&
+                                      aboutUsList[0].content.Phone__c == '' &&
+                                      aboutUsList[0].content.Email__c == '' ,
+                            'display:none;','line-height:200%;')}" />
+                   </div>
+                   <div style="{!IF(aboutUsList[0].content.Address_Street__c == '' && 
+                                aboutUsList[0].content.Address_City__c == '' &&
+                                aboutUsList[0].content.Address_State__c == '' &&
+                                aboutUsList[0].content.Address_ZIP__c == '' && 
+                                aboutUsList[0].content.Address_Country__c == '',
+                                'line-height:200%','display:none;')}">
+                         <div class="contact-info">
+                            <span class="contact-info"
+                                  style="{!IF(aboutUsList[0].content.Phone__c != '', '', 'display:none;')}"                            
+                            ><b>Phone </b></span>
+                            <span>{!aboutUsList[0].content.Phone__c}</span>
+                         </div>
+                         <div class="contact-info">
+                                <span class="contact-info"
+                                      style="{!IF(aboutUsList[0].content.Email__c != '', '', 'display:none;')}"                                
+                                ><b>Email </b></span>
+                                <span>{!aboutUsList[0].content.Email__c}</span>
+                         </div>
+                   </div>
+                   <div class="flex-row two-col" style="{!IF(aboutUsList[0].content.Address_Street__c != '' || 
+                                aboutUsList[0].content.Address_City__c    != '' ||
+                                aboutUsList[0].content.Address_State__c   != '' ||
+                                aboutUsList[0].content.Address_ZIP__c     != '' ||
+                                aboutUsList[0].content.Address_Country__c != '',
+                                '','display:none;')}">
+                        <div>
+                            <div>{!aboutUsList[0].content.Address_Street__c}</div>
+                            <div>{!aboutUsList[0].content.Address_City__c} {!aboutUsList[0].content.Address_State__c}</div>
+                            <div>{!aboutUsList[0].content.Address_ZIP__c} {!aboutUsList[0].content.Address_Country__c}</div>
+                        </div>
+                        <div>
+                            <div class="contact-info" 
+                                 style="{!IF(aboutUsList[0].content.Address_Street__c != '' ||  
+                                             aboutUsList[0].content.Address_City__c != '' || 
+                                             aboutUsList[0].content.Address_State__c != '' || 
+                                             aboutUsList[0].content.Address_ZIP__c != '' || 
+                                             aboutUsList[0].content.Address_Country__c != '','','display:none;')}">
+                                <span class="contact-info"
+                                      style="{!IF(aboutUsList[0].content.Phone__c != '', '', 'display:none;')}"
+                                ><b>Phone </b></span>{!aboutUsList[0].content.Phone__c}</div>
+                            <div>
+                                <span class="contact-info"
+                                      style="{!IF(aboutUsList[0].content.Email__c != '', '', 'display:none;')}"
+                                ><b>Email </b></span>{!aboutUsList[0].content.Email__c}</div>
+                        </div>
+                    </div>
+                </div></div>
+        </apex:outputPanel>
+    </div>
+</apex:component>

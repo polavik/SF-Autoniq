@@ -1,0 +1,143 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false"
+	standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false"
+	title="EdgeForce Home" controller="EdgeForceIntranetTeamController">
+	<title>KAR - {!groupName}</title>
+	<style>
+		.scroll-container {position:relative;}
+        .hero .back-btn {
+             width: 20px;
+        }
+	</style>
+	<apex:composition template="KAR_TemplateNew">
+		<apex:define name="body">
+			<div class="team-page">
+				<div class="secondary-nav">
+					<div class="container-bs">
+						<!-- <c:KAR_BusinessUnitNav /> -->
+						<c:KAR_StockTicker />
+						<!-- <c:KAR_QuickSearch /> -->
+					</div>
+				</div>
+				<!--/.secondary-nav -->
+				<apex:variable var="imagePath" value="{!bgImg}" />
+				<div class="container-bs hero team" style="background-image: url(/servlet/servlet.FileDownload?file={!bgImg}&amp;otherId=);">
+					<div class="hero-overlay {!overlayColor}"></div>
+					<div class="hero-content">
+						<div>
+							<a class="back-btn" style='{!styleHide}' onclick="history.back();">
+								<img src="{!URLFOR($Resource.KARDesign, 'img/arrow-left_white.svg')}" />BACK
+							</a>
+							<div class="team-name">{!groupName}</div>
+							<h1 class="hero-title">{!teamTitle}</h1>
+							<div class="intro">{!mission}</div>
+							<div class="controls {!IF(subTeamSize>0 && !isBrand,'','hide')}" style="">
+								<div class="dropdown {!IF(subTeamSize>0 && !isBrand,'','hide')}" style="">
+									<a id="select-team" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon" style="{!IF(subTeamSize>0,'','display:none;')}">{!selectButton}</a>
+									<ul aria-labelledby="select-team" class="dropdown-menu">
+										<li class="mobile-drop-controls">
+											<div class="title">Select a Team</div><a href="#">&times;</a>
+										</li>
+										<apex:repeat value="{!subTeams}" var="subs">
+										   <li>
+                                              <a href="{!IF(contains(subs.content.Target__c, 'Frame'),
+                                                        '/apex/KAR_Frame?url=' + subs.contentVersionForDisplay.URL__c  + '&height=' + TEXT(subs.content.Frame_Height__c),
+                                                        IF(subs.contentVersionForDisplay.URL__c <> '', subs.contentVersionForDisplay.URL__c, '/apex/KAR_SubTeam_jc?&name=' + subs.content.name + '&tabName=Our+Teams'+'&groupName='+groupName))}"
+                                                 target="{!IF(contains(subs.content.Target__c, 'Frame'),
+                                                          "_parent",
+                                                          subs.content.Target__c)}">{!subs.contentVersionForDisplay.Title__c}</a>
+										   </li>
+										</apex:repeat>
+									</ul>
+								</div>
+							</div>
+                            <div class="controls {!IF(isBrand,'','hide')}">
+                                <!-- <a class="btn-bs btn-bordered" href="#explore-brand">Explore the brands</a> -->
+                                <div class="dropdown {!IF(isBrand,'','hide')}">
+                                    <a id="select-brand" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon">Select a Brand</a>
+                                    <ul class="dropdown-menu" aria-labelledby="select-brand" style="height:100%; overflow-y: scroll;">
+                                        <li class="mobile-drop-controls">
+                                            <div class="title">Select a Brand</div><a href="#">&times;</a>
+                                        </li>
+                                        <apex:repeat value="{!brands}" var="br">
+                                            <li>
+                                                <a href="{!IF(contains(br.content.Target__c, 'Frame'), '/apex/KAR_Frame?url=' + br.contentVersionForDisplay.URL__c  + '&height=' + TEXT(br.content.Frame_Height__c), IF(br.contentVersionForDisplay.URL__c <> '', br.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + br.content.name + '&tabName=Our+Brands'))}" target="{!IF(contains(br.content.Target__c, 'Frame'), "_parent", br.content.Target__c)}">{!br.content.Name}</a>
+                                            </li>
+                                        </apex:repeat>
+                                    </ul>
+                                </div>
+                            </div><!-- /.controls -->
+						</div>
+						<!-- <div class="controls hidden-xs" style="{!IF(isBrand,'display:block;','display:none;')}">
+							<div class="dropdown" style="{!IF(isBrand,'display:block;','display:none;')}">
+								<a id="select-team-mobile" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon" style="{!IF(subTeamSize>0,'','display:none;')}">{!selectButton}</a>
+								<ul aria-labelledby="select-team" class="dropdown-menu">
+
+									<apex:repeat value="{!subTeams}" var="subs">
+										   <li>
+                                              <a href="{!IF(contains(subs.content.Target__c, 'Frame'),
+                                                        '/apex/KAR_Frame?url=' + subs.contentVersionForDisplay.URL__c  + '&height=' + TEXT(subs.content.Frame_Height__c),
+                                                        IF(subs.contentVersionForDisplay.URL__c <> '', subs.contentVersionForDisplay.URL__c, '/apex/KAR_Team?&name=' + subs.content.name + '&tabName=Our+Teams'))}"
+                                                 target="{!IF(contains(subs.content.Target__c, 'Frame'),
+                                                          "_parent",
+                                                          subs.content.Target__c)}">{!subs.contentVersionForDisplay.Name}</a>
+										   </li>
+									</apex:repeat>
+								</ul>
+							</div>
+						</div> -->
+					</div><!-- /.hero-content -->
+				</div>
+
+				<div class="container-bs">
+					<a name="explore-teams"></a>
+					<div class="r1-c2 two-thirds">
+						<div class="widget-left">
+							<apex:dynamicComponent componentValue="{!dcLeftList[0]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[1]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[2]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[3]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[4]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[5]}" />
+							<apex:dynamicComponent componentValue="{!dcLeftList[6]}" />
+						</div>
+						<div class="widget-right flex-height">
+							<apex:dynamicComponent componentValue="{!dcRightList[0]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[1]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[2]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[3]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[4]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[5]}" />
+							<apex:dynamicComponent componentValue="{!dcRightList[6]}" />
+						</div>
+					</div>
+				</div><!-- /.container-bs -->
+			</div><!-- /.team-page -->
+			<apex:form >
+			<apex:actionFunction reRender="false" action="{!test}" name="testAF">
+      </apex:actionFunction>
+      </apex:form>
+		</apex:define>
+	</apex:composition>
+	<script>
+		$(document).ready(
+				function() {
+					function getURLParameter(name) {
+						return decodeURI((RegExp(name + '=' + '(.+?)(&|$)')
+								.exec(location.search) || [ , null ])[1]);
+					}
+					var pageName = getURLParameter("tabName");
+					$("#menuDiv ul:first > li > a").each(
+							function() {
+								if ($(this).text().toLowerCase() == pageName
+										.toLowerCase()) {
+									$(this).parent().addClass("active");
+								} else {
+									$(this).parent().removeClass("active");
+								}
+							});
+					$('.defaultBannerImage').attr('src',
+							'{!$Resource.TeamBanner}');
+				});
+    $(document).ready(function(){ $('.read-more').attr('target', '_blank'); });
+	</script>
+</apex:page>

@@ -1,0 +1,71 @@
+<apex:page standardController="Checklist_Item__c" extensions="ChecklistItemUploadContExt">
+	<h1 class="Title">✔ Checklist Item</h1>
+	<apex:form enctype="multipart/form-data">
+		<apex:pageMessages id="uploadStatus"/>
+		<apex:outputLabel id="labelVal" value="Upload a file"/>
+		<div class="buttonSection">
+		    <apex:inputFile value="{!fileData}" filename="{!fileName}"/>
+			<apex:commandButton action="{!processUpload}" value="Upload" rendered="{!NOT(isSubmitted)}" styleClass="uploadBtn" id="uploadBtnID"/>
+			<apex:commandButton id="backBtn" value="Back" rendered="{!isSubmitted}" styleClass="uploadBtn" onclick="sforce.one.navigateToSObject('{!Checklist_Item__c.id}', 'detail');"/>
+
+		</div>
+	</apex:form>
+
+	<style>
+		h1{
+			font-weight: bold;
+			font-size: 3.1em;
+			text-align: center;
+			margin: 0 auto;
+			display: block;
+		}
+		label {
+			font-size: 1.5em;
+			font-weight: bold;
+			background-color: #D8D8D8;
+			color: #222;
+			padding: 10px 5px 15px 5px;
+			margin-top: 20px;
+			display: block;
+			width: 98%;
+			border-bottom: 1px solid #bdc3c7;
+		}
+		input[type="file"]{
+			font-size: 1.4em;
+			margin: 12px 0px;
+			padding: 10px 0px;
+		}
+		.btn{
+			padding: 20px;
+		}
+	input.uploadBtn[type="submit"]{
+		font-weight: bold;
+		font-size: 1.9em;
+		display: block;
+		margin: 0px auto;
+		margin-top: 55px;
+		padding: 20px 55px;
+		line-height: 100%;
+		text-shadow: 0 1px rgba(0, 0, 0, 0.4);
+		color: #fff;
+		vertical-align: middle;
+		text-align: center;
+		transition: background 0.1s ease-in-out;
+		-webkit-transition: background 0.1s ease-in-out;
+		-moz-transition: background 0.1s ease-in-out;
+		-ms-transition: background 0.1s ease-in-out;
+		-o-transition: background 0.1s ease-in-out;
+		text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 3px;
+		border-radius: 6px;
+		border: none;
+		background-image: none;
+		background-color: #3498db;
+		/*box-shadow: 0px 3px 0px 0px #1E78C3;*/
+		border-bottom: 4px solid #2980b9;
+		text-transform: uppercase;
+	}
+
+	</style>
+</apex:page>

@@ -1,0 +1,158 @@
+<apex:page standardController="Case_Escalation__c" extensions="CaseEscalationList" recordSetVar="standardRecordSet" tabstyle="Case_Escalation__c" contenttype="application/vnd.ms-excel">
+         <apex:pageBlock >
+                 <apex:pageBlockTable value="{!records}" var="e">
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Case Escalation No.
+                                   </apex:facet>
+                                   {!e.Name}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Date Escalated
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.CreatedDate}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Dealer
+                                   </apex:facet>
+                                   {!e.Account_Name__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Location
+                                   </apex:facet>
+                                   {!e.Location__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            VIN
+                                   </apex:facet>
+                                   {!e.VIN__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            YMMS
+                                   </apex:facet>
+                                   {!e.YMMS__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Grounding Dealer
+                                   </apex:facet>
+                                   {!e.Grounding_Dealership__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Case Type
+                                   </apex:facet>
+                                   {!e.Case_Type__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Case Reason
+                                   </apex:facet>
+                                   {!e.Case_Reason__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Purchase Venue
+                                   </apex:facet>
+                                   {!e.Private_Label__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Buyer Dealer Code
+                                   </apex:facet>
+                                   {!e.Buyer_Dealer_Code__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Assigned To
+                                   </apex:facet>
+                                   {!e.Assigned_To_Name__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Approver
+                                   </apex:facet>
+                                   {!e.Approver__r.Name}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Resolution
+                                   </apex:facet>
+                                   {!e.Escalation_Resolution__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Resolution Details
+                                   </apex:facet>
+                                   {!e.Resolution_Details__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Concession Amount
+                                   </apex:facet>
+                                   {!e.Concession_Amount__c}
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Assigned Date/Time
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Assigned_Date_Time__c}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Resolution Date/Time
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Resolution_Date__c}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Approved Date/Time
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Approved_Date_Time__c}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Approver Notifed Date/Time
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Approver_Notified_Date_Time__c}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Case Opened Date
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Date_Time_Opened__c}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Case Closed Date
+                                   </apex:facet>
+                                   <apex:outputText value="{0, date, M/d/yyyy hh:mm a}">
+                                            <apex:param value="{!e.Case__r.ClosedDate}"/>
+                                   </apex:outputText>
+                          </apex:column>
+                          <apex:column >
+                                   <apex:facet name="header">
+                                            Days in Escalation
+                                   </apex:facet>
+                                   {!e.Days_Escalated__c}
+                          </apex:column>
+                 </apex:pageBlockTable>
+         </apex:pageBlock>
+</apex:page>

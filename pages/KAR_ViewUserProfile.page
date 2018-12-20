@@ -1,0 +1,259 @@
+<apex:page docType="html-5.0" 
+           showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" 
+           standardController="User">
+    <title>User Profile</title>
+    <style>
+        .form-control-static {
+            margin-top: 0px;
+        }
+        .img-user {
+            margin-bottom: 20px;
+        }
+        .zen-img {
+            display: none !important;
+        }
+        .zen-imgExt:after {
+            content: 'Unfollow';
+        }
+        img.chatter-icon.chatter-unfollowIcon {
+            display: none;
+        }
+        .zen-mediaBody {
+            font-size: 0;
+        }
+        .zen-mediaBody a {
+            display: block !important;
+            margin-bottom: 0;
+            text-align: center;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.428571429;
+            border-radius: 4px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            color: #fff;
+            background-color: #3A6D8E;
+            border: 0;
+            text-transform: uppercase;
+            font-family: "Open Sans", sans-serif;
+            font-weight: 700;
+            width: 100%;
+        }
+        .zen-mediaBody a:hover {
+            color: #fff;
+            background-color: #2b516a;
+            border-color: #213e50;
+            text-decoration: none;
+        }
+        .zen-mediaBody a:active {
+            color: #fff;
+            background-color: #2b516a;
+            border-color: #213e50;
+            outline: 0;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,0.125);
+            background-image: none;
+        }
+        .zen-mediaBody a:active:hover {
+            color: #fff;
+            background-color: #213e50;
+            border-color: #0e1a21;
+        }
+        .zen-mediaBody, .zen-media {
+            width: 100% !important;
+        }
+        .more-info .form-group {
+            display: block !important;
+        }
+        .more-info .form-group label {
+            width: 90%;
+            text-align: left;
+            padding-bottom: 5px;
+        }
+        .profile-info .content {
+            padding-bottom: 30px !important;
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+            <div class="container-bs desktop-pad-t">
+                <div class="r1-c2 one-third sm">
+                    <div class="widget-left photo-upload">
+                        <div class="widget-heading">
+                            <h2>{!$Label.EF_Profile_UserPhotoLabel}</h2>
+                        </div><!-- /.widget-heading -->
+                        <div class="content">
+                            <apex:image value="{!User.FullPhotoUrl}" styleClass="img-user" />
+                            <apex:outputPanel rendered="{!User.UserType=='Standard'}">
+                                <chatter:follow entityId="{!User.Id}" />
+                            </apex:outputPanel>
+                        </div><!-- /.content -->
+
+                    </div><!-- /.widget-left -->
+                    <div class="widget-right">
+                        <div class="profile-info">
+                            <div class="widget-heading">
+                                <div class="widget-heading" style="width:100%">
+                                    <h2>{!$Label.EF_Profile_ViewProfile}</h2>
+                                    <apex:variable var="x" value="x" rendered="{!$User.Id==User.Id}">
+                                    <a href="/apex/KAR_UserProfile">{!$Label.EF_Profile_EditProfile}</a>
+                                    </apex:variable>
+                                </div><!-- /.widget-heading -->
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label" for="name">{!$ObjectType.User.fields.Name.Label}:</label>
+                                        <div class="md">
+                                            <p id="name" class="form-control-static">{!User.Name}</p>
+                                        </div>
+                                    </div>
+                                    <apex:outputPanel rendered="{!NOT(ISBLANK(User.Title))}">
+                                        <div class="form-group">
+                                            <label class="control-label" for="title">{!$ObjectType.User.fields.Title.Label}:</label>
+                                            <div class="sm">
+                                                <p class="form-control-static">{!User.Title}</p>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                    </apex:outputPanel>
+                                    <div class="form-group">
+                                        <label class="control-label" for="email">{!$ObjectType.User.fields.Email.Label}:</label>
+                                        <div class="md">
+                                            <p class="form-control-static">{!User.Email}</p>
+                                        </div>
+                                    </div><!--/.form-group -->
+                                    <div class="form-group">
+                                        <label class="control-label" for="locale">{!$ObjectType.User.fields.LocaleSidKey.Label}:</label>
+                                        <div class="md">
+                                            <p class="form-control-static" styleClass="localeId">{!User.LocaleSidKey}</p>
+                                            <apex:form >
+                                                <apex:inputfield styleCLass="locale"  value="{!User.LocaleSidKey}" style="display:none;"/>
+                                            </apex:form>
+                                        </div>
+                                        <script>
+                                            document.querySelector('.form-control-static[styleclass=localeId]').innerText = document.getElementsByClassName('locale')[0].options[document.getElementsByClassName('locale')[0].selectedIndex].innerText;
+                                        </script>
+                                    </div><!--/.form-group -->
+                                    <div class="form-group">
+                                        <label class="control-label" for="language">{!$ObjectType.User.fields.LanguageLocaleKey.Label}:</label>
+                                        <div class="md">
+                                            <p class="form-control-static" styleClass="languageId">{!User.LanguageLocaleKey}</p>
+                                            <apex:form >
+                                                <apex:inputfield styleCLass="language"  value="{!User.LanguageLocaleKey}" style="display:none;"/>
+                                            </apex:form>
+                                        </div>
+                                        <script>
+                                            document.querySelector('.form-control-static[styleclass=languageId]').innerText = document.getElementsByClassName('language')[0].options[document.getElementsByClassName('language')[0].selectedIndex].innerText;
+                                        </script>
+                                    </div><!--/.form-group -->
+                                    <apex:outputPanel >
+                                        <div class="form-group">
+                                            <label class="control-label" for="phone">{!$ObjectType.User.fields.Phone.Label}:</label>
+                                            <div class="md">
+                                                <p class="form-control-static">{!User.Phone}</p>
+                                            </div>
+                                        </div>
+                                   </apex:outputPanel>
+                                   <apex:outputPanel >
+                                        <div class="form-group">
+                                            <label class="control-label" for="phone">{!$ObjectType.User.fields.MobilePhone.Label}:</label>
+                                            <div class="md">
+                                                <p class="form-control-static">{!User.MobilePhone}</p>
+                                            </div>
+                                        </div>                                        
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!OR(NOT(ISBLANK(User.Street)),NOT(ISBLANK(User.City)),NOT(ISBLANK(User.Country)))}">
+                                        <div class="form-group">
+                                            <label class="control-label" for="adress">{!$ObjectType.User.fields.Location__c.Label}:</label>
+                                            <div>
+                                                <p class="form-control-static"><apex:outputText value="{!IF(User.Street!=null,User.Street+'<br/>','')}{!IF(User.City!=null,User.City,'')}{!IF(User.State!=null,', '+User.State+' ','')}{!IF(User.PostalCode!=null,User.PostalCode+'<br />','')}{!IF(User.Country!=null,User.Country,'')}" escape="false" /></p>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                    </apex:outputPanel>                              
+                                    <apex:outputPanel rendered="{!NOT(ISBLANK(User.Department))}">
+                                        <div class="form-group">
+                                            <label class="control-label" for="department">{!$ObjectType.User.fields.Department.Label}:</label>
+                                            <div class="md">
+                                                <p class="form-control-static">{!User.Department}</p>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                    </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!NOT(ISBLANK(User.EF_User_Business_Unit__c))}">
+                                        <div class="form-group">
+                                            <label class="control-label" for="division">{!$ObjectType.User.fields.EF_User_Business_Unit__c.InlineHelpText}:</label>
+                                            <div class="md">
+                                                <p class="form-control-static">{!User.EF_User_Business_Unit__c}</p>
+                                            </div>
+                                        </div><!--/.form-group -->
+                                    </apex:outputPanel>
+                                    <div class="more-info">
+                                        <apex:outputPanel rendered="{!NOT(ISBLANK(User.EF_User_History__c))}">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userHistory">{!$ObjectType.User.fields.EF_User_History__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <p class="form-control-static">{!User.EF_User_History__c}</p>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!NOT(ISBLANK(User.EF_User_Function__c))}">
+                                            <div class="form-group">
+                                                <label class="control-label" for="unserFunction">{!$ObjectType.User.fields.EF_User_Function__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <p class="form-control-static">{!User.EF_User_Function__c}</p>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!NOT(ISBLANK(User.EF_User_Feedback__c))}">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFeedback">{!$ObjectType.User.fields.EF_User_Feedback__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <p class="form-control-static">{!User.EF_User_Feedback__c}</p>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                        </apex:outputPanel>
+                                        <apex:outputPanel rendered="{!NOT(ISBLANK(User.EF_User_Fun__c))}">
+                                            <div class="form-group">
+                                                <label class="control-label" for="userFun">{!$ObjectType.User.fields.EF_User_Fun__c.InlineHelpText}</label>
+                                                <!-- <div> -->
+                                                    <p class="form-control-static">{!User.EF_User_Fun__c}</p>
+                                                <!-- </div> -->
+                                            </div><!--/.form-group -->
+                                        </apex:outputPanel>
+                                    </div>
+                                </div>
+                            </div><!-- /.content -->
+                        </div><!-- /.profile-info -->
+                        <div class="chatter-panel">
+                            <div class="widget-heading">
+                                <h2>{!$Label.Chatter}</h2>
+                            </div><!-- /.widget-heading -->
+                            <div class="content">
+                                <div class="chatterPanel"><chatter:feed entityId="{!User.Id}"></chatter:feed></div>
+                                <c:EF_CustomChatter />
+                            </div>
+                        </div><!-- /.chatter-panel -->
+                    </div><!-- /.widget-right -->
+                </div><!-- /.r1-c2 one-third sm -->
+            </div><!-- /.container-bs -->
+
+        </apex:define>
+    </apex:composition>
+
+</apex:page>

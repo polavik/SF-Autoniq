@@ -1,0 +1,9 @@
+<apex:page >
+ <body>
+   <form name="input" action="/apex/partial_vin_search" method="get" target="_top" >
+     <input name="q" label="partial_vin" maxlength="17" style="width: 90%;" type="text"/><br/>
+     <br/>
+     <input value="Go!" type="submit"/> 
+   </form>
+ </body> 
+</apex:page>

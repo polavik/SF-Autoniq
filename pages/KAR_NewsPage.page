@@ -1,0 +1,146 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" controller="EdgeforceIntranetNewsPageController" >
+    <title>News</title>
+    <style>
+        .news-list .tags {
+            padding-left: 0;
+            padding-bottom: 10px;
+            display: block;
+            text-align: right;
+            width: 100%;
+        }
+        @media (max-width: 480px) {
+            .news-list article > img {
+                width: 100%;
+                margin-right: 0;
+            }
+            .news-list article .detail {
+                padding: 20px 30px 20px;
+            }
+            .news-list article {
+                padding: 0;
+                display: block;
+            }
+            .news-page .news-list .content {
+                 padding: 0;
+            }
+            .news-page .page-footer {
+                padding: 20px;
+                float: right;
+                flex-wrap: wrap;
+            }
+            .paging-stats {
+                padding-bottom: 10px;
+            }
+        }
+    </style>
+    <apex:composition template="KAR_TemplateNew">
+        <apex:define name="body">
+
+            <div class="secondary-nav">
+                <div class="container-bs">
+                    <!-- <c:KAR_BusinessUnitNav /> -->
+                    <c:KAR_StockTicker />
+                    <!-- <c:KAR_QuickSearch /> -->
+                </div><!-- /.container-bs -->
+            </div><!--/.secondary-nav -->
+
+
+            <div class="container-bs news-page desktop-pad-t">
+                <!-- <div class="r1-c2 one-third sm"> -->
+                <div>
+
+                    <!-- <div class="widget-left quick-links-vertical"> -->
+                        <!-- <div class="widget-heading"> -->
+                            <!-- <h2>Quick Links</h2> -->
+                        <!-- </div>/.widget-heading -->
+                        <!-- <div class="sidebar-nav with-icons"> -->
+                            <!-- <c:KAR_QuickLinks /> -->
+                        <!-- </div>/.content -->
+                    <!-- </div>/.widget-left -->
+
+                    <div class="widget-right news-list">
+                        <div class="widget-heading">
+                            <h1>{!$Label.EF_NewsTitle} {!IF(ISBLANK(pageName),'',' - '+pageName)}</h1>
+                            <apex:outputLink rendered="{!!ISBLANK(pageName)}" value="/apex/KAR_NewsPage">{!$Label.EF_View_All}</apex:outputLink>
+                        </div><!-- /.widget-heading -->
+                        <apex:outputPanel id="NewsPanel" styleClass="content" layout="block">
+                            <apex:form >
+                                <apex:inputHidden value="{!offSet}" id="offSetText"/>
+                                <div class="news-list">
+                                    <apex:repeat value="{!displayList}" var="content">
+                                        <article>
+                                            <apex:image styleClass="img-responsive" value="{!content.imageId}" alt="{!content.title}" rendered="{!content.imageId!=null}" />
+                                            <div class="detail">
+                                                <div class="heading">
+                                                    <h3><a class="article-title" href="/apex/KAR_Content?id={!content.articleId}&category=Content">{!content.title}</a></h3>
+                                                </div><!-- /.heading -->
+                                                <div class="category"><apex:outputText value="{!content.category}"/></div>
+                                                <p class="summary">
+                                                    <apex:outputText value="{!content.summary}" escape="false"/>
+                                                    <a class="read-more" href="/apex/KAR_Content?id={!content.articleId}&category=Content">{!$Label.EF_ReadMoreText}</a>
+                                                </p>
+                                                <div class="tags">
+                                                    <apex:repeat value="{!content.tagsList}" var="tag">
+                                                        <a href="/apex/KAR_NewsPage?name={!tag}">{!tag}</a>
+                                                    </apex:repeat>
+                                                </div><!--/.article-tags -->
+                                                <ul class="social-stats">
+                                                    <li>
+                                                        <span>{!socialInfoMap[content.articleId].noOfLikes}</span>
+                                                        <apex:outputText value="{!IF(socialInfoMap[content.articleId].noOfLikes != 1, ' Likes', ' Like')}" />
+                                                    </li>
+                                                    <li>
+                                                        <span>{!socialInfoMap[content.articleId].noOfComments}</span>
+                                                        <apex:outputText value="{!IF(socialInfoMap[content.articleId].noOfComments != 1, ' Comments', ' Comment')}" />
+                                                    </li>
+                                                    <li>
+                                                        <span>{!socialInfoMap[content.articleId].noOfFollowers}</span>
+                                                        <apex:outputText value="{!IF(socialInfoMap[content.articleId].noOfFollowers != 1, ' Followers', ' Follower')}" />
+                                                    </li>
+                                                </ul><!--/.social-stats -->
+                                            </div><!-- /.detail -->
+                                        </article>
+                                    </apex:repeat>
+                                </div><!--/.news-list -->
+
+                                <apex:actionFunction name="changePage" action="{!addToDispalyList}" reRender="NewsPanel" oncomplete="$('body').scrollTop(0);"/>
+                                <div class="page-footer">
+                                    <div class="paging-stats">{!$Label.EF_NewsShowingLabel} {!offSetInt+1}-{!endWith} of {!totalNews} {!$Label.EF_NewsArticlesTitle}</div>
+                                    <nav>
+                                        <ul class="pagination">
+                                            <li><a href="#" onclick="return false;">{!$Label.EF_PreviousButtonText}</a></li>
+                                            <apex:repeat value="{!paginationno}" var="num">
+                                                <li class="{!IF(num == offSet, 'active', '')}"><a href="#" onclick="return false;">{!num}</a></li>
+                                            </apex:repeat>
+                                            <li><a href="#" onclick="return false;">{!$Label.EF_NextButtonText}</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                                <script>
+                                    $(".pagination a").each(function(){
+                                        if($(this).text()=='Previous' && ("{!isFirst}"=='true')){
+                                            $(this).parent().addClass('disabled');
+                                        }
+                                        else if($(this).text()=='Next' && ("{!isLast}"=='true')){
+                                            $(this).parent().addClass('disabled');
+                                        }
+                                        else if($(this).text()==$('input[id$=offSetText]').val()){
+                                            $(this).parent().addClass('disabled');
+                                        }
+                                    });
+                                    $('body').delegate('.pagination li:not(.disabled)>a','click',function(){
+                                        $('input[id$=offSetText]').val($(this).text());
+                                        changePage();
+                                    });
+                                </script>
+                            </apex:form>
+
+                        </apex:outputPanel>
+                    </div><!-- /.widget-right -->
+
+                </div>
+            </div>
+
+        </apex:define>
+    </apex:composition>
+</apex:page>

@@ -1,0 +1,171 @@
+<apex:page docType="html-5.0" showHeader="false" sidebar="false" standardStylesheets="true" applyHtmlTag="false" applyBodyTag="false" title="EdgeForce Home" controller="EdgeForceIntranetTeamController">
+  <title>KAR - {!groupName}</title>
+  <apex:composition template="KAR_TemplateNew">
+    <apex:define name="body">
+      <div class="team-page brand-landing">
+        <div class="secondary-nav">
+          <div class="container-bs">
+            <!-- <c:KAR_BusinessUnitNav /> -->
+            <c:KAR_StockTicker />
+            <!-- <c:KAR_QuickSearch /> -->
+          </div>
+        </div>
+        <!--/.secondary-nav -->
+        <div class="container-bs hero team" style="background-image:url({!URLFOR($Resource.KARDesign, 'demo/brand-bg.jpg')})">
+          <div class="hero-overlay"></div>
+          <div class="flex-row hero-content">
+            <div>
+              <img src="{!URLFOR($Resource.KARDesign, 'img/logo_kar-auction-services.png')}" class="brands-logo" />
+            </div>
+            <div>
+              <h1>One KAR</h1>
+              <div class="intro">To leverage KAR Auction Services institutional knowledge, spend, procurement expertise and technology in order to provide solutions to our customers, financial return on investment to our shareholders while achieving “customer of choice’ status with our key supplier partners.</div>
+              <div class="controls">
+                <a href="#explore-brand" class="btn-bs btn-bordered">Explore the brands</a>
+                <div class="dropdown">
+                  <a id="select-brand" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn-bs btn-bordered right-icon">Select a brand</a>
+                  <ul class="dropdown-menu" aria-labelledby="select-brand">
+                    <li><a href="//c.cs25.visual.force.com/apex/KAR_Brand_new?&name=Legal&tabName=Our+Teams">Brand 01</a></li>
+                    <li><a href="//c.cs25.visual.force.com/apex/KAR_Brand_new?&name=Legal&tabName=Our+Teams">Brand 02</a></li>
+                    <li><a href="//c.cs25.visual.force.com/apex/KAR_Brand_new?&name=Legal&tabName=Our+Teams">Brand 03</a></li>
+                  </ul>
+                </div>
+              </div>
+              <!-- /.controls -->
+            </div>
+          </div>
+          <!-- /.flex-row -->
+        </div>
+        <!-- /.hero -->
+        <div class="container-bs">
+          <a name="explore-brand"></a>
+          <div class="r1-c1">
+            <div class="widget-heading white has-controls ">
+              <div class="flex-row">
+                <div class="button-group">
+                  <a href="KAR_Brands_new"><img src="{!URLFOR($Resource.KARDesign, 'img/grid.svg')}" alt="Grid View" /></a>
+                  <a class="active" href="#"><img src="{!URLFOR($Resource.KARDesign, 'img/list.svg')}" alt="List View" /></a>
+                </div>
+                <!-- /.button-group -->
+                <h2>Explore KAR Brands</h2>
+              </div>
+              <div class="controls">
+              </div>
+              <!-- /.controls -->
+            </div>
+            <!-- /.widget-header -->
+            <div class="brand-list">
+              <div class="side-nav">
+                <div class="title">One KAR Menu</div>
+                <div class="group"><a href="#all-brands" class="active"><span class="letters">All</span><span class="count">12</span></a></div>
+                <div class="group"><a href="#a"><span class="letters">A-D</span><span class="count">7</span></a></div>
+                <div class="group"><a href="#e"><span class="letters">E-G</span><span class="count">0</span></a></div>
+                <div class="group"><a href="#h"><span class="letters">H-L</span><span class="count">2</span></a></div>
+                <div class="group"><a href="#m"><span class="letters">M-O</span><span class="count">1</span></a></div>
+                <div class="group"><a href="#p"><span class="letters">P-S</span><span class="count">0</span></a></div>
+                <div class="group"><a href="#t"><span class="letters">T-V</span><span class="count">0</span></a></div>
+                <div class="group"><a href="#w"><span class="letters">W-Z</span><span class="count">0</span></a></div>
+              </div>
+              <a name="all-brands"></a>
+              <div class="content">
+                <a class="card" name="a">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Adesa DealerBlock</div>
+                    <div class="description">View the vision and strategy of the KAR brands</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Adesa Physical Auctions</div>
+                    <div class="description">Explore how the KAR brand fits into our full remarketing lifecycle</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Adesa Liveblock</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Autoniq</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">AutoVIN</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Cars Arrive Network</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Dent Demon</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card" name="h">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">High Tech Locksmiths</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Instavin</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+                <a class="card" name="m">
+                  <div class="photo"><img src="http://placehold.it/360x140" class="img-responsive" /></div>
+                  <div>
+                    <div class="title">Open Land</div>
+                    <div class="description">Explore the KAR brands alphabetically</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <!-- /.r1-c1 -->
+        </div>
+        <!-- /.container-bs -->
+      </div>
+      <!-- /.team-page -->
+    </apex:define>
+  </apex:composition>
+  <script>
+  $(".search-brands").not('active').click(function() {
+    $(this).addClass('active');
+    $(".search-controls").addClass('active');
+  });
+  $(document).ready(function() {
+    function getURLParameter(name) {
+      return decodeURI((RegExp(name + '=' + '(.+?)(&|$)').exec(location.search) || [, null])[1]);
+    }
+    var pageName = getURLParameter("tabName");
+    $("#menuDiv ul:first > li > a").each(function() {
+      if ($(this).text().toLowerCase() == pageName.toLowerCase()) {
+        $(this).parent().addClass("active");
+      } else {
+        $(this).parent().removeClass("active");
+      }
+    });
+    $('.defaultBannerImage').attr('src', '{!$Resource.TeamBanner}');
+  });
+  </script>
+</apex:page>

@@ -1,0 +1,83 @@
+<apex:component controller="EdgeForceIntranetNewsGridController" layout="none">
+    <style>
+        .news-grid .view-all {
+            height: 39px;
+        }
+        .news-grid .view-all > a {
+            width: 100%;
+            padding: 10px !important;
+            display: flex;
+            justify-content: center;
+            font-size: 17px;
+            background: #EEB111;
+        }
+        .news-grid .news > li:not(.view-all) > a .content {
+            text-align: right;
+        }
+        .news-grid .news > li:not(.view-all) > a:after {
+            background: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <div class="news-grid">
+        <div class="container-bs main" style="{!IF(bannerList.size > 1,'flex-wrap: nowrap !important;','')}">
+                <apex:variable value="x" var="x" rendered="{!bannerList.size > 0}">
+                <a class="featured" href="{!IF(contains(bannerList[0].content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ bannerList[0].contentVersionforDisplay.URL__c  + '&height=' + TEXT(bannerList[0].content.Frame_Height__c), IF(contains(bannerList[0].contentVersionforDisplay.URL__c, 'http') || contains(bannerList[0].contentVersionforDisplay.URL__c, 'https'), bannerList[0].contentVersionforDisplay.URL__c, 'https://' + bannerList[0].contentVersionforDisplay.URL__c))}" target="{!IF(contains(bannerList[0].content.Target__c, 'Frame'), "_parent", bannerList[0].content.Target__c)}" style="overflow:hidden;{!IF(bannerList.size==1,'width:100%;','')}{!IF(bannerList[0].contentVersionforDisplay.URL__c==null||bannerList[0].contentVersionforDisplay.URL__c=='','pointer-events:none;','')}">
+                    <apex:image styleClass="img-responsive" value="/servlet/servlet.FileDownload?file={!bannerList[0].content.Attachments[0].Id}&otherId=" rendered="{!bannerList[0].content.Attachments != null && bannerList[0].content.Attachments.size > 0}" alt="{!bannerList[0].contentVersionforDisplay.Image_Description__c}" />
+                    <apex:image style="width:100%" value="{!$Resource.NoImage}" rendered="{!bannerList[0].content.Attachments != null && bannerList[0].content.Attachments.size == 0}" alt="{!bannerList[0].contentVersionforDisplay.Image_Description__c}" />
+                    <div class="content">
+                        <div class="title">{!bannerList[0].contentVersionforDisplay.Header__c}</div><!-- /.title -->
+                        <div class="category">{!bannerList[0].content.Category__c}</div><!-- /.category -->
+                        <div class="copy">{!bannerList[0].contentVersionforDisplay.Summary__c}</div><!-- /.copy -->
+                        <div class="read-more" style="{!IF(bannerList[0].contentVersionforDisplay.URL__c==null||bannerList[0].contentVersionforDisplay.URL__c=='','display:none;','')}">{!$Label.EF_ReadMoreText}</div>
+                    </div><!-- /.copy -->
+                </a><!-- /.featured -->
+                <apex:outputPanel rendered="{!bannerList.size == 1}" styleClass="view-all" style="width:100%;">
+                    <a href="/apex/KAR_NewsPage">{!$Label.EF_HomeAllNewsLabel}</a>
+                </apex:outputPanel><!-- /.view-all -->
+            </apex:variable>
+            <apex:variable value="y" var="x" rendered="{!bannerList.size > 1}">
+            <ul class="news">
+                <li>
+                    <apex:variable value="x" var="x" rendered="{!bannerList.size > 1}">
+                        <a href="{!IF(contains(bannerList[1].content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ bannerList[1].contentVersionforDisplay.URL__c  + '&height=' + TEXT(bannerList[1].content.Frame_Height__c), IF(contains(bannerList[1].contentVersionforDisplay.URL__c, 'http') || contains(bannerList[1].contentVersionforDisplay.URL__c, 'https'), bannerList[1].contentVersionforDisplay.URL__c, 'https://' + bannerList[1].contentVersionforDisplay.URL__c))}" target="{!IF(contains(bannerList[1].content.Target__c, 'Frame'), "_parent", bannerList[1].content.Target__c)}" style="{!IF(bannerList[1].contentVersionforDisplay.URL__c==null||bannerList[1].contentVersionforDisplay.URL__c=='','pointer-events:none;','')}">
+                            <apex:image styleClass="img-responsive" value="{!$Resource.NoImage}" rendered="{!bannerList[1].content.Attachments != null && bannerList[1].content.Attachments.size == 0}" alt="{!bannerList[1].contentVersionforDisplay.Image_Description__c}" />
+                            <apex:image value="/servlet/servlet.FileDownload?file={!bannerList[1].content.Attachments[0].Id}&otherId=" rendered="{!bannerList[1].content.Attachments != null && bannerList[1].content.Attachments.size > 0}" alt="{!bannerList[1].contentVersionforDisplay.Image_Description__c}" />
+                            <div class="content">
+                                <div class="title">{!bannerList[1].contentVersionforDisplay.Header__c}</div><!-- /.title -->
+                                <div class="category">{!bannerList[1].content.Category__c}</div><!-- /.category -->
+                            </div><!-- /.content -->
+                        </a>
+                    </apex:variable>
+                </li>
+                <li>
+                    <apex:variable value="x" var="x" rendered="{!bannerList.size > 2}">
+                        <a href="{!IF(contains(bannerList[2].content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ bannerList[2].contentVersionforDisplay.URL__c  + '&height=' + TEXT(bannerList[2].content.Frame_Height__c), IF(contains(bannerList[2].contentVersionforDisplay.URL__c, 'http') || contains(bannerList[2].contentVersionforDisplay.URL__c, 'https'), bannerList[2].contentVersionforDisplay.URL__c, 'https://' + bannerList[2].contentVersionforDisplay.URL__c))}" target="{!IF(contains(bannerList[2].content.Target__c, 'Frame'), "_parent", bannerList[2].content.Target__c)}" style="{!IF(bannerList[2].contentVersionforDisplay.URL__c==null||bannerList[2].contentVersionforDisplay.URL__c=='','pointer-events:none;','')}">
+                            <apex:image styleClass="img-responsive" value="{!$Resource.NoImage}" rendered="{!bannerList[2].content.Attachments != null && bannerList[2].content.Attachments.size == 0}" alt="{!bannerList[2].contentVersionforDisplay.Image_Description__c}" />
+                            <apex:image styleClass="img-responsive" value="/servlet/servlet.FileDownload?file={!bannerList[2].content.Attachments[0].Id}&otherId=" rendered="{!bannerList[2].content.Attachments != null && bannerList[2].content.Attachments.size > 0}" alt="{!bannerList[2].contentVersionforDisplay.Image_Description__c}" />
+                            <div class="content">
+                                <div class="title">{!bannerList[2].contentVersionforDisplay.Header__c}</div><!-- /.title -->
+                                <div class="category">{!bannerList[2].content.Category__c}</div><!-- /.category -->
+                            </div><!-- /.content -->
+                        </a>
+                    </apex:variable>
+                </li>
+                <li>
+                    <apex:variable value="x" var="x" rendered="{!bannerList.size > 3}">
+                        <a href="{!IF(contains(bannerList[3].content.Target__c, 'Frame'), '/apex/KAR_Frame?url='+ bannerList[3].contentVersionforDisplay.URL__c  + '&height=' + TEXT(bannerList[3].content.Frame_Height__c), IF(contains(bannerList[3].contentVersionforDisplay.URL__c, 'http') || contains(bannerList[3].contentVersionforDisplay.URL__c, 'https'), bannerList[3].contentVersionforDisplay.URL__c, 'https://' + bannerList[3].contentVersionforDisplay.URL__c))}" target="{!IF(contains(bannerList[3].content.Target__c, 'Frame'), "_parent", bannerList[3].content.Target__c)}" style="{!IF(bannerList[3].contentVersionforDisplay.URL__c==null||bannerList[3].contentVersionforDisplay.URL__c=='','pointer-events:none;','')}">
+                            <apex:image styleClass="img-responsive" value="{!$Resource.NoImage}" rendered="{!bannerList[3].content.Attachments != null && bannerList[3].content.Attachments.size == 0}" alt="{!bannerList[3].contentVersionforDisplay.Image_Description__c}" />
+                            <apex:image styleClass="img-responsive" value="/servlet/servlet.FileDownload?file={!bannerList[3].content.Attachments[0].Id}&otherId=" rendered="{!bannerList[3].content.Attachments != null && bannerList[3].content.Attachments.size > 0}" alt="{!bannerList[3].contentVersionforDisplay.Image_Description__c}" />
+                            <div class="content">
+                                <div class="title">{!bannerList[3].contentVersionforDisplay.Header__c}</div><!-- /.title -->
+                                <div class="category">{!bannerList[3].content.Category__c}</div><!-- /.category -->
+                            </div><!-- /.content -->
+                        </a>
+                    </apex:variable>
+                </li>
+                <li class="view-all">
+                    <a href="/apex/KAR_NewsPage">{!$Label.EF_HomeAllNewsLabel}</a>
+                </li><!-- /.view-all -->
+            </ul><!-- /.news -->
+            </apex:variable>
+        </div><!-- /.container-bs -->
+    </div><!-- /.news-grid -->
+</apex:component>

@@ -1,0 +1,39 @@
+<apex:page controller="LexisNexisLOSController" tabStyle="Application__c" action="{!conditionalBypass}">
+
+    <apex:sectionHeader title="LexisNexis Reports" subtitle="{!score.Application_Name__c}"/>
+    <apex:pageMessages />
+
+    <apex:form >
+                
+        <apex:pageBlock title="Select Correct Account From LexisNexis Candidate List">
+
+            <apex:pageBlockButtons location="top">
+                <apex:commandButton value="Skip" action="{!doSkip}" immediate="true"/>            
+                <apex:commandButton value="Cancel" action="{!doCancel}" immediate="true"/>
+            </apex:pageBlockButtons>
+
+            <apex:pageBlockTable value="{!listOfSimilars}" var="acct" captionStyle="font-weight:bold;width:100%;background-color:#EEEEEE;">
+
+                <apex:facet name="caption">
+                    <apex:outputText value="{!currentAccount.Name}, {!currentAccount.Primary_Street1__c}, {!currentAccount.Primary_City__c}, {!currentAccount.Primary_State__c}"/>
+                </apex:facet>
+            
+                <apex:column headerValue="Action">
+                    <apex:commandLink action="{!processSelection}" value="Select"> 
+                        <apex:param name="companyId" value="{!acct.companyId}"/>
+                    </apex:commandLink>
+                </apex:column>            
+                <apex:column headerValue="Name" value="{!acct.companyName}"/>
+                <apex:column headerValue="Address" value="{!acct.address}"/>
+                <apex:column headerValue="City" value="{!acct.city}"/>
+                <apex:column headerValue="State" value="{!acct.state}"/>
+                <apex:column headerValue="Postal Code" value="{!acct.postalCode}"/>
+                <apex:column headerValue="Phone" value="{!acct.phone}"/>
+                <apex:column headerValue="LexisNexis ID" value="{!acct.companyId}"/>
+            </apex:pageBlockTable>
+        
+        </apex:pageBlock>
+        
+    </apex:form>
+    
+</apex:page>

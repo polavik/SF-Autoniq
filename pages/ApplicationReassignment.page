@@ -1,0 +1,65 @@
+<apex:page showHeader="true" sidebar="true" controller="ApplicationReassignmentController" tabStyle="Application__c">
+<apex:form >
+	<script type="text/javascript">
+		function changeAllCheckboxes(){
+			var checkboxes = document.getElementsByClassName("selectedAppCheckbox");
+			for(var i=0; i<checkboxes.length;i++){
+				checkboxes[i].checked = document.getElementById("selectAllCheckbox").checked;
+			}
+		} 
+	</script>
+
+	<apex:pageMessages id="messages"/>
+	<apex:sectionHeader title="Bulk Application Reassignment" />
+	<apex:pageBlock id="resultsBlock" title="Applications">
+		<apex:pageBlockButtons id="resultButtons" location="top">
+                <apex:commandButton value="Search" action="{!refreshResults}" rerender="messages, resultsBlock"/>
+        </apex:pageBlockButtons>
+		<apex:pageBlockSection title="Filters" collapsible="false" columns="1">
+			<apex:pageBlockSectionItem >
+				<apex:outputLabel value="{!$ObjectType.Application__c.fields.Application_Type__c.Label}" />
+				<apex:selectList value="{!applicationFilters.Application_Type__c}" size="1">
+					<apex:selectOptions value="{!availableApplicationTypes}"/>
+				</apex:selectList>
+			</apex:pageBlockSectionItem>
+			<apex:repeat value="{!$ObjectType.Application__c.FieldSets.Reassignment_Filters}" var="aField">
+                    <apex:inputField value="{!applicationFilters[aField]}" rendered="{!$ObjectType.Application__c.fields[aField].updateable}"/>
+            </apex:repeat>
+		</apex:pageBlockSection>
+		<apex:pageBlockSection title="Results" collapsible="true" rendered="{!NOT(ISBLANK(setCont.records))}" columns="1">
+			<apex:pageBlockTable value="{!setCont.records}" var="result" id="resultsTable">
+				<apex:column >
+					<apex:facet name="header">
+				        <input type="checkbox" id="selectAllCheckbox" onchange="changeAllCheckboxes();"/>
+				    </apex:facet>
+					<apex:inputCheckbox value="{!applicationSelectedMap[result.Id]}" styleClass="selectedAppCheckbox"/> 
+				</apex:column>
+				<apex:repeat value="{!$ObjectType.Application__c.FieldSets.Reassignment_Table}" var="aField">
+	                    <apex:column value="{!result[aField]}" rendered="{!$ObjectType.Application__c.fields[aField].accessible}"/>
+	            </apex:repeat>
+			</apex:pageBlockTable>
+			<apex:panelGrid columns="2" style="text-align:center" width="100%">
+                <apex:commandLink action="{!setCont.previous}" rendered="{!setCont.HasPrevious}">Back</apex:commandlink>
+                <apex:outputText rendered="{!NOT(setCont.HasPrevious)}">Back</apex:outputText>
+
+                <apex:commandLink action="{!contNext}" rendered="{!setCont.HasNext}">Next</apex:commandlink>
+                <apex:outputText rendered="{!NOT(setCont.HasNext)}">Next</apex:outputText>
+            </apex:panelGrid>
+		</apex:pageBlockSection>
+
+		<apex:pageBlockSection rendered="{!ISBLANK(setCont.records)}" columns="1">
+			<apex:outputText >No Results</apex:outputText>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+	<apex:pageBlock title="Reassign">
+		<apex:pageBlockButtons id="reassignButtons" location="bottom">
+                <apex:commandButton value="Reassign" action="{!reassign}" rerender="messages, resultsBlock"/>
+        </apex:pageBlockButtons>
+		<apex:pageBlockSection columns="1">
+			<apex:repeat value="{!$ObjectType.Application__c.FieldSets.Reassignment_Fields}" var="aField">
+                    <apex:inputField value="{!dummyReassignedApplication[aField]}" rendered="{!$ObjectType.Application__c.fields[aField].updateable}"/>
+            </apex:repeat>
+		</apex:pageBlockSection>
+	</apex:pageBlock>
+</apex:form>	
+</apex:page>

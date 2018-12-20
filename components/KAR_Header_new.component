@@ -1,0 +1,87 @@
+<apex:component controller="EdgeForceIntranetHeaderCompController" >
+    <style>
+    .overlay {
+        left: 240px;
+    }
+    @media (max-width: 768px) {
+        label[for="nav-trigger"] {
+            top:0;
+        }
+    }
+    .overlay::before {
+        content: "";
+        display: block;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+    }
+    .body-overlay {
+        overflow-y: hidden;
+        position: fixed;
+    }
+    </style>
+    <header>
+        <div class="container-bs">
+            <a href="KAR_Home?name=Home" class="logo hidden-xs">
+                <!-- <img src="{!URLFOR($Resource.KARDesign, 'img/logo_kar.png')}" class="kar-logo" alt="KAR Auction Services" /> -->
+                <img src="{!URLFOR($Resource.IntranetLogo)}" class="kar-logo" alt="The Hub" />
+            </a>
+            <img src="{!URLFOR($Resource.IntranetLogoMobile)}" alt="KAR Auction Services" class="kar-logo visible-xs"/>
+            <img src="{!URLFOR($Resource.IntranetHubLogoMobile)}" alt="The Hub" class="hub-logo visible-xs"/>
+            <c:KAR_TopNav />
+            <div id="sb-search" class="search-container sb-search hidden-sm hidden-xs">
+              <input type="search" name="search" placeholder="{!$Label.EF_SearchLabel}" id="quick-search" class="sb-search-input srch-term"/>
+              <input type="submit" class="sb-search-submit"/><span class="sb-icon-search"></span>
+            </div>
+            <div class="dropdown user hidden-xs">
+                <a id="user-nav" data-toggle="dropdown" aria-haspopup="true" role="button">
+                    <apex:image styleClass="user-img" value="{!currentUser.SmallPhotoUrl}" alt="{!$User.FirstName}'s' Photo" />
+                    <apex:image value="{!URLFOR($Resource.KARDesign, 'img/arrow-down_white.svg')}" />
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="user-nav">
+                    <li><a href="/apex/KAR_UserProfile">{!$Label.EF_Header_MyProfileTitle}</a></li>
+                    <li><a href="/apex/EF_Logout">{!$Label.Logout}</a></li>
+                    <apex:variable value="y" var="y" rendered="{!AND(currentUser.Profile.UserLicense.Name!='Chatter Only',currentUser.Profile.UserLicense.Name!='Chatter Free')}">
+                        <li><a href="/home/home.jsp" target="_blank">Salesforce</a></li>
+                    </apex:variable>
+                    <apex:variable value="x" var="x" rendered="{!AND(efAppId!='',$Permission.EdgeForce_Admin)}">
+                        <li><a href="/home/home.jsp?tsid={!efAppId}" target="_blank">{!$Label.EF_Header_IntranetAdminTitle}</a></li>
+                    </apex:variable>
+                </ul>
+            </div><!-- /.user -->
+        </div><!-- /.container-bs -->
+    </header>
+    <script>
+        var overlayHandler = function() {
+            $(".nav-trigger label").css('left','10px');
+            $(".content-wrapper").toggleClass('overlay').unbind('click',overlayHandler);
+            $(".mobile-nav").delay(200).hide(0);
+            $(".nav-trigger").prop('checked',false);
+            $("body").toggleClass('body-overlay');
+        };
+
+        $(function(){
+            $(".nav-trigger").click(function(){
+                if($(this).is(':checked')){
+                    $(".mobile-nav").show();
+                    $(".content-wrapper").toggleClass('overlay').bind('click',overlayHandler);
+                    $(".nav-trigger label").css('left','255px');
+                    $("body").toggleClass('body-overlay');
+                }
+            });
+            //$(".dropdown-menu").dropdown();
+            // $(".mobile-nav .nav .dropdown>a").click(function(){
+            //     if($(this).next().is(":visible")){
+            //         $(this).next().hide();
+            //     } else {
+            //         $(".dropdown-menu").hide();
+            //         $(this).next().show();
+            //     }
+            // });
+        });
+    </script>
+</apex:component>

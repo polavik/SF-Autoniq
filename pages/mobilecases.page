@@ -1,0 +1,7 @@
+<apex:page >
+<script type = "text/javascript">
+    window.onload=function(){        
+        sforce.one.navigateToURL("/{!$ObjectType.Case.keyprefix}/o");
+    };
+</script>
+</apex:page>

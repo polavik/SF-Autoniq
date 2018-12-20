@@ -1,0 +1,52 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+	controller="ATNQSubscriptionPanelController" access="global" >
+	
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="thirdPartyItems" type="Object[]" />
+
+	<lightning:card title="Third Party Logins" iconName="standard:contact" footer="">
+		<lightning:accordion activeSectionName="">
+			<aura:iteration items="{!v.thirdPartyItems}" var="thirdPartyItem">
+				<lightning:accordionSection title="{!thirdPartyItem.name}"  name="{!thirdPartyItem.name}" label="{!thirdPartyItem.name}">
+					 <div class="slds-grid slds-gutters">
+				        <div class="slds-col">
+				            <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+			                	<div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+			                    	<div class="slds-panel__section">
+			                        	<h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>
+				                        <ul>
+				                            <li class="slds-form-element slds-hint-parent slds-border_bottom">
+				                                <span class="slds-form-element__label">Username</span>
+				                                <div class="slds-form-element__control">
+				                                    <span class="slds-form-element__static"> {!thirdPartyItem.username} </span>
+				                                </div>
+				                            </li>				                         
+				                        </ul>
+			                        
+			                    	</div>					        
+			                	</div>
+			            	</div>
+			        	</div>
+			        	 <div class="slds-col">
+				            <div class="slds-panel slds-grid slds-grid_vertical slds-nowrap">
+			                	<div class="slds-form slds-form_stacked slds-grow slds-scrollable_y">					     
+			                    	<div class="slds-panel__section">
+			                        	<h3 class="slds-text-heading_small slds-m-bottom_medium"></h3>					                        
+			                        	<ul>
+			                            	<li class="slds-form-element slds-hint-parent slds-border_bottom">
+			                                	<span class="slds-form-element__label">Password</span>
+			                                	<div class="slds-form-element__control">
+			                                    	<span class="slds-form-element__static"> {!thirdPartyItem.password} </span>
+			                                	</div>
+			                            	</li>				                         
+			                        	</ul>
+			                    	</div>					        
+			                	</div>
+			            	</div>
+			        	</div>
+	    			</div>
+				</lightning:accordionSection>
+			</aura:iteration>	
+		</lightning:accordion>
+	</lightning:card>
+</aura:component>

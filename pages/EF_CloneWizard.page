@@ -1,0 +1,84 @@
+<apex:page controller="EdgeForceIntranetCloneWizardController" standardStylesheets="false" showheader="false" sidebar="false">
+   <head>
+          
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>        
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"/>        
+        <!-- Optional theme -->       
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"/>
+     
+    </head> 
+    <style>
+       label{
+            display:inline!important;
+        }
+        
+        input{
+            margin: 0!important;
+        }
+        
+    </style>
+    
+    <div class="container" >
+       <!--  <div class="well">
+            <center><h3>Clone Wizard</h3> </center>
+       </div> -->
+        <apex:outputPanel id="status">
+           <apex:outputPanel rendered="{!statusMessage!= null && statusMessage!= '' && isError==false}">
+               <div class="alert alert-success">
+                    Cloned Successful . Please Click <a style="color:#3E8D4E;text-decoration: underline;font-weight:bold" href="/{!statusMessage}" > {!newPageName} </a> to see details.
+               </div>
+           </apex:outputPanel> 
+           <apex:outputPanel rendered="{!statusMessage!= null && statusMessage!= '' && isError==true}">
+               <div class="alert alert-danger">
+                    {!statusMessage}
+               </div>
+           </apex:outputPanel> 
+       </apex:outputPanel>
+       <apex:form >
+        <div class="panel panel-default" style="margin-bottom:0px;margin-top:0px">
+            <div class="panel-heading" style="background:#1797C0;color:white;">
+                <span><label>Page Info</label></span>
+            </div>            
+            <div class="panel-body" >
+               <div class="row" style="margin-bottom:10px;"> 
+                <span class="col-sm-6"><label >Page Being Cloned</label></span >                 
+                <span class="col-sm-6" style="float:right"><apex:outputText value="{!mapofcontentIdandpublishedVersion[contentIdParameter].name}"/></span > 
+               </div>
+               
+               <div class="row" style="margin-bottom:10px;">                      
+                <span class="col-sm-6"><label >New Page Name</label></span >                     
+                <span class="col-sm-6" style="float:right"><apex:inputText styleclass="form-control" value="{!newPageName}" /></span >  
+                </div>  
+                <div class="row" >                                
+                  <span class="col-sm-12" > <apex:inputCheckbox value="{!isPrefixChecked}" onchange="showPrefixBox()" /> *This new page will be used as prefix for all child pages.  If you want to provide your own names for each child page then use the following checkbox to proceed.                                      
+                 </span> 
+                  <span class ="col-sm-6" style="float:right">   <apex:outputpanel id="prefix"> <apex:inputText styleclass="form-control" value="{!blankPrefix}" rendered="{!isPrefixChecked==false}" disabled="true"/> <apex:inputText styleclass="form-control" value="{!NewPrefixName}" rendered="{!isPrefixChecked}"/></apex:outputpanel> </span>    
+                 
+                </div>  
+                       
+            </div>                          
+        </div>        
+            <apex:actionfunction name="processCloning" action="{!processCloning}"/>
+            <apex:actionfunction name="showPrefixBox"  reRender="prefix"/>
+            <div class="panel panel-info" >
+                <div class="panel-heading" style="background:#1797C0;color:white;">
+                     <label>Related Data</label>
+                </div>
+                 <div class="panel-body">  
+                     <div class="row">
+                        
+                        <span class ="col-sm-6">             
+                             <apex:selectCheckboxes value="{!optionsSelected}" layout="pageDirection">                                         
+                                 <apex:selectOptions value="{!listofoptionsforUI}"/>                       
+                             </apex:selectCheckboxes>                               
+                        </span>     
+                    </div>  
+                </div> 
+           </div>  
+       </apex:form>
+       <center><a href="#" class="btn btn-default" onclick="processCloning();">Clone</a> </center>
+    </div>
+    
+</apex:page>

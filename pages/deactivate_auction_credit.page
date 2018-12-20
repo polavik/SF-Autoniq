@@ -1,0 +1,16 @@
+<apex:page standardController="Auction_Credit__c" extensions="DeactivateAuctionCreditController" >
+	<apex:form >
+		<apex:pageBlock title="Deactivate Auction Credit">
+			<apex:pageMessages />
+			<apex:pageBlockSection title="Comments" collapsible="false" columns="1" rendered="{!isAvailable}">
+				<apex:outputPanel layout="block" style="text-align: center">
+					<apex:inputTextarea id="deactivationComments" style="width:80%; min-height:3em" value="{!credit.Deactivation_Comments__c}"/>
+				</apex:outputPanel>
+			</apex:pageBlockSection>
+			<apex:outputPanel layout="block" style="margin-top: 10px; text-align: center">
+				<apex:commandButton action="{!deactivate}" value="Continue" rendered="{!isAvailable}"/>
+				<apex:commandButton action="{!back}" value="Back" /> 
+			</apex:outputPanel>
+		</apex:pageBlock>
+	</apex:form>
+</apex:page>

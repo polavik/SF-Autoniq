@@ -1,0 +1,10 @@
+<apex:page >
+<body>
+    <div style="border: 1px solid black; overflow: hidden; width: 667px;">
+    <div style="padding: 23px 0px 0px; background-color: rgb(29, 80, 133);">
+    <map id="splashmap" name="splashmap"><area shape="rect" coords="34,365,298,391" href="/apex/create_case" alt="Create New Case" /></map>
+    <img src="/servlet/servlet.FileDownload?file=01560000000IO4j" usemap="#splashmap" />
+    </div>
+    </div>
+</body>
+</apex:page>

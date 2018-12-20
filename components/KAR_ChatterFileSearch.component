@@ -1,0 +1,111 @@
+<apex:component controller="EdgeForceIntranetChtFileSearchController">
+
+    <apex:form >
+        <apex:actionfunction name="processfileSearch_chatter" action="{!processfileSearch}" reRender="searchResultPanel_chatter"  status="panelsearchStatus">
+            <apex:param name="searchInput" assignTo="{!searchInputinController}" value=""/>
+        </apex:actionfunction>
+        <apex:actionfunction name="processfilesSearchMore_chatter" action="{!processfilesSearchMore}" reRender="searchResultPanel_chatter"  status="panelsearchStatus"/>
+        <apex:actionfunction name="refreshResult_chatter" action="{!clear}" reRender="searchResultPanel_chatter" />
+    </apex:form>
+
+    <apex:outputpanel id="searchResultPanel_chatter">  
+        <script>
+            $('#resultTable').empty();
+        </script>
+
+        <ul id="resultTable" class="file-search-results resulttable">
+            <li class="empty">{!$Label.EF_ChatterFiles_UseInputHelper}</li>
+            <apex:repeat value="{!listoffiles}" var="chatterfiles">
+                <script>
+                    var url;
+                    var createdate=new Date('{!chatterfiles.CreatedDate}');
+                    var parseddate=[createdate.getDate(), createdate.getMonth()+1, createdate.getFullYear()].join('/');
+                    var filetype='{!chatterfiles.fileType}';
+
+                    //alert(filetype);
+                    if(filetype=="TEXT")
+                        url="/sfc/images/docicons/doctype_txt_32.png";
+                    else if(filetype=="WORD_X" || filetype=='WORD')
+                        url="/sfc/images/docicons/doctype_word_32.png";
+                    else if(filetype=="POWER_POINT_X" || filetype== 'POWER_POINT')
+                        url="/sfc/images/docicons/doctype_ppt_32.png";
+                    else if(filetype="PDF")
+                        url="/sfc/images/docicons/doctype_pdf_32.png";
+                    else
+                        url="/sfc/images/docicons/doctype_word_32.png";
+                        //alert('{!chatterfiles.title}');
+                        //$('#resultTable').append('<tr><td>'+'jdso'+'</td></tr>');
+                        // $('#resultTable').append('<li><a class="wrapper" href="/sfc/servlet.shepherd/version/download/'+'{!chatterfiles.id}'+'?asPdf=false&operationContext=CHATTER" target="_blank"><img src="'+url+'" /><span class="detail"><span class="name">'+'{!chatterfiles.title}'+'</span><span class="date">'+parseddate+'</span><span class="user">'+'{!chatterfiles.CreatedBy.FirstName}'+' '+ '{!chatterfiles.CreatedBy.LastName}'+'</span></span></a></li>');
+                        $('#resultTable').append('<li><a class="wrapper" href="#" onclick="processContent(\'{!chatterfiles.id}\');return false;"><img src="'+url+'" /><span class="detail"><span class="name">'+'{!chatterfiles.title}'+'</span><span class="date">'+parseddate+'</span><span class="user">'+'{!chatterfiles.CreatedBy.FirstName}'+' '+ '{!chatterfiles.CreatedBy.LastName}'+'</span></span></a></li>');
+                        //alert('here');
+                </script>
+            </apex:repeat>
+        </ul>
+        <script>
+            function performSearchMore_Chatter(){
+                if(isScrollBottom() && !{!allResults}){ 
+                    var searchText = $('#search-chatter-files').val();
+                    if(searchText != null && searchText != '' && searchText.length >=2 ){  
+                        processfilesSearchMore_chatter();
+                    }else{
+                        refreshResult_chatter();
+                    }
+                }
+            }
+        </script>
+    </apex:outputpanel>
+
+    <c:EF_DocPreview />
+
+    <apex:actionStatus startText="(Retrieving data...)" id="panelsearchStatus" layout="block">
+        <apex:facet name="start">
+            <div class="loading-overlay">
+                <div class="loading-spinner">
+                  <div class="rect1"></div>
+                  <div class="rect2"></div>
+                  <div class="rect3"></div>
+                  <div class="rect4"></div>
+                  <div class="rect5"></div>
+                </div>
+            </div><!-- /.overlay -->
+        </apex:facet>
+        <apex:facet name="stop"></apex:facet>
+    </apex:actionStatus>
+
+    <script>
+        var timer;
+        var prevSearch;
+
+        function performinitialSearch_chatter(inputText){
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                if(inputText != null && inputText != '' && inputText.length>=2){
+                    processfileSearch_chatter(inputText)
+                    prevSearch = inputText;
+                }else{
+                    refreshResult_chatter();
+                }
+            }, 750);
+        }
+
+        $(window).scroll(function(){ 
+            performSearchMore_Chatter();
+        });
+
+        function isScrollBottom_Chatter() { 
+            var elem = $('.file-search');
+            var divend = elem[0].scrollHeight + elem.offset().top;
+            var pagescroll = $(this).scrollTop() + $(this).height();
+            return (divend <= pagescroll);
+        }
+
+        function fileTabClick() {
+            var fileInput = $('#search-chatter-files').val();
+            if(fileInput != null && fileInput != '' && prevSearch != fileInput){
+                processfileSearch_chatter(fileInput);
+                prevSearch = fileInput;
+            }
+        }
+    </script>
+
+</apex:component>

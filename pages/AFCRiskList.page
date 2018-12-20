@@ -1,0 +1,235 @@
+<apex:page Controller="AFCRiskListController" showHeader="true">
+	<head>
+		<apex:includeScript value="{!URLFOR($Resource.jquerycustom, 'jquery-1.11.3.min.js')}"/>
+		<apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/jquery-ui-1.12.1/jquery-ui.min.js')}"/>
+		<apex:includeScript value="{!URLFOR($Resource.jquerycustom, '/jquerydatatables/datatables.min.js')}"/>
+		<apex:stylesheet value="{!URLFOR($Resource.jquerycustom, '/jquerydatatables/datatables.min.css')}"/>
+		<apex:stylesheet value="{!URLFOR($Resource.jquerycustom, '/jquery-ui-1.12.1/jquery-ui.min.css')}"/>
+
+
+		<script>
+			j$ = jQuery.noConflict();
+			j$(document).ready( function () {
+				var contractTable = j$('[id$="contracttable"]').DataTable({
+					"oLanguage": {"sSearch": "Filter Results"},
+					"iDisplayLength": 10//,
+				});
+
+				// Toggle column visibility
+				j$('a.toggle-vis').on( 'click', function (e) {
+						e.preventDefault();
+						var column = contractTable.column( j$(this).attr('data-column') );
+						column.visible( ! column.visible() );
+					} );
+
+				j$('#rangefilterlink').on('click',function(){
+					j$('#rangefilters').slideToggle()
+					j$(this).text(function(_, val){
+					return val == "Advanced Options" ? "Hide Advanced Options" : "Advanced Options"
+					});
+				});
+
+				// Initialize and configure the "Balance Min" filter
+				j$("#balance_from").keyup(function() {
+					minBalFilter = this.value;
+					contractTable.draw();
+				});
+
+				// Initialize and configure the "Balance Max" filter
+				j$("#balance_to").keyup(function() {
+					maxBalFilter = this.value;
+					contractTable.draw();
+				});
+
+				// Initialize and configure the "Priority Min" filter
+				j$("#priority_from").keyup(function() {
+					minPriFilter = this.value;
+					contractTable.draw();
+				});
+
+				// Initialize and configure the "Priority Max" filter
+				j$("#priority_to").keyup(function() {
+					maxPriFilter = this.value;
+					contractTable.draw();
+				});
+				
+				// Initialize and configure the datepicker "From" filter
+				j$("#datepicker_from").datepicker({
+					"onSelect": function(date) {
+						minDateFilter = new Date(date).getTime();
+						contractTable.draw();
+					}
+				}).keyup(function() {
+					minDateFilter = new Date(this.value).getTime();
+					contractTable.draw();
+					});
+
+				// Initialize and configure the datepicker "To" filter
+				j$("#datepicker_to").datepicker({
+					"onSelect": function(date) {
+						maxDateFilter = new Date(date).getTime();
+						contractTable.draw();
+					}
+				}).keyup(function() {
+					maxDateFilter = new Date(this.value).getTime();
+					contractTable.draw();
+				});
+
+				j$('#balance_from').val({!minBalance});
+				j$('#balance_to').val({!maxBalance});
+				j$('#priority_from').val({!minPriority});
+				j$('#priority_to').val({!maxPriority});
+
+				// Date range filter
+				minBalFilter = "{!minBalance}";
+				maxBalFilter = "{!maxBalance}";
+				minPriFilter = "{!minPriority}";
+				maxPriFilter = "{!maxPriority}";
+				minDateFilter = "";
+				maxDateFilter = "";
+
+				j$.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex) {
+					os = Number(aData[5].substring(0,aData[5].indexOf('.')).replace(/\D/g,''));  // outstanding balance
+					pr = Number(aData[7]); // priority
+					fu = new Date(aData[9]).getTime(); // followup date
+
+					return  !((minPriFilter && !isNaN(minPriFilter) && pr < minPriFilter) || (maxPriFilter && !isNaN(maxPriFilter) && pr > maxPriFilter) ||
+						(minDateFilter && !isNaN(minDateFilter) && fu < minDateFilter) || (maxDateFilter && !isNaN(maxDateFilter) && fu > maxDateFilter) ||
+						(minBalFilter && !isNaN(minBalFilter) && os < minBalFilter) || (maxBalFilter && !isNaN(maxBalFilter) && os > maxBalFilter));
+				  })
+
+				// Redraw table with default filters applied
+				contractTable.draw();
+			});
+
+			function selectRow(thisrow){
+				j$('.selected').removeClass('selected');
+				j$(thisrow).addClass("selected");
+				refreshSummary(j$(thisrow).prop('id'));
+			}
+
+		</script>
+		<style>
+			tr.selected background-color: #e92929 !important;color:#fff;vertical-align: middle; padding: 1.5em;font-style:italic;}
+		</style>
+	</head>
+	<apex:form >
+	<apex:actionFunction name="refreshSummary" action="{!refreshSummary}" immediate="true" reRender="casedetails" >
+		<apex:param name="contractid" value=""/>
+	</apex:actionFunction>
+	<apex:actionFunction name="createCase" action="{!createCase}" reRender="summarytable,pagemessages" oncomplete="j$('[id$=\'contracttable\']').dataTable();">
+		<apex:param name="contractid" value=""/>
+	</apex:actionFunction>
+   
+	<body><p/>
+		<apex:outputPanel id="pagemessages">
+			<apex:pageMessages />
+		</apex:outputPanel>
+
+
+		<p><div id="rangefiltersheader" align="right"><h3><a id="rangefilterlink" href="#">Advanced Options</a></h3></div></p>
+		<div id="rangefilters" style="display:none;">
+		<p id="bal_filter" align="right">
+			<div align="left">
+				Show Columns: 
+				<a class="toggle-vis" data-column="0" style="cursor: pointer;">Contract</a> - 
+				<a class="toggle-vis" data-column="1" style="cursor: pointer;">Account</a> - 
+				<!--<a class="toggle-vis" data-column="2" style="cursor: pointer;">Division</a> - -->
+				<a class="toggle-vis" data-column="2" style="cursor: pointer;">Region</a> - 
+				<a class="toggle-vis" data-column="3" style="cursor: pointer;">Risk Group</a> - 
+				<a class="toggle-vis" data-column="4" style="cursor: pointer;">Yield Group</a> - 
+				<a class="toggle-vis" data-column="5" style="cursor: pointer;">Prinicipal O/S</a> - 
+				<a class="toggle-vis" data-column="6" style="cursor: pointer;">Case</a> - 
+				<a class="toggle-vis" data-column="7" style="cursor: pointer;">Priority</a> - 
+				<a class="toggle-vis" data-column="8" style="cursor: pointer;">Owner</a> - 
+				<a class="toggle-vis" data-column="9" style="cursor: pointer;">Followup</a>            
+			</div>
+			<div align="right">
+				<span id="balance-label-from" class="date-label">Principal O/S From: </span><input type="text" id="balance_from" />
+				<span id="balance-label-to" class="date-label">To: </span><input type="text" id="balance_to" />  
+			</div>  
+		</p>        
+		<p id="priority_filter" align="right">
+			<span id="priority-label-from" class="date-label">Priority From: </span><input type="text" id="priority_from" />
+			<span id="priority-label-to" class="date-label">To: </span><input type="text" id="priority_to" />    
+		</p>
+		<p id="date_filter" align="right">
+			<span id="date-label-from" class="date-label">Followup Date From: </span><input type="text" id="datepicker_from" />
+			<span id="date-label-to" class="date-label">To: </span><input type="text" id="datepicker_to" />    
+		</p>
+		</div>
+		<apex:outputPanel id="summarytable">
+			<table id="contracttable" class="display">
+			<thead>
+				<tr>
+					<th>Contract</th>
+					<th>Account</th>
+					<!--<th>Division</th>-->
+					<th>Region</th>
+					<th class="dt-right">Risk Group</th>
+					<th class="dt-right">Yield Group</th>
+					<th class="dt-right">Principal O/S</th>
+					<th>Case</th>
+					<th class="dt-center">Priority</th>
+					<th class="dt-right">Owner</th>
+					<th class="dt-right">Followup</th>
+				</tr>
+			</thead>
+			<tbody>
+				<apex:repeat value="{!contractSummaryList}" var="cs">
+					<tr id="{!cs.contract.id}" onclick="selectRow(j$(this));">
+						<td><apex:outputLink value="/{!cs.contract.id}">{!cs.contract.Name}</apex:outputLink></td>
+						<td><apex:outputLink value="/{!cs.contract.Account__c}">{!cs.contract.Account__r.Name}</apex:outputLink></td>
+						<!--<td>{!cs.contract.AFC_Division__c}</td>-->
+						<td>{!cs.contract.AFC_Region__c}</td>
+						<td class="dt-right">{!cs.contract.AFC_Risk_Group__c}</td>
+						<td class="dt-right">{!cs.contract.AFC_Yield_Group__c}</td>                        
+						<td class="dt-right">
+							<apex:outputText value="{0, number,###,###,##0.00}">
+								<apex:param value="{!cs.contract.Current_Principle_Amt_Oustanding__c}" />
+							</apex:outputText>
+						</td>
+						<td>
+							<apex:outputLink value="/{!cs.openCase.id}"><apex:outputText rendered="{!cs.openCase.id != null}" value="{!cs.openCase.name}"/></apex:outputLink>
+						</td>
+						<td class="dt-center">    
+							<apex:outputField rendered="{!cs.openCase.id != null}" value="{!cs.openCase.AFC_Priority__c}"/>
+						</td>
+						<td class="dt-right">
+							<apex:outputField rendered="{!cs.openCase.id != null}" value="{!cs.openCase.ownerId}"/>
+						</td>
+						<td class="dt-right">
+							<apex:outputField rendered="{!cs.openCase.id != null}" value="{!cs.openCase.AFC_FU_date__c}"/>
+						</td>  
+					</tr>
+				</apex:repeat>
+			</tbody>
+			</table><p/>
+		</apex:outputPanel>
+
+		<apex:outputPanel id="casedetails">
+			<apex:outputPanel rendered="{! selectedContract != null && contractSummaryMap[selectedContract].openCase == null}">
+				<apex:pageBlock title="Create a New Case">
+					<apex:pageBlockButtons location="top">
+						<apex:commandButton action="{!createCase}" value="Submit"/>
+					</apex:pageBlockButtons>
+					<apex:pageBlockSection >
+						<apex:inputField styleClass="priority" value="{!newCase.AFC_Priority__c}"/>
+						<apex:inputField id="ownerfield" styleClass="ownerid" value="{!newCase.ownerid}"/>
+						<apex:inputField styleClass="fudate" value="{!newCase.AFC_FU_date__c}"/>
+					</apex:pageBlockSection>
+				</apex:pageBlock>
+			</apex:outputPanel>
+			<apex:outputPanel rendered="{! selectedContract != null && contractSummaryMap[selectedContract].openCase != null}">
+				<apex:pageBlock title="Existing Case Plan">
+					<apex:pageBlockSection >
+						<apex:outputField value="{!contractSummaryMap[selectedContract].openCase.AFC_Assess_Comments__c}"/><p/>
+						<apex:outputField value="{!contractSummaryMap[selectedContract].openCase.AFC_Identify__c}"/><p/>
+						<apex:outputField value="{!contractSummaryMap[selectedContract].openCase.AFC_Develop_Plan__c}"/><p/>
+					</apex:pageBlockSection>
+				</apex:pageBlock>
+			</apex:outputPanel>				
+		</apex:outputPanel>
+	</body>
+	</apex:form>
+</apex:page>
